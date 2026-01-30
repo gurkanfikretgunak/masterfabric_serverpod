@@ -1,0 +1,7 @@
+### Feature flags configuration
+class: FeatureFlags
+fields:
+  ### Onboarding feature enabled
+  onboardingEnabled: bool
+  ### Analytics feature enabled
+  analyticsEnabled: bool

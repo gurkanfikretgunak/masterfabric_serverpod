@@ -1,0 +1,33 @@
+### Splash screen configuration
+class: SplashConfiguration
+fields:
+  ### Splash style (startup/custom)
+  style: String
+  ### Splash duration in milliseconds
+  duration: int
+  ### Background color hex code
+  backgroundColor: String
+  ### Text color hex code
+  textColor: String
+  ### Primary color hex code
+  primaryColor: String
+  ### Logo URL
+  logoUrl: String?
+  ### Logo width
+  logoWidth: int
+  ### Logo height
+  logoHeight: int
+  ### Show loading indicator
+  showLoadingIndicator: bool
+  ### Loading indicator size
+  loadingIndicatorSize: int
+  ### Loading text
+  loadingText: String
+  ### Show app version
+  showAppVersion: bool
+  ### App version to display
+  appVersion: String
+  ### Show copyright
+  showCopyright: bool
+  ### Copyright text
+  copyrightText: String

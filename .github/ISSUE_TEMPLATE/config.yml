@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Serverpod Documentation
+    url: https://docs.serverpod.dev
+    about: Check the official Serverpod documentation for common questions
+  - name: Serverpod Discord Community
+    url: https://discord.gg/serverpod
+    about: Ask questions and get help from the Serverpod community

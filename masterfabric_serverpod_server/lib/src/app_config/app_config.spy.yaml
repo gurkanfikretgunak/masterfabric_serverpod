@@ -1,0 +1,25 @@
+### Main app configuration model
+class: AppConfig
+fields:
+  ### App settings
+  appSettings: AppSettings
+  ### UI configuration
+  uiConfiguration: UiConfiguration
+  ### Splash screen configuration
+  splashConfiguration: SplashConfiguration
+  ### Feature flags
+  featureFlags: FeatureFlags
+  ### Navigation configuration
+  navigationConfiguration: NavigationConfiguration
+  ### API configuration
+  apiConfiguration: ApiConfiguration
+  ### Permissions configuration
+  permissionsConfiguration: PermissionsConfiguration
+  ### Localization configuration
+  localizationConfiguration: LocalizationConfiguration
+  ### Storage configuration
+  storageConfiguration: StorageConfiguration
+  ### Push notification configuration
+  pushNotificationConfiguration: PushNotificationConfiguration
+  ### Force update configuration
+  forceUpdateConfiguration: ForceUpdateConfiguration

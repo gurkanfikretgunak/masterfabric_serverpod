@@ -1,0 +1,13 @@
+### App settings configuration
+class: AppSettings
+fields:
+  ### Application name
+  appName: String
+  ### Application version
+  appVersion: String
+  ### Environment (development/staging/production)
+  environment: String
+  ### Debug mode enabled
+  debugMode: bool
+  ### Maintenance mode enabled
+  maintenanceMode: bool

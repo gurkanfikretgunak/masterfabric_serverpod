@@ -1,0 +1,7 @@
+### Navigation configuration
+class: NavigationConfiguration
+fields:
+  ### Default route path
+  defaultRoute: String
+  ### Deep linking enabled
+  deepLinkingEnabled: bool

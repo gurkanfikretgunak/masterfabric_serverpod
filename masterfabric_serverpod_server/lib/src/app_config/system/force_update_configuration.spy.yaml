@@ -1,0 +1,15 @@
+### Force update configuration
+class: ForceUpdateConfiguration
+fields:
+  ### Latest app version
+  latestVersion: String
+  ### Minimum required version
+  minimumVersion: String
+  ### Release notes
+  releaseNotes: String
+  ### New features list
+  features: List<String>
+  ### Store URLs
+  storeUrl: StoreUrl?
+  ### Custom update message
+  customMessage: String

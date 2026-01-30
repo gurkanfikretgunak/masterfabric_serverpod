@@ -1,0 +1,18 @@
+# Default owner for all files
+* @gurkanfikretgunak
+
+# Server-specific files
+/masterfabric_serverpod_server/ @gurkanfikretgunak
+
+# Client-specific files
+/masterfabric_serverpod_client/ @gurkanfikretgunak
+
+# Flutter app-specific files
+/masterfabric_serverpod_flutter/ @gurkanfikretgunak
+
+# GitHub workflows and templates
+/.github/ @gurkanfikretgunak
+
+# Documentation
+/README.md @gurkanfikretgunak
+/CONTRIBUTING.md @gurkanfikretgunak

@@ -1,0 +1,7 @@
+### Localization configuration
+class: LocalizationConfiguration
+fields:
+  ### Default locale code
+  defaultLocale: String
+  ### Supported locales list
+  supportedLocales: List<String>

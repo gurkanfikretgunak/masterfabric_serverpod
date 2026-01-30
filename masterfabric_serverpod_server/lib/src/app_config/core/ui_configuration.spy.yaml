@@ -1,0 +1,11 @@
+### UI configuration settings
+class: UiConfiguration
+fields:
+  ### Theme mode (light/dark/auto)
+  themeMode: String
+  ### Font scale factor
+  fontScale: double
+  ### Show dev mode grid overlay
+  devModeGrid: bool
+  ### Show dev mode spacer overlay
+  devModeSpacer: bool

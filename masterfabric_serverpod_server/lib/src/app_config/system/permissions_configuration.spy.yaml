@@ -1,0 +1,7 @@
+### Permissions configuration
+class: PermissionsConfiguration
+fields:
+  ### Required permissions list
+  required: List<String>
+  ### Optional permissions list
+  optional: List<String>

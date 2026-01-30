@@ -1,0 +1,11 @@
+### Push notification configuration
+class: PushNotificationConfiguration
+fields:
+  ### Push notifications enabled
+  enabled: bool
+  ### Default provider (onesignal/firebase/etc)
+  defaultProvider: String
+  ### Auto initialize push notifications
+  autoInitialize: bool
+  ### Provider configurations as JSON string (will be parsed on client)
+  providersJson: String?

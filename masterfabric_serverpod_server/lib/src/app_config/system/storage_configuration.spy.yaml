@@ -1,0 +1,9 @@
+### Storage configuration
+class: StorageConfiguration
+fields:
+  ### Local storage type (hiveCe/sharedPreferences/etc)
+  localStorageType: String
+  ### Encryption enabled
+  encryptionEnabled: bool
+  ### Cache enabled
+  cacheEnabled: bool

@@ -1,0 +1,9 @@
+### API configuration
+class: ApiConfiguration
+fields:
+  ### API base URL
+  baseUrl: String
+  ### Request timeout in milliseconds
+  timeout: int
+  ### Retry count for failed requests
+  retryCount: int

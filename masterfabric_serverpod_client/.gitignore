@@ -1,0 +1,74 @@
+# Files and directories created by pub
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+
+# Omit committing pubspec.lock for library packages:
+# https://dart.dev/guides/libraries/private-files#pubspeclock
+pubspec.lock
+
+# Conventional directory for build outputs
+build/
+*.dart.js
+*.dart.js.map
+*.info.json
+
+# Directory created by dartdoc
+doc/api/
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Coverage
+coverage/
+*.lcov
+test/.test_coverage.dart
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+*.a
+*.o
+*.so
+*.dylib
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock

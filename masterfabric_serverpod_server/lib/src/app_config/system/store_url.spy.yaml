@@ -1,0 +1,7 @@
+### Store URLs for app store links
+class: StoreUrl
+fields:
+  ### iOS App Store URL
+  ios: String?
+  ### Android Play Store URL
+  android: String?

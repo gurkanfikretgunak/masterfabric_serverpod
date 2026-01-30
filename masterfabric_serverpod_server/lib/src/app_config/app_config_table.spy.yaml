@@ -1,0 +1,19 @@
+### App configuration database table
+### Stores app configuration per environment and platform
+class: AppConfigEntry
+table: app_config_entry
+fields:
+  ### Unique identifier
+  id: int?
+  ### Environment name (development/staging/production)
+  environment: String
+  ### Platform identifier (ios/android/web/null for all platforms)
+  platform: String?
+  ### Configuration data as JSON string
+  configJson: String
+  ### When this configuration was created
+  createdAt: DateTime
+  ### When this configuration was last updated
+  updatedAt: DateTime
+  ### Whether this configuration is active
+  isActive: bool
