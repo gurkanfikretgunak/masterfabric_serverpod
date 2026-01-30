@@ -1,5 +1,20 @@
 # MasterFabric Serverpod
 
+<div align="center">
+
+![CI](https://github.com/gurkanfikretgunak/masterfabric_serverpod/workflows/Analyze/badge.svg)
+![Tests](https://github.com/gurkanfikretgunak/masterfabric_serverpod/workflows/Tests/badge.svg)
+![Format](https://github.com/gurkanfikretgunak/masterfabric_serverpod/workflows/Format/badge.svg)
+![Dart](https://img.shields.io/badge/Dart-3.8.0-blue.svg?logo=dart)
+![Flutter](https://img.shields.io/badge/Flutter-3.32.0-blue.svg?logo=flutter)
+![Serverpod](https://img.shields.io/badge/Serverpod-3.2.3-orange.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+
+[![GitHub stars](https://img.shields.io/github/stars/gurkanfikretgunak/masterfabric_serverpod?style=social)](https://github.com/gurkanfikretgunak/masterfabric_serverpod/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/gurkanfikretgunak/masterfabric_serverpod?style=social)](https://github.com/gurkanfikretgunak/masterfabric_serverpod/network/members)
+
+</div>
+
 A full-stack Flutter application built with Serverpod, featuring app configuration management, authentication, and integrations with Firebase, Sentry, and Mixpanel.
 
 ## Overview
