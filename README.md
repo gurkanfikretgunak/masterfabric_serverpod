@@ -34,10 +34,6 @@ graph TB
     Flutter -->|Uses| Client
     Server -->|Generates| Client
     Flutter <-->|HTTP/WebSocket| Server
-    
-    style Client fill:#e1f5ff
-    style Flutter fill:#c8e6c9
-    style Server fill:#fff3e0
 ```
 
 ### System Architecture
@@ -84,11 +80,6 @@ graph LR
     IntMgr --> Mixpanel
     ServerpodServer --> PostgreSQL
     ServerpodServer --> Redis
-    
-    style FlutterApp fill:#c8e6c9
-    style ServerpodServer fill:#fff3e0
-    style PostgreSQL fill:#bbdefb
-    style Redis fill:#ffcdd2
 ```
 
 ## Prerequisites
@@ -113,12 +104,6 @@ flowchart TD
     SeedData --> StartServer[5. Start Server]
     StartServer --> RunFlutter[6. Run Flutter App]
     RunFlutter --> Done([Ready!])
-    
-    style Start fill:#c8e6c9
-    style Done fill:#c8e6c9
-    style Docker fill:#bbdefb
-    style StartServer fill:#fff3e0
-    style RunFlutter fill:#e1f5ff
 ```
 
 ### 1. Install Dependencies
@@ -245,11 +230,6 @@ flowchart LR
     E --> F{Test}
     F -->|Pass| G[Commit Changes]
     F -->|Fail| A
-    
-    style A fill:#e3f2fd
-    style B fill:#fff3e0
-    style C fill:#e1f5ff
-    style G fill:#c8e6c9
 ```
 
 1. **Make changes** to your models/endpoints in the server
@@ -266,11 +246,6 @@ graph TD
     AppConfig[App Configuration] --> Core[Core Settings<br/>App Settings<br/>Feature Flags<br/>UI Config<br/>Splash Config]
     AppConfig --> Integrations[Integration Settings<br/>API Config<br/>Navigation<br/>Push Notifications]
     AppConfig --> System[System Settings<br/>Force Update<br/>Localization<br/>Permissions<br/>Storage]
-    
-    style AppConfig fill:#e1f5ff
-    style Core fill:#c8e6c9
-    style Integrations fill:#fff3e0
-    style System fill:#f3e5f5
 ```
 
 Centralized configuration management including:
@@ -290,12 +265,6 @@ graph LR
     IntMgr --> Mixpanel[Mixpanel<br/>Analytics]
     
     Config[Config Files] -.->|Enable/Disable| IntMgr
-    
-    style IntMgr fill:#e1f5ff
-    style Firebase fill:#fff3e0
-    style Sentry fill:#ffcdd2
-    style Mixpanel fill:#c8e6c9
-    style Config fill:#f3e5f5
 ```
 
 - **Firebase**: Firebase Admin SDK integration
@@ -341,10 +310,6 @@ graph TD
     CronParser --> JobN[Job N<br/>Custom Schedule]
     
     Scheduler -->|Runs| BackgroundTasks[Background Tasks]
-    
-    style Scheduler fill:#e1f5ff
-    style CronParser fill:#fff3e0
-    style BackgroundTasks fill:#c8e6c9
 ```
 
 Cron-based job scheduling system for background tasks.
@@ -360,11 +325,6 @@ graph LR
     Tests --> Docker[Start Docker<br/>PostgreSQL & Redis]
     Docker --> RunTests[Run Tests]
     RunTests --> Cleanup[Stop Containers]
-    
-    style Push fill:#e3f2fd
-    style Analyze fill:#fff3e0
-    style Tests fill:#c8e6c9
-    style Format fill:#f3e5f5
 ```
 
 The project includes GitHub Actions workflows:
