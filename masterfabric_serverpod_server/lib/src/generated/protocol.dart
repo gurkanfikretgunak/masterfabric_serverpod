@@ -31,6 +31,8 @@ import 'app_config/system/permissions_configuration.dart' as _i16;
 import 'app_config/system/storage_configuration.dart' as _i17;
 import 'app_config/system/store_url.dart' as _i18;
 import 'greetings/greeting.dart' as _i19;
+import 'translations/translation_entry.dart' as _i20;
+import 'translations/translation_response.dart' as _i21;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -46,6 +48,8 @@ export 'app_config/system/permissions_configuration.dart';
 export 'app_config/system/storage_configuration.dart';
 export 'app_config/system/store_url.dart';
 export 'greetings/greeting.dart';
+export 'translations/translation_entry.dart';
+export 'translations/translation_response.dart';
 
 class Protocol extends _i1.SerializationManagerServer {
   Protocol._();
@@ -109,6 +113,80 @@ class Protocol extends _i1.SerializationManagerServer {
       indexes: [
         _i2.IndexDefinition(
           indexName: 'app_config_entry_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'translation_entry',
+      dartName: 'TranslationEntry',
+      schema: 'public',
+      module: 'masterfabric_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'translation_entry_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'locale',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'namespace',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'translationsJson',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'version',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'updatedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'isActive',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'translation_entry_pkey',
           tableSpace: null,
           elements: [
             _i2.IndexElementDefinition(
@@ -200,6 +278,12 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i19.Greeting) {
       return _i19.Greeting.fromJson(data) as T;
     }
+    if (t == _i20.TranslationEntry) {
+      return _i20.TranslationEntry.fromJson(data) as T;
+    }
+    if (t == _i21.TranslationResponse) {
+      return _i21.TranslationResponse.fromJson(data) as T;
+    }
     if (t == _i1.getType<_i5.AppConfig?>()) {
       return (data != null ? _i5.AppConfig.fromJson(data) : null) as T;
     }
@@ -260,8 +344,21 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i19.Greeting?>()) {
       return (data != null ? _i19.Greeting.fromJson(data) : null) as T;
     }
+    if (t == _i1.getType<_i20.TranslationEntry?>()) {
+      return (data != null ? _i20.TranslationEntry.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i21.TranslationResponse?>()) {
+      return (data != null ? _i21.TranslationResponse.fromJson(data) : null)
+          as T;
+    }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == Map<String, dynamic>) {
+      return (data as Map).map(
+            (k, v) => MapEntry(deserialize<String>(k), deserialize<dynamic>(v)),
+          )
+          as T;
     }
     try {
       return _i3.Protocol().deserialize<T>(data, t);
@@ -292,6 +389,8 @@ class Protocol extends _i1.SerializationManagerServer {
       _i17.StorageConfiguration => 'StorageConfiguration',
       _i18.StoreUrl => 'StoreUrl',
       _i19.Greeting => 'Greeting',
+      _i20.TranslationEntry => 'TranslationEntry',
+      _i21.TranslationResponse => 'TranslationResponse',
       _ => null,
     };
   }
@@ -339,6 +438,10 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'StoreUrl';
       case _i19.Greeting():
         return 'Greeting';
+      case _i20.TranslationEntry():
+        return 'TranslationEntry';
+      case _i21.TranslationResponse():
+        return 'TranslationResponse';
     }
     className = _i2.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -406,6 +509,12 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'Greeting') {
       return deserialize<_i19.Greeting>(data['data']);
     }
+    if (dataClassName == 'TranslationEntry') {
+      return deserialize<_i20.TranslationEntry>(data['data']);
+    }
+    if (dataClassName == 'TranslationResponse') {
+      return deserialize<_i21.TranslationResponse>(data['data']);
+    }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
       return _i2.Protocol().deserializeByClassName(data);
@@ -444,6 +553,8 @@ class Protocol extends _i1.SerializationManagerServer {
     switch (t) {
       case _i6.AppConfigEntry:
         return _i6.AppConfigEntry.t;
+      case _i20.TranslationEntry:
+        return _i20.TranslationEntry.t;
     }
     return null;
   }

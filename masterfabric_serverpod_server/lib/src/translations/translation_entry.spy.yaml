@@ -1,0 +1,21 @@
+### Translation database table
+### Stores translations per locale and namespace
+class: TranslationEntry
+table: translation_entry
+fields:
+  ### Unique identifier
+  id: int?
+  ### Locale code (e.g., 'en', 'tr', 'de')
+  locale: String
+  ### Namespace identifier (optional, for organizing translations)
+  namespace: String?
+  ### Translations data as JSON string (slang format)
+  translationsJson: String
+  ### Version number for cache invalidation
+  version: int
+  ### When this translation was created
+  createdAt: DateTime
+  ### When this translation was last updated
+  updatedAt: DateTime
+  ### Whether this translation is active
+  isActive: bool

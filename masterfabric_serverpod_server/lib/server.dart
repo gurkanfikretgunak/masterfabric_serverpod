@@ -6,8 +6,8 @@ import 'package:serverpod_auth_idp_server/providers/email.dart';
 
 import 'src/generated/endpoints.dart';
 import 'src/generated/protocol.dart';
-import 'src/web/routes/app_config_route.dart';
-import 'src/web/routes/root.dart';
+import 'src/routes/app_config_route.dart';
+import 'src/routes/root_route.dart';
 import 'src/core/integrations/integration_manager.dart';
 import 'src/core/health/health_check_handler.dart';
 import 'src/core/scheduling/scheduler_manager.dart';
@@ -59,8 +59,10 @@ void run(List<String> args) async {
 
   // Serve all files in the web/static relative directory under /.
   // These are used by the default web page.
-  final root = Directory(Uri(path: 'web/static').toFilePath());
-  pod.webServer.addRoute(StaticRoute.directory(root));
+  final staticDir = Directory(Uri(path: 'web/static').toFilePath());
+  if (staticDir.existsSync()) {
+    pod.webServer.addRoute(StaticRoute.directory(staticDir));
+  }
 
   // Setup the app config route.
   // We build this configuration based on the servers api url and serve it to
@@ -81,16 +83,6 @@ void run(List<String> args) async {
         ),
       ),
       '/app',
-    );
-  } else {
-    // If the flutter web app has not been built, serve the build app page.
-    pod.webServer.addRoute(
-      StaticRoute.file(
-        File(
-          Uri(path: 'web/pages/build_flutter_app.html').toFilePath(),
-        ),
-      ),
-      '/app/**',
     );
   }
 

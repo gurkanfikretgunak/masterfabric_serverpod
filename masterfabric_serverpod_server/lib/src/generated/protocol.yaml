@@ -12,3 +12,6 @@ jwtRefresh:
   - refreshAccessToken:
 greeting:
   - hello:
+translation:
+  - getTranslations:
+  - saveTranslations:

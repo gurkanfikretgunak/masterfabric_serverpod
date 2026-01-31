@@ -31,6 +31,11 @@ serverpod:
       windows: powershell -ExecutionPolicy Bypass -File scripts\seed_app_config.ps1
       posix: bash scripts/seed_app_config.sh
 
+    # Seed translations from JSON files
+    seed-translations:
+      windows: dart bin/seed_translations.dart
+      posix: dart bin/seed_translations.dart
+
     # Build the Flutter web app and copy it to the server's web directory.
     # Windows uses xcopy since flutter's --output flag doesn't work there.
     # See: https://github.com/flutter/flutter/issues/157886

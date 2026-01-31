@@ -20,7 +20,9 @@ import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i5;
 import 'package:masterfabric_serverpod_client/src/protocol/greetings/greeting.dart'
     as _i6;
-import 'protocol.dart' as _i7;
+import 'package:masterfabric_serverpod_client/src/protocol/translations/translation_response.dart'
+    as _i7;
+import 'protocol.dart' as _i8;
 
 /// Endpoint for providing app configuration to mobile clients
 ///
@@ -282,6 +284,67 @@ class EndpointGreeting extends _i1.EndpointRef {
       );
 }
 
+/// Endpoint for providing translations to clients
+///
+/// This endpoint provides translations in slang-compatible JSON format.
+/// Locale is auto-detected from Cloudflare CF-IPCountry header if not specified.
+/// {@category Endpoint}
+class EndpointTranslation extends _i1.EndpointRef {
+  EndpointTranslation(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'translation';
+
+  /// Get translations for a locale
+  ///
+  /// [session] - Serverpod session
+  /// [locale] - Optional locale code (e.g., 'en', 'tr'). If not provided,
+  ///   locale will be auto-detected from IP address via Cloudflare headers.
+  /// [namespace] - Optional namespace identifier for organizing translations
+  ///
+  /// Returns TranslationResponse containing translations in slang JSON format
+  ///
+  /// Throws InternalServerError if translations cannot be loaded
+  _i2.Future<_i7.TranslationResponse> getTranslations({
+    String? locale,
+    String? namespace,
+  }) => caller.callServerEndpoint<_i7.TranslationResponse>(
+    'translation',
+    'getTranslations',
+    {
+      'locale': locale,
+      'namespace': namespace,
+    },
+  );
+
+  /// Save translations (admin method)
+  ///
+  /// [session] - Serverpod session
+  /// [locale] - Locale code (e.g., 'en', 'tr')
+  /// [translations] - Translations as Map<String, dynamic> (slang JSON format)
+  /// [namespace] - Optional namespace identifier
+  /// [isActive] - Whether this translation is active
+  ///
+  /// Returns TranslationResponse with saved translations
+  ///
+  /// Note: This should be protected by authentication/authorization in production
+  _i2.Future<_i7.TranslationResponse> saveTranslations(
+    String locale,
+    Map<String, dynamic> translations, {
+    String? namespace,
+    required bool isActive,
+  }) => caller.callServerEndpoint<_i7.TranslationResponse>(
+    'translation',
+    'saveTranslations',
+    {
+      'locale': locale,
+      'translations': translations,
+      'namespace': namespace,
+      'isActive': isActive,
+    },
+  );
+}
+
 class Modules {
   Modules(Client client) {
     serverpod_auth_idp = _i4.Caller(client);
@@ -313,7 +376,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i7.Protocol(),
+         _i8.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -326,6 +389,7 @@ class Client extends _i1.ServerpodClientShared {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     greeting = EndpointGreeting(this);
+    translation = EndpointTranslation(this);
     modules = Modules(this);
   }
 
@@ -337,6 +401,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointGreeting greeting;
 
+  late final EndpointTranslation translation;
+
   late final Modules modules;
 
   @override
@@ -345,6 +411,7 @@ class Client extends _i1.ServerpodClientShared {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
     'greeting': greeting,
+    'translation': translation,
   };
 
   @override

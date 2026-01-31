@@ -1,0 +1,35 @@
+{
+  "welcome": {
+    "title": "Welcome $name",
+    "subtitle": "Get started with MasterFabric",
+    "description": "Your journey begins here"
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign In",
+    "success": "Logged in successfully",
+    "fail": "Login failed",
+    "forgotPassword": "Forgot password?"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "ok": "OK"
+  },
+  "errors": {
+    "network": "Network error. Please check your connection.",
+    "server": "Server error. Please try again later.",
+    "validation": "Please check your input.",
+    "unauthorized": "You are not authorized to perform this action."
+  }
+}

@@ -1,0 +1,10 @@
+### Translation response model
+### Wraps translations JSON string for Serverpod endpoint
+class: TranslationResponse
+fields:
+  ### Translations as JSON string (slang format)
+  translationsJson: String
+  ### Locale code that was used
+  locale: String
+  ### Namespace identifier (if any)
+  namespace: String?

@@ -1,0 +1,35 @@
+{
+  "welcome": {
+    "title": "Hoş geldiniz $name",
+    "subtitle": "MasterFabric ile başlayın",
+    "description": "Yolculuğunuz burada başlıyor"
+  },
+  "login": {
+    "title": "Giriş Yap",
+    "email": "E-posta",
+    "password": "Şifre",
+    "submit": "Giriş Yap",
+    "success": "Başarıyla giriş yapıldı",
+    "fail": "Giriş başarısız",
+    "forgotPassword": "Şifremi unuttum?"
+  },
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "back": "Geri",
+    "next": "İleri",
+    "done": "Tamam",
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "retry": "Tekrar Dene",
+    "ok": "Tamam"
+  },
+  "errors": {
+    "network": "Ağ hatası. Lütfen bağlantınızı kontrol edin.",
+    "server": "Sunucu hatası. Lütfen daha sonra tekrar deneyin.",
+    "validation": "Lütfen girdiğiniz bilgileri kontrol edin.",
+    "unauthorized": "Bu işlemi gerçekleştirmek için yetkiniz yok."
+  }
+}

@@ -11,14 +11,15 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../app_config/app_config_endpoint.dart' as _i2;
-import '../auth/email_idp_endpoint.dart' as _i3;
-import '../auth/jwt_refresh_endpoint.dart' as _i4;
-import '../greetings/greeting_endpoint.dart' as _i5;
+import '../services/app_config/app_config_endpoint.dart' as _i2;
+import '../services/auth/email_idp_endpoint.dart' as _i3;
+import '../services/auth/jwt_refresh_endpoint.dart' as _i4;
+import '../services/greetings/greeting_endpoint.dart' as _i5;
+import '../services/translations/translation_endpoint.dart' as _i6;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i6;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i7;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i8;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -46,6 +47,12 @@ class Endpoints extends _i1.EndpointDispatch {
         ..initialize(
           server,
           'greeting',
+          null,
+        ),
+      'translation': _i6.TranslationEndpoint()
+        ..initialize(
+          server,
+          'translation',
           null,
         ),
     };
@@ -292,9 +299,77 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i6.Endpoints()
+    connectors['translation'] = _i1.EndpointConnector(
+      name: 'translation',
+      endpoint: endpoints['translation']!,
+      methodConnectors: {
+        'getTranslations': _i1.MethodConnector(
+          name: 'getTranslations',
+          params: {
+            'locale': _i1.ParameterDescription(
+              name: 'locale',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'namespace': _i1.ParameterDescription(
+              name: 'namespace',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['translation'] as _i6.TranslationEndpoint)
+                  .getTranslations(
+                    session,
+                    locale: params['locale'],
+                    namespace: params['namespace'],
+                  ),
+        ),
+        'saveTranslations': _i1.MethodConnector(
+          name: 'saveTranslations',
+          params: {
+            'locale': _i1.ParameterDescription(
+              name: 'locale',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'translations': _i1.ParameterDescription(
+              name: 'translations',
+              type: _i1.getType<Map<String, dynamic>>(),
+              nullable: false,
+            ),
+            'namespace': _i1.ParameterDescription(
+              name: 'namespace',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'isActive': _i1.ParameterDescription(
+              name: 'isActive',
+              type: _i1.getType<bool>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['translation'] as _i6.TranslationEndpoint)
+                  .saveTranslations(
+                    session,
+                    params['locale'],
+                    params['translations'],
+                    namespace: params['namespace'],
+                    isActive: params['isActive'],
+                  ),
+        ),
+      },
+    );
+    modules['serverpod_auth_idp'] = _i7.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i7.Endpoints()
+    modules['serverpod_auth_core'] = _i8.Endpoints()
       ..initializeEndpoints(server);
   }
 }
