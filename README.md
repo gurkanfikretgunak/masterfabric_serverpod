@@ -218,6 +218,49 @@ docker compose down
 docker compose down -v
 ```
 
+## Cursor IDE Support
+
+This project includes Cursor IDE commands and skills for enhanced AI-assisted development.
+
+### Commands
+
+Located in `.cursor/commands/`:
+
+| Command | Description |
+|---------|-------------|
+| `/create-server-service` | Scaffold new Serverpod service with endpoint, service class, and models |
+| `/create-server-integration` | Create REST API integration with base client and patterns |
+| `/check-performance-service` | Test and monitor service performance |
+
+### Skills
+
+Located in `.cursor/skills/masterfabric-server/`:
+
+| File | Purpose |
+|------|---------|
+| `SKILL.md` | Project standards, patterns, and service creation guide |
+| `SERVICES.md` | Reference for existing services and configurations |
+
+### Usage
+
+The AI agent automatically uses these skills when:
+- Creating new API endpoints or services
+- Adding external integrations (Stripe, Twilio, etc.)
+- Working with rate limiting, caching, or authentication
+- Checking service performance
+
+```
+.cursor/
+├── commands/
+│   ├── create-server-service.md
+│   ├── create-server-integration.md
+│   └── check-performance-service.md
+└── skills/
+    └── masterfabric-server/
+        ├── SKILL.md
+        └── SERVICES.md
+```
+
 ## Overview
 
 This is a monorepo containing three main components:
