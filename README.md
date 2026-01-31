@@ -31,6 +31,23 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 | **Authentication** | Email/password auth with JWT tokens and session management |
 | **Integrations** | Firebase, Sentry, Mixpanel (configurable) |
 
+## Screenshots
+
+<table>
+  <tr>
+    <td><img src=".github/images/image-1.png" width="200" alt="Dashboard"/></td>
+    <td><img src=".github/images/image-2.png" width="200" alt="Test View"/></td>
+    <td><img src=".github/images/image-3.png" width="200" alt="Service Testing"/></td>
+    <td><img src=".github/images/image-4.png" width="200" alt="Auth Check"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Dashboard</b></td>
+    <td align="center"><b>Test View</b></td>
+    <td align="center"><b>Service Testing</b></td>
+    <td align="center"><b>Auth Check</b></td>
+  </tr>
+</table>
+
 ## Quick Start
 
 ### One Command Development
