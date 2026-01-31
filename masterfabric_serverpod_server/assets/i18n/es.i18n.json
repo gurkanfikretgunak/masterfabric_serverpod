@@ -1,0 +1,35 @@
+{
+  "welcome": {
+    "title": "Bienvenido 🤩 $name",
+    "subtitle": "Comienza con MasterFabric",
+    "description": "Tu viaje comienza aquí"
+  },
+  "login": {
+    "title": "Iniciar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Entrar",
+    "success": "Sesión iniciada correctamente",
+    "fail": "Error al iniciar sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "done": "Hecho",
+    "loading": "Cargando...",
+    "error": "Se produjo un error",
+    "retry": "Reintentar",
+    "ok": "Aceptar"
+  },
+  "errors": {
+    "network": "Error de red. Por favor, verifica tu conexión.",
+    "server": "Error del servidor. Por favor, inténtalo más tarde.",
+    "validation": "Por favor, verifica tu información.",
+    "unauthorized": "No tienes autorización para realizar esta acción."
+  }
+}

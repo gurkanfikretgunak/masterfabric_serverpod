@@ -23,7 +23,7 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 |---------|-------------|
 | **Rate Limiting** | Distributed rate limiting with Redis, configurable per endpoint |
 | **Multi-Level Caching** | Local, LocalPrio, and Global (Redis) caching strategies |
-| **Internationalization** | Auto-seeding translations (EN, TR, DE) with runtime locale switching |
+| **Internationalization** | Auto-seeding translations (EN, TR, DE, ES) with runtime locale switching |
 | **Modern Error Handling** | SerializableExceptions with detailed error responses |
 | **Health Monitoring** | Real-time service health checks with auto-refresh |
 | **Service Testing** | Built-in test UI for API, Auth, and Rate Limit testing |

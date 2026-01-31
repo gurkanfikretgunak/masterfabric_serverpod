@@ -178,7 +178,7 @@ class HomeScreen extends StatelessWidget {
             _buildInfoRow('Auth', 'Email, Google, Apple sign-in'),
             _buildInfoRow('Rate Limit', '20 requests/minute'),
             _buildInfoRow('Caching', 'Redis + Local cache'),
-            _buildInfoRow('i18n', 'EN, TR, DE'),
+            _buildInfoRow('i18n', 'EN, TR, DE, ES'),
           ],
         ),
       ),

@@ -252,6 +252,10 @@ class _ApiTestTabState extends State<_ApiTestTab> {
                   onPressed: () => _testTranslation('de'),
                   child: const Text('German'),
                 ),
+                ElevatedButton(
+                  onPressed: () => _testTranslation('es'),
+                  child: const Text('Spanish'),
+                ),
               ],
             ),
             if (_translationResult != null) ...[
