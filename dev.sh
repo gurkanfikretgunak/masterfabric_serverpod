@@ -8,6 +8,16 @@
 #   2. Server startup
 #   3. Flutter app launch
 #
+# Usage: ./dev.sh [OPTIONS]
+#
+# Options:
+#   -w, --web       Run Flutter on Chrome/Web (default)
+#   -i, --ios       Run Flutter on iOS Simulator
+#   -a, --android   Run Flutter on Android Emulator
+#   -m, --macos     Run Flutter on macOS
+#   -n, --no-flutter Run server only (no Flutter)
+#   -h, --help      Show this help message
+#
 
 set -e
 
@@ -24,6 +34,11 @@ CLIENT_DIR="$ROOT_DIR/masterfabric_serverpod_client"
 POSTGRES_PORT=8090
 REDIS_PORT=8091
 SERVER_PORT=8080
+
+# Flutter platform (default: web)
+FLUTTER_PLATFORM="web"
+FLUTTER_DEVICE=""
+RUN_FLUTTER=true
 
 # Colors
 RED='\033[0;31m'
@@ -128,6 +143,79 @@ cleanup() {
 
 # Trap Ctrl+C
 trap cleanup SIGINT SIGTERM
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Help & Argument Parsing
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+show_help() {
+    echo ""
+    echo -e "${BOLD}${CYAN}MasterFabric Serverpod - Development Runner${NC}"
+    echo ""
+    echo -e "${BOLD}USAGE:${NC}"
+    echo "    ./dev.sh [OPTIONS]"
+    echo ""
+    echo -e "${BOLD}OPTIONS:${NC}"
+    echo -e "    ${GREEN}-w, --web${NC}         Run Flutter on Chrome/Web ${GRAY}(default)${NC}"
+    echo -e "    ${GREEN}-i, --ios${NC}         Run Flutter on iOS Simulator"
+    echo -e "    ${GREEN}-a, --android${NC}     Run Flutter on Android Emulator"
+    echo -e "    ${GREEN}-m, --macos${NC}       Run Flutter on macOS desktop"
+    echo -e "    ${GREEN}-n, --no-flutter${NC}  Run server only (no Flutter app)"
+    echo -e "    ${GREEN}-h, --help${NC}        Show this help message"
+    echo ""
+    echo -e "${BOLD}EXAMPLES:${NC}"
+    echo "    ./dev.sh              # Start with Flutter web (default)"
+    echo "    ./dev.sh --ios        # Start with iOS Simulator"
+    echo "    ./dev.sh -a           # Start with Android Emulator"
+    echo "    ./dev.sh --no-flutter # Server only, no Flutter"
+    echo ""
+    echo -e "${BOLD}SERVICES:${NC}"
+    echo "    PostgreSQL    localhost:8090"
+    echo "    Redis         localhost:8091"
+    echo "    API Server    http://localhost:8080"
+    echo "    Insights      http://localhost:8081"
+    echo "    Web Server    http://localhost:8082"
+    echo ""
+    exit 0
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -w|--web)
+            FLUTTER_PLATFORM="web"
+            FLUTTER_DEVICE="chrome"
+            shift
+            ;;
+        -i|--ios)
+            FLUTTER_PLATFORM="ios"
+            FLUTTER_DEVICE=""
+            shift
+            ;;
+        -a|--android)
+            FLUTTER_PLATFORM="android"
+            FLUTTER_DEVICE=""
+            shift
+            ;;
+        -m|--macos)
+            FLUTTER_PLATFORM="macos"
+            FLUTTER_DEVICE="macos"
+            shift
+            ;;
+        -n|--no-flutter)
+            RUN_FLUTTER=false
+            shift
+            ;;
+        -h|--help)
+            show_help
+            ;;
+        *)
+            echo -e "${RED}Unknown option: $1${NC}"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Main Script
@@ -293,35 +381,58 @@ print_success "Server running at http://localhost:$SERVER_PORT"
 # Step 4: Start Flutter App
 # ─────────────────────────────────────────────────────────────────────────────
 
-print_step "4" "${ICON_FLUTTER} Starting Flutter app..."
+if [ "$RUN_FLUTTER" = true ]; then
+    print_step "4" "${ICON_FLUTTER} Starting Flutter app ($FLUTTER_PLATFORM)..."
 
-cd "$FLUTTER_DIR"
+    cd "$FLUTTER_DIR"
 
-print_info "Launching Flutter app..."
+    print_info "Launching Flutter app on $FLUTTER_PLATFORM..."
 
-# Detect available devices
-DEVICES=$(flutter devices 2>/dev/null | grep -v "No devices" | tail -n +2)
-
-if [ -z "$DEVICES" ]; then
-    print_error "No Flutter devices available"
-    print_info "Starting Flutter in Chrome (web)..."
-    flutter run -d chrome &
-    FLUTTER_PID=$!
+    case $FLUTTER_PLATFORM in
+        web)
+            print_info "Running on Chrome (web)..."
+            flutter run -d chrome &
+            FLUTTER_PID=$!
+            ;;
+        ios)
+            # Check for iOS simulator
+            if ! xcrun simctl list devices 2>/dev/null | grep -q "Booted"; then
+                print_info "No iOS Simulator running. Starting one..."
+                # Try to boot first available iPhone simulator
+                SIMULATOR_ID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | grep -oE '[A-F0-9-]{36}' || echo "")
+                if [ -n "$SIMULATOR_ID" ]; then
+                    xcrun simctl boot "$SIMULATOR_ID" 2>/dev/null || true
+                    sleep 3
+                fi
+            fi
+            print_info "Running on iOS Simulator..."
+            flutter run &
+            FLUTTER_PID=$!
+            ;;
+        android)
+            # Check for Android emulator
+            if ! adb devices 2>/dev/null | grep -q "emulator"; then
+                print_info "No Android Emulator running."
+                print_info "Please start an emulator manually or use Android Studio."
+            fi
+            print_info "Running on Android..."
+            flutter run &
+            FLUTTER_PID=$!
+            ;;
+        macos)
+            print_info "Running on macOS..."
+            flutter run -d macos &
+            FLUTTER_PID=$!
+            ;;
+        *)
+            print_info "Running on default device..."
+            flutter run &
+            FLUTTER_PID=$!
+            ;;
+    esac
 else
-    # Run on first available device or Chrome
-    if echo "$DEVICES" | grep -q "chrome"; then
-        print_info "Running on Chrome..."
-        flutter run -d chrome &
-        FLUTTER_PID=$!
-    elif echo "$DEVICES" | grep -q "macos"; then
-        print_info "Running on macOS..."
-        flutter run -d macos &
-        FLUTTER_PID=$!
-    else
-        print_info "Running on first available device..."
-        flutter run &
-        FLUTTER_PID=$!
-    fi
+    print_step "4" "${ICON_FLUTTER} Flutter app skipped (--no-flutter)"
+    print_info "Server running without Flutter client"
 fi
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -337,14 +448,32 @@ echo -e "    ${GREEN}${ICON_CHECK}${NC} Redis          ${GRAY}localhost:${REDIS_
 echo -e "    ${GREEN}${ICON_CHECK}${NC} API Server     ${GRAY}http://localhost:${SERVER_PORT}${NC}"
 echo -e "    ${GREEN}${ICON_CHECK}${NC} Insights       ${GRAY}http://localhost:8081${NC}"
 echo -e "    ${GREEN}${ICON_CHECK}${NC} Web Server     ${GRAY}http://localhost:8082${NC}"
+
+if [ "$RUN_FLUTTER" = true ]; then
+    echo -e "    ${GREEN}${ICON_CHECK}${NC} Flutter App    ${GRAY}$FLUTTER_PLATFORM${NC}"
+else
+    echo -e "    ${GRAY}○${NC} Flutter App    ${GRAY}(not running)${NC}"
+fi
+
 echo ""
 echo -e "  ${CYAN}Quick Commands:${NC}"
 echo -e "    ${GRAY}Stop all:${NC}        ${YELLOW}Ctrl+C${NC}"
 echo -e "    ${GRAY}Regenerate:${NC}      ${YELLOW}cd $SERVER_DIR && serverpod generate${NC}"
 echo -e "    ${GRAY}Stop Docker:${NC}     ${YELLOW}cd $SERVER_DIR && docker compose down${NC}"
 echo ""
+echo -e "  ${CYAN}Platform Options:${NC}"
+echo -e "    ${GRAY}./dev.sh --web${NC}        Web/Chrome"
+echo -e "    ${GRAY}./dev.sh --ios${NC}        iOS Simulator"
+echo -e "    ${GRAY}./dev.sh --android${NC}    Android Emulator"
+echo -e "    ${GRAY}./dev.sh --macos${NC}      macOS Desktop"
+echo ""
 echo -e "  ${GRAY}Press Ctrl+C to stop all services...${NC}"
 echo ""
 
 # Wait for processes
-wait
+if [ "$RUN_FLUTTER" = true ]; then
+    wait
+else
+    # Keep server running in foreground if no Flutter
+    wait $SERVER_PID
+fi

@@ -34,10 +34,17 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 ### One Command Development
 
 ```bash
-# Full stack (Docker + Server + Flutter)
+# Full stack with Flutter web (default)
 ./dev.sh
 
-# Server only (Docker + Server)
+# Full stack with specific platform
+./dev.sh --ios        # iOS Simulator
+./dev.sh --android    # Android Emulator
+./dev.sh --macos      # macOS Desktop
+./dev.sh --web        # Chrome/Web (default)
+
+# Server only (no Flutter)
+./dev.sh --no-flutter
 ./dev-server.sh
 ```
 
@@ -79,7 +86,29 @@ flutter run
 
 ### `./dev.sh` - Full Stack Development
 
-The main development script that sets up everything automatically:
+The main development script that sets up everything automatically.
+
+**Platform Flags:**
+
+| Flag | Short | Description |
+|------|-------|-------------|
+| `--web` | `-w` | Run Flutter on Chrome/Web (default) |
+| `--ios` | `-i` | Run Flutter on iOS Simulator |
+| `--android` | `-a` | Run Flutter on Android Emulator |
+| `--macos` | `-m` | Run Flutter on macOS Desktop |
+| `--no-flutter` | `-n` | Run server only (no Flutter) |
+| `--help` | `-h` | Show help message |
+
+**Examples:**
+
+```bash
+./dev.sh              # Default: web
+./dev.sh --ios        # iOS Simulator
+./dev.sh -a           # Android Emulator  
+./dev.sh --no-flutter # Server only
+```
+
+**Output:**
 
 ```
 ╔═══════════════════════════════════════════════════════════════════════╗
