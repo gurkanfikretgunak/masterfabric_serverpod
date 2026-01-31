@@ -34,9 +34,9 @@ import 'package:masterfabric_serverpod_server/src/generated/services/auth/user_l
     as _i12;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/user_info_response.dart'
     as _i13;
-import 'package:masterfabric_serverpod_server/src/generated/greetings/greeting_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/greetings/greeting_response.dart'
     as _i14;
-import 'package:masterfabric_serverpod_server/src/generated/translations/translation_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/translations/translation_response.dart'
     as _i15;
 import 'package:masterfabric_serverpod_server/src/generated/protocol.dart';
 import 'package:masterfabric_serverpod_server/src/generated/endpoints.dart';

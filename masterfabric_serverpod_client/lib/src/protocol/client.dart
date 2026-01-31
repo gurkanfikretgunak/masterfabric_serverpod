@@ -34,9 +34,9 @@ import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user_li
     as _i12;
 import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user_info_response.dart'
     as _i13;
-import 'package:masterfabric_serverpod_client/src/protocol/greetings/greeting_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/greetings/greeting_response.dart'
     as _i14;
-import 'package:masterfabric_serverpod_client/src/protocol/translations/translation_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/translations/translation_response.dart'
     as _i15;
 import 'protocol.dart' as _i16;
 
@@ -994,7 +994,7 @@ class EndpointTranslation extends _i1.EndpointRef {
   ///
   /// [session] - Serverpod session
   /// [locale] - Locale code (e.g., 'en', 'tr')
-  /// [translations] - Translations as Map<String, dynamic> (slang JSON format)
+  /// [translations] - Translations as `Map<String, dynamic>` (slang JSON format)
   /// [namespace] - Optional namespace identifier
   /// [isActive] - Whether this translation is active
   ///

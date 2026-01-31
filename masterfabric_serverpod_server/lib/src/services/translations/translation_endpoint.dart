@@ -84,7 +84,7 @@ class TranslationEndpoint extends Endpoint {
   /// 
   /// [session] - Serverpod session
   /// [locale] - Locale code (e.g., 'en', 'tr')
-  /// [translations] - Translations as Map<String, dynamic> (slang JSON format)
+  /// [translations] - Translations as `Map<String, dynamic>` (slang JSON format)
   /// [namespace] - Optional namespace identifier
   /// [isActive] - Whether this translation is active
   /// 

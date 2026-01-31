@@ -28,7 +28,7 @@ class TranslationService {
   /// [locale] - Locale code (e.g., 'en', 'tr')
   /// [namespace] - Optional namespace identifier
   /// 
-  /// Returns Map<String, dynamic> containing translations in slang JSON format
+  /// Returns `Map<String, dynamic>` containing translations in slang JSON format
   /// Falls back to default locale if requested locale not found
   Future<Map<String, dynamic>> getTranslations(
     Session session,
@@ -96,7 +96,7 @@ class TranslationService {
 
   /// Load translations from database
   /// 
-  /// Returns Map<String, dynamic> if found in database, null otherwise
+  /// Returns `Map<String, dynamic>` if found in database, null otherwise
   Future<Map<String, dynamic>?> _loadFromDatabase(
     Session session,
     String locale, {
@@ -247,7 +247,7 @@ class TranslationService {
   /// 
   /// [session] - Serverpod session
   /// [locale] - Locale code
-  /// [translations] - Translations as Map<String, dynamic> (slang JSON format)
+  /// [translations] - Translations as `Map<String, dynamic>` (slang JSON format)
   /// [namespace] - Optional namespace identifier
   /// [isActive] - Whether this translation is active
   /// 
