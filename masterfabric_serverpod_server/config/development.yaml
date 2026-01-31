@@ -51,6 +51,9 @@ sessionLogs:
   persistentEnabled: true
   consoleEnabled: true
   consoleLogFormat: text # Defaults to "json", options are "text" or "json"
+  # Log level filters - only log messages at this level or above
+  # Levels: debug, info, warning, error, fatal
+  consoleLogLevel: info  # Set to 'warning' to reduce noise
 
 # futureCallExecutionEnabled: true # Defaults to true
 

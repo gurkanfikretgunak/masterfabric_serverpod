@@ -131,14 +131,17 @@ class RateLimitService {
           entry.windowStart + windowMs,
         );
         
+        // Log clean, structured rate limit message
         session.log(
-          'Rate limit exceeded: ${config.keyPrefix}/$identifier '
-          '(${entry.count}/${config.maxRequests}) - '
-          'retry after ${retryAfterSeconds}s',
+          '⚡ RATE LIMITED │ ${config.keyPrefix}/$identifier │ '
+          '${entry.count}/${config.maxRequests} requests │ '
+          'retry in ${retryAfterSeconds}s │ '
+          'reset at ${resetAt.toIso8601String().substring(11, 19)}',
           level: LogLevel.warning,
         );
         
         // Throw SerializableException - properly returned to client
+        // Note: Serverpod will log this as ERROR with stack trace by default
         throw RateLimitException(
           message: 'Rate limit exceeded. You have made ${entry.count} requests. '
               'Maximum allowed is ${config.maxRequests} per ${config.windowDuration.inSeconds} seconds. '
