@@ -23,10 +23,12 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 |---------|-------------|
 | **Rate Limiting** | Distributed rate limiting with Redis, configurable per endpoint |
 | **Multi-Level Caching** | Local, LocalPrio, and Global (Redis) caching strategies |
-| **Internationalization** | Auto-seeding translations from JSON files with runtime locale switching |
+| **Internationalization** | Auto-seeding translations (EN, TR, DE) with runtime locale switching |
 | **Modern Error Handling** | SerializableExceptions with detailed error responses |
-| **Beautiful Flutter UI** | Rate limit banners, countdown timers, loading states |
-| **Authentication** | Email/password auth with JWT tokens and 2FA support |
+| **Health Monitoring** | Real-time service health checks with auto-refresh |
+| **Service Testing** | Built-in test UI for API, Auth, and Rate Limit testing |
+| **Beautiful Flutter UI** | Rate limit banners, health indicators, countdown timers |
+| **Authentication** | Email/password auth with JWT tokens and session management |
 | **Integrations** | Firebase, Sentry, Mixpanel (configurable) |
 
 ## Quick Start
@@ -435,22 +437,29 @@ Generated client code that provides:
 
 ```
 lib/
-├── main.dart             # App entry point with bootstrap
+├── main.dart                 # App entry point with bootstrap
 ├── screens/
-│   ├── greetings_screen.dart  # Main screen with rate limit UI
-│   └── sign_in_screen.dart    # Authentication screen
+│   ├── home_screen.dart          # Dashboard with health status
+│   ├── service_test_screen.dart  # Service testing (API, Auth, Rate Limit)
+│   ├── greetings_screen.dart     # Greeting screen with rate limit UI
+│   └── sign_in_screen.dart       # Email authentication screen
 ├── services/
 │   ├── app_config_service.dart    # App config client
+│   ├── health_service.dart        # Health monitoring service
 │   └── translation_service.dart   # i18n client with locale switching
 └── widgets/
+    ├── health_status_bar.dart     # Health indicator & status card
     └── rate_limit_banner.dart     # Rate limit UI components
 ```
 
 **Features**:
+- **Email Sign-in** with verification
+- **Health Monitoring** with auto-check (configurable interval)
+- **Service Testing** screen (API, Auth, Rate Limit tabs)
 - Rate limit banner with countdown timer
 - Rate limit indicator showing remaining requests
 - Modern greeting result cards
-- Locale switching at runtime
+- Locale switching at runtime (EN, TR, DE)
 - Loading states & error handling
 
 ## Available Scripts
@@ -771,6 +780,91 @@ Danger:   [🔴  1 left ██████████████████�
 - Loading states with disabled inputs
 - Auto-retry button when countdown finishes
 - Beautiful gradient cards
+
+---
+
+### Health Monitoring
+
+Real-time service health monitoring with auto-refresh.
+
+**Dashboard View:**
+
+```
+┌─────────────────────────────────────────────────┐
+│  MasterFabric                    ✓ 5/5   ↪  │
+├─────────────────────────────────────────────────┤
+│  Dashboard                                      │
+│  Monitor and test your Serverpod backend...    │
+│                                                 │
+│  ┌─────────────────────────────────────────┐    │
+│  │ Service Health                     🔄   │    │
+│  │ ✓ All Systems Operational       125ms   │    │
+│  ├─────────────────────────────────────────┤    │
+│  │ ✓ API Server           23ms  Connected  │    │
+│  │ ✓ Greeting Service     45ms  OK (18/20) │    │
+│  │ ✓ Translation Service  32ms  Available  │    │
+│  │ ✓ App Config Service   15ms  Loaded     │    │
+│  │ ✓ Auth Service         10ms  Available  │    │
+│  └─────────────────────────────────────────┘    │
+│                                                 │
+│  Developer Tools                                │
+│  ┌─────────────────────────────────────────┐    │
+│  │ 🔬  Service Testing              >      │    │
+│  │     Test API, auth flows, rate limits   │    │
+│  └─────────────────────────────────────────┘    │
+│                                                 │
+│  About                                          │
+│  ┌─────────────────────────────────────────┐    │
+│  │ Auth       Email, Google, Apple         │    │
+│  │ Rate Limit 20 requests/minute           │    │
+│  │ Caching    Redis + Local cache          │    │
+│  │ i18n       EN, TR, DE                   │    │
+│  └─────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────┘
+```
+
+**Service Test Screen:**
+
+| Tab | Description |
+|-----|-------------|
+| **Health** | Health status card, auto-check toggle |
+| **API** | Test Greeting, Translation, Config endpoints |
+| **Auth** | Check auth status, profile, sessions, password validation |
+| **Rate Limit** | Bulk request testing, stats, request log |
+
+**Health Service Features:**
+- Auto health checks (configurable interval, default 60s)
+- Service status: healthy, degraded, unhealthy, unknown
+- Latency tracking per service
+- ChangeNotifier for reactive UI updates
+
+---
+
+### Session Management
+
+JWT token-based session management.
+
+**Available Methods:**
+
+| Method | Description |
+|--------|-------------|
+| `getCurrentSession()` | Get current JWT session info |
+| `getActiveSessions()` | Get all sessions (returns JWT if no server-side) |
+| `revokeSession(id)` | Revoke a specific session |
+| `revokeAllOtherSessions()` | Revoke all except current |
+| `revokeAllSessions()` | Revoke all sessions |
+
+**Flutter Usage:**
+
+```dart
+// Get current session info
+final session = await client.sessionManagement.getCurrentSession();
+print('User ID: ${session.userId}');
+print('Method: ${session.method}');  // "jwt"
+
+// Get all sessions
+final sessions = await client.sessionManagement.getActiveSessions();
+```
 
 ---
 
