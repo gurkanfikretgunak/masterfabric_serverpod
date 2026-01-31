@@ -40,18 +40,20 @@ import 'services/auth/user_list_response.dart' as _i27;
 import 'services/auth/user_role.dart' as _i28;
 import 'services/greetings/greeting.dart' as _i29;
 import 'services/greetings/greeting_response.dart' as _i30;
-import 'services/translations/translation_entry.dart' as _i31;
-import 'services/translations/translation_response.dart' as _i32;
+import 'services/health/health_check_response.dart' as _i31;
+import 'services/health/service_health_info.dart' as _i32;
+import 'services/translations/translation_entry.dart' as _i33;
+import 'services/translations/translation_response.dart' as _i34;
 import 'package:masterfabric_serverpod_client/src/protocol/services/auth/role.dart'
-    as _i33;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/permission.dart'
-    as _i34;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/session_info_response.dart'
     as _i35;
-import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/permission.dart'
     as _i36;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/session_info_response.dart'
     as _i37;
+import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
+    as _i38;
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+    as _i39;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -81,6 +83,8 @@ export 'services/auth/user_list_response.dart';
 export 'services/auth/user_role.dart';
 export 'services/greetings/greeting.dart';
 export 'services/greetings/greeting_response.dart';
+export 'services/health/health_check_response.dart';
+export 'services/health/service_health_info.dart';
 export 'services/translations/translation_entry.dart';
 export 'services/translations/translation_response.dart';
 export 'client.dart';
@@ -206,11 +210,17 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i30.GreetingResponse) {
       return _i30.GreetingResponse.fromJson(data) as T;
     }
-    if (t == _i31.TranslationEntry) {
-      return _i31.TranslationEntry.fromJson(data) as T;
+    if (t == _i31.HealthCheckResponse) {
+      return _i31.HealthCheckResponse.fromJson(data) as T;
     }
-    if (t == _i32.TranslationResponse) {
-      return _i32.TranslationResponse.fromJson(data) as T;
+    if (t == _i32.ServiceHealthInfo) {
+      return _i32.ServiceHealthInfo.fromJson(data) as T;
+    }
+    if (t == _i33.TranslationEntry) {
+      return _i33.TranslationEntry.fromJson(data) as T;
+    }
+    if (t == _i34.TranslationResponse) {
+      return _i34.TranslationResponse.fromJson(data) as T;
     }
     if (t == _i1.getType<_i2.AppConfig?>()) {
       return (data != null ? _i2.AppConfig.fromJson(data) : null) as T;
@@ -321,11 +331,18 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i1.getType<_i30.GreetingResponse?>()) {
       return (data != null ? _i30.GreetingResponse.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i31.TranslationEntry?>()) {
-      return (data != null ? _i31.TranslationEntry.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i31.HealthCheckResponse?>()) {
+      return (data != null ? _i31.HealthCheckResponse.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i32.TranslationResponse?>()) {
-      return (data != null ? _i32.TranslationResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i32.ServiceHealthInfo?>()) {
+      return (data != null ? _i32.ServiceHealthInfo.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i33.TranslationEntry?>()) {
+      return (data != null ? _i33.TranslationEntry.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i34.TranslationResponse?>()) {
+      return (data != null ? _i34.TranslationResponse.fromJson(data) : null)
           as T;
     }
     if (t == List<String>) {
@@ -337,11 +354,17 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           as T;
     }
-    if (t == List<_i33.Role>) {
-      return (data as List).map((e) => deserialize<_i33.Role>(e)).toList() as T;
+    if (t == List<_i32.ServiceHealthInfo>) {
+      return (data as List)
+              .map((e) => deserialize<_i32.ServiceHealthInfo>(e))
+              .toList()
+          as T;
     }
-    if (t == List<_i34.Permission>) {
-      return (data as List).map((e) => deserialize<_i34.Permission>(e)).toList()
+    if (t == List<_i35.Role>) {
+      return (data as List).map((e) => deserialize<_i35.Role>(e)).toList() as T;
+    }
+    if (t == List<_i36.Permission>) {
+      return (data as List).map((e) => deserialize<_i36.Permission>(e)).toList()
           as T;
     }
     if (t == List<String>) {
@@ -350,9 +373,9 @@ class Protocol extends _i1.SerializationManager {
     if (t == Set<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
     }
-    if (t == List<_i35.SessionInfoResponse>) {
+    if (t == List<_i37.SessionInfoResponse>) {
       return (data as List)
-              .map((e) => deserialize<_i35.SessionInfoResponse>(e))
+              .map((e) => deserialize<_i37.SessionInfoResponse>(e))
               .toList()
           as T;
     }
@@ -366,10 +389,10 @@ class Protocol extends _i1.SerializationManager {
           as T;
     }
     try {
-      return _i36.Protocol().deserialize<T>(data, t);
+      return _i38.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     try {
-      return _i37.Protocol().deserialize<T>(data, t);
+      return _i39.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     return super.deserialize<T>(data, t);
   }
@@ -405,8 +428,10 @@ class Protocol extends _i1.SerializationManager {
       _i28.UserRole => 'UserRole',
       _i29.Greeting => 'Greeting',
       _i30.GreetingResponse => 'GreetingResponse',
-      _i31.TranslationEntry => 'TranslationEntry',
-      _i32.TranslationResponse => 'TranslationResponse',
+      _i31.HealthCheckResponse => 'HealthCheckResponse',
+      _i32.ServiceHealthInfo => 'ServiceHealthInfo',
+      _i33.TranslationEntry => 'TranslationEntry',
+      _i34.TranslationResponse => 'TranslationResponse',
       _ => null,
     };
   }
@@ -482,16 +507,20 @@ class Protocol extends _i1.SerializationManager {
         return 'Greeting';
       case _i30.GreetingResponse():
         return 'GreetingResponse';
-      case _i31.TranslationEntry():
+      case _i31.HealthCheckResponse():
+        return 'HealthCheckResponse';
+      case _i32.ServiceHealthInfo():
+        return 'ServiceHealthInfo';
+      case _i33.TranslationEntry():
         return 'TranslationEntry';
-      case _i32.TranslationResponse():
+      case _i34.TranslationResponse():
         return 'TranslationResponse';
     }
-    className = _i36.Protocol().getClassNameForObject(data);
+    className = _i38.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_idp.$className';
     }
-    className = _i37.Protocol().getClassNameForObject(data);
+    className = _i39.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_core.$className';
     }
@@ -591,19 +620,25 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'GreetingResponse') {
       return deserialize<_i30.GreetingResponse>(data['data']);
     }
+    if (dataClassName == 'HealthCheckResponse') {
+      return deserialize<_i31.HealthCheckResponse>(data['data']);
+    }
+    if (dataClassName == 'ServiceHealthInfo') {
+      return deserialize<_i32.ServiceHealthInfo>(data['data']);
+    }
     if (dataClassName == 'TranslationEntry') {
-      return deserialize<_i31.TranslationEntry>(data['data']);
+      return deserialize<_i33.TranslationEntry>(data['data']);
     }
     if (dataClassName == 'TranslationResponse') {
-      return deserialize<_i32.TranslationResponse>(data['data']);
+      return deserialize<_i34.TranslationResponse>(data['data']);
     }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);
-      return _i36.Protocol().deserializeByClassName(data);
+      return _i38.Protocol().deserializeByClassName(data);
     }
     if (dataClassName.startsWith('serverpod_auth_core.')) {
       data['className'] = dataClassName.substring(20);
-      return _i37.Protocol().deserializeByClassName(data);
+      return _i39.Protocol().deserializeByClassName(data);
     }
     return super.deserializeByClassName(data);
   }
@@ -618,10 +653,10 @@ class Protocol extends _i1.SerializationManager {
       return null;
     }
     try {
-      return _i36.Protocol().mapRecordToJson(record);
+      return _i38.Protocol().mapRecordToJson(record);
     } catch (_) {}
     try {
-      return _i37.Protocol().mapRecordToJson(record);
+      return _i39.Protocol().mapRecordToJson(record);
     } catch (_) {}
     throw Exception('Unsupported record type ${record.runtimeType}');
   }

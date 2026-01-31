@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:masterfabric_serverpod_client/masterfabric_serverpod_client.dart';
 import '../services/health_service.dart';
 
 /// Health status indicator for app bar
@@ -13,8 +14,8 @@ class HealthStatusIndicator extends StatelessWidget {
       listenable: HealthService.instance,
       builder: (context, _) {
         final health = HealthService.instance;
-        final status = health.lastStatus;
         final isChecking = health.isChecking;
+        final status = health.overallStatus;
 
         Color statusColor;
         IconData statusIcon;
@@ -24,21 +25,21 @@ class HealthStatusIndicator extends StatelessWidget {
           statusColor = Colors.blue;
           statusIcon = Icons.sync;
           tooltip = 'Checking health...';
-        } else if (status == null) {
+        } else if (health.lastResponse == null) {
           statusColor = Colors.grey;
           statusIcon = Icons.help_outline;
-          tooltip = 'Health unknown';
+          tooltip = health.lastError ?? 'Health unknown';
         } else {
-          switch (status.overall) {
+          switch (status) {
             case ServiceStatus.healthy:
               statusColor = Colors.green;
               statusIcon = Icons.check_circle;
-              tooltip = 'All services healthy (${status.totalLatencyMs}ms)';
+              tooltip = 'All services healthy (${health.lastResponse!.totalLatencyMs}ms)';
               break;
             case ServiceStatus.degraded:
               statusColor = Colors.orange;
               statusIcon = Icons.warning;
-              tooltip = '${status.healthyCount}/${status.totalCount} services healthy';
+              tooltip = '${health.healthyCount}/${health.totalCount} services healthy';
               break;
             case ServiceStatus.unhealthy:
               statusColor = Colors.red;
@@ -75,9 +76,9 @@ class HealthStatusIndicator extends StatelessWidget {
                   else
                     Icon(statusIcon, color: statusColor, size: 20),
                   const SizedBox(width: 4),
-                  if (status != null && !isChecking)
+                  if (health.lastResponse != null && !isChecking)
                     Text(
-                      '${status.healthyCount}/${status.totalCount}',
+                      '${health.healthyCount}/${health.totalCount}',
                       style: TextStyle(
                         color: statusColor,
                         fontSize: 12,
@@ -94,7 +95,7 @@ class HealthStatusIndicator extends StatelessWidget {
   }
 }
 
-/// Detailed health status card
+/// Detailed health status card with categorized services
 class HealthStatusCard extends StatelessWidget {
   const HealthStatusCard({super.key});
 
@@ -104,7 +105,7 @@ class HealthStatusCard extends StatelessWidget {
       listenable: HealthService.instance,
       builder: (context, _) {
         final health = HealthService.instance;
-        final status = health.lastStatus;
+        final response = health.lastResponse;
         final isChecking = health.isChecking;
 
         return Card(
@@ -144,20 +145,20 @@ class HealthStatusCard extends StatelessWidget {
                   ],
                 ),
                 const Divider(),
-                if (status == null)
-                  const Center(
+                if (response == null)
+                  Center(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text('No health data. Tap refresh to check.'),
+                      padding: const EdgeInsets.all(16),
+                      child: Text(health.lastError ?? 'Tap refresh to check health.'),
                     ),
                   )
                 else ...[
-                  _buildOverallStatus(status),
+                  _buildOverallStatus(response),
+                  const SizedBox(height: 16),
+                  _buildServiceCategories(response.services),
                   const SizedBox(height: 12),
-                  ...status.services.map((s) => _buildServiceRow(s)),
-                  const SizedBox(height: 8),
                   Text(
-                    'Last checked: ${_formatTime(status.checkedAt)}',
+                    'Last checked: ${_formatTime(response.timestamp)} • ${response.services.length} services',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[600],
@@ -172,32 +173,89 @@ class HealthStatusCard extends StatelessWidget {
     );
   }
 
-  Widget _buildOverallStatus(HealthStatus status) {
+  Widget _buildServiceCategories(List<ServiceHealthInfo> services) {
+    // Categorize services
+    final infrastructure = services.where((s) => 
+      s.name == 'Database' || s.name == 'Cache'
+    ).toList();
+    
+    final application = services.where((s) =>
+      s.name == 'Translations' || s.name == 'App Config' || s.name == 'Greeting'
+    ).toList();
+    
+    final auth = services.where((s) =>
+      s.name.startsWith('Auth:')
+    ).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (infrastructure.isNotEmpty) ...[
+          _buildCategoryHeader('Infrastructure', Icons.storage),
+          ...infrastructure.map((s) => _buildServiceRow(s)),
+          const SizedBox(height: 12),
+        ],
+        if (application.isNotEmpty) ...[
+          _buildCategoryHeader('Application', Icons.apps),
+          ...application.map((s) => _buildServiceRow(s)),
+          const SizedBox(height: 12),
+        ],
+        if (auth.isNotEmpty) ...[
+          _buildCategoryHeader('Authentication', Icons.security),
+          ...auth.map((s) => _buildServiceRow(s)),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCategoryHeader(String title, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: Colors.grey[600]),
+          const SizedBox(width: 6),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOverallStatus(HealthCheckResponse response) {
     Color color;
     String text;
     IconData icon;
 
-    switch (status.overall) {
-      case ServiceStatus.healthy:
+    final healthyCount = response.services.where((s) => s.status == 'healthy').length;
+    final total = response.services.length;
+
+    switch (response.status) {
+      case 'healthy':
         color = Colors.green;
         text = 'All Systems Operational';
         icon = Icons.check_circle;
         break;
-      case ServiceStatus.degraded:
+      case 'degraded':
         color = Colors.orange;
-        text = 'Partial Outage';
+        text = 'Partial Outage ($healthyCount/$total)';
         icon = Icons.warning;
         break;
-      case ServiceStatus.unhealthy:
+      case 'unhealthy':
         color = Colors.red;
-        text = 'Major Outage';
+        text = 'Major Outage ($healthyCount/$total)';
         icon = Icons.error;
         break;
-      case ServiceStatus.unknown:
+      default:
         color = Colors.grey;
         text = 'Unknown';
         icon = Icons.help_outline;
-        break;
     }
 
     return Container(
@@ -211,16 +269,17 @@ class HealthStatusCard extends StatelessWidget {
         children: [
           Icon(icon, color: color),
           const SizedBox(width: 8),
-          Text(
-            text,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          const Spacer(),
           Text(
-            '${status.totalLatencyMs}ms',
+            '${response.totalLatencyMs}ms',
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 12,
@@ -231,55 +290,65 @@ class HealthStatusCard extends StatelessWidget {
     );
   }
 
-  Widget _buildServiceRow(ServiceHealth service) {
+  Widget _buildServiceRow(ServiceHealthInfo service) {
     Color color;
     IconData icon;
 
     switch (service.status) {
-      case ServiceStatus.healthy:
+      case 'healthy':
         color = Colors.green;
         icon = Icons.check_circle_outline;
         break;
-      case ServiceStatus.degraded:
+      case 'degraded':
         color = Colors.orange;
         icon = Icons.warning_amber_outlined;
         break;
-      case ServiceStatus.unhealthy:
+      case 'unhealthy':
         color = Colors.red;
         icon = Icons.error_outline;
         break;
-      case ServiceStatus.unknown:
+      default:
         color = Colors.grey;
         icon = Icons.help_outline;
-        break;
     }
 
+    // Remove "Auth: " prefix for cleaner display
+    final displayName = service.name.startsWith('Auth: ') 
+        ? service.name.substring(6) 
+        : service.name;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 18),
+          Icon(icon, color: color, size: 16),
           const SizedBox(width: 8),
           Expanded(
+            flex: 2,
             child: Text(
-              service.name,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              displayName,
+              style: const TextStyle(fontSize: 13),
             ),
           ),
           if (service.latencyMs != null)
-            Text(
-              '${service.latencyMs}ms',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
+            SizedBox(
+              width: 45,
+              child: Text(
+                '${service.latencyMs}ms',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.right,
               ),
             ),
           const SizedBox(width: 8),
           Expanded(
+            flex: 2,
             child: Text(
               service.message ?? '',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 color: Colors.grey[600],
               ),
               textAlign: TextAlign.end,

@@ -36,9 +36,11 @@ import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user_in
     as _i13;
 import 'package:masterfabric_serverpod_client/src/protocol/services/greetings/greeting_response.dart'
     as _i14;
-import 'package:masterfabric_serverpod_client/src/protocol/services/translations/translation_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/health/health_check_response.dart'
     as _i15;
-import 'protocol.dart' as _i16;
+import 'package:masterfabric_serverpod_client/src/protocol/services/translations/translation_response.dart'
+    as _i16;
+import 'protocol.dart' as _i17;
 
 /// Endpoint for providing app configuration to mobile clients
 ///
@@ -964,6 +966,32 @@ class EndpointGreeting extends _i1.EndpointRef {
       );
 }
 
+/// Health check endpoint for monitoring ALL service status
+/// {@category Endpoint}
+class EndpointHealth extends _i1.EndpointRef {
+  EndpointHealth(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'health';
+
+  /// Check health of ALL services
+  ///
+  /// Returns health status for all infrastructure and application services
+  _i2.Future<_i15.HealthCheckResponse> check() =>
+      caller.callServerEndpoint<_i15.HealthCheckResponse>(
+        'health',
+        'check',
+        {},
+      );
+
+  /// Quick ping check - minimal overhead
+  _i2.Future<String> ping() => caller.callServerEndpoint<String>(
+    'health',
+    'ping',
+    {},
+  );
+}
+
 /// Endpoint for providing translations to clients
 ///
 /// This endpoint provides translations in slang-compatible JSON format.
@@ -985,10 +1013,10 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse containing translations in slang JSON format
   ///
   /// Throws InternalServerError if translations cannot be loaded
-  _i2.Future<_i15.TranslationResponse> getTranslations({
+  _i2.Future<_i16.TranslationResponse> getTranslations({
     String? locale,
     String? namespace,
-  }) => caller.callServerEndpoint<_i15.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i16.TranslationResponse>(
     'translation',
     'getTranslations',
     {
@@ -1008,12 +1036,12 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse with saved translations
   ///
   /// Note: This should be protected by authentication/authorization in production
-  _i2.Future<_i15.TranslationResponse> saveTranslations(
+  _i2.Future<_i16.TranslationResponse> saveTranslations(
     String locale,
     Map<String, dynamic> translations, {
     String? namespace,
     required bool isActive,
-  }) => caller.callServerEndpoint<_i15.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i16.TranslationResponse>(
     'translation',
     'saveTranslations',
     {
@@ -1083,7 +1111,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i16.Protocol(),
+         _i17.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -1105,6 +1133,7 @@ class Client extends _i1.ServerpodClientShared {
     userManagement = EndpointUserManagement(this);
     userProfile = EndpointUserProfile(this);
     greeting = EndpointGreeting(this);
+    health = EndpointHealth(this);
     translation = EndpointTranslation(this);
     modules = Modules(this);
   }
@@ -1135,6 +1164,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointGreeting greeting;
 
+  late final EndpointHealth health;
+
   late final EndpointTranslation translation;
 
   late final Modules modules;
@@ -1154,6 +1185,7 @@ class Client extends _i1.ServerpodClientShared {
     'userManagement': userManagement,
     'userProfile': userProfile,
     'greeting': greeting,
+    'health': health,
     'translation': translation,
   };
 

@@ -56,6 +56,9 @@ userProfile:
   - deleteProfileImage:
 greeting:
   - hello:
+health:
+  - check:
+  - ping:
 translation:
   - getTranslations:
   - saveTranslations:

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:masterfabric_serverpod_client/masterfabric_serverpod_client.dart';
 
-/// Health status for a service
+/// Health status enum for UI
 enum ServiceStatus {
   healthy,
   degraded,
@@ -10,45 +10,7 @@ enum ServiceStatus {
   unknown,
 }
 
-/// Individual service health info
-class ServiceHealth {
-  final String name;
-  final ServiceStatus status;
-  final int? latencyMs;
-  final String? message;
-  final DateTime checkedAt;
-
-  ServiceHealth({
-    required this.name,
-    required this.status,
-    this.latencyMs,
-    this.message,
-    DateTime? checkedAt,
-  }) : checkedAt = checkedAt ?? DateTime.now();
-
-  bool get isHealthy => status == ServiceStatus.healthy;
-}
-
-/// Overall health status
-class HealthStatus {
-  final ServiceStatus overall;
-  final List<ServiceHealth> services;
-  final DateTime checkedAt;
-  final int totalLatencyMs;
-
-  HealthStatus({
-    required this.overall,
-    required this.services,
-    required this.totalLatencyMs,
-    DateTime? checkedAt,
-  }) : checkedAt = checkedAt ?? DateTime.now();
-
-  int get healthyCount => services.where((s) => s.isHealthy).length;
-  int get totalCount => services.length;
-  double get healthPercentage => totalCount > 0 ? healthyCount / totalCount : 0;
-}
-
-/// Health monitoring service for checking server and service status
+/// Health monitoring service - calls server-side health endpoint
 class HealthService extends ChangeNotifier {
   static HealthService? _instance;
   static HealthService get instance => _instance ??= HealthService._();
@@ -57,232 +19,111 @@ class HealthService extends ChangeNotifier {
 
   Client? _client;
   Timer? _autoCheckTimer;
-  HealthStatus? _lastStatus;
+  HealthCheckResponse? _lastResponse;
   bool _isChecking = false;
+  bool _isInitialized = false;
+  String? _lastError;
 
-  HealthStatus? get lastStatus => _lastStatus;
+  HealthCheckResponse? get lastResponse => _lastResponse;
   bool get isChecking => _isChecking;
-  bool get isHealthy => _lastStatus?.overall == ServiceStatus.healthy;
+  bool get isInitialized => _isInitialized;
+  String? get lastError => _lastError;
+
+  bool get isHealthy => _lastResponse?.status == 'healthy';
+  int get healthyCount => _lastResponse?.services.where((s) => s.status == 'healthy').length ?? 0;
+  int get totalCount => _lastResponse?.services.length ?? 0;
+
+  ServiceStatus get overallStatus {
+    if (_lastResponse == null) return ServiceStatus.unknown;
+    switch (_lastResponse!.status) {
+      case 'healthy':
+        return ServiceStatus.healthy;
+      case 'degraded':
+        return ServiceStatus.degraded;
+      case 'unhealthy':
+        return ServiceStatus.unhealthy;
+      default:
+        return ServiceStatus.unknown;
+    }
+  }
 
   /// Initialize with client
   void initialize(Client client) {
     _client = client;
+    _isInitialized = true;
+    debugPrint('HealthService: Initialized');
   }
 
   /// Start automatic health checks
   void startAutoCheck({Duration interval = const Duration(seconds: 30)}) {
+    if (!_isInitialized) {
+      debugPrint('HealthService: Cannot start auto-check - not initialized');
+      return;
+    }
+    
     stopAutoCheck();
+    debugPrint('HealthService: Starting auto-check every ${interval.inSeconds}s');
+    
     _autoCheckTimer = Timer.periodic(interval, (_) => checkHealth());
+    
     // Do initial check
     checkHealth();
   }
 
   /// Stop automatic health checks
   void stopAutoCheck() {
-    _autoCheckTimer?.cancel();
-    _autoCheckTimer = null;
+    if (_autoCheckTimer != null) {
+      _autoCheckTimer!.cancel();
+      _autoCheckTimer = null;
+      debugPrint('HealthService: Auto-check stopped');
+    }
   }
 
-  /// Perform health check on all services
-  Future<HealthStatus> checkHealth() async {
+  /// Perform health check via server endpoint
+  Future<HealthCheckResponse?> checkHealth() async {
     if (_client == null) {
-      return HealthStatus(
-        overall: ServiceStatus.unknown,
-        services: [],
-        totalLatencyMs: 0,
-      );
+      debugPrint('HealthService: No client available');
+      _lastError = 'Not initialized';
+      notifyListeners();
+      return null;
+    }
+
+    if (_isChecking) {
+      return _lastResponse;
     }
 
     _isChecking = true;
+    _lastError = null;
     notifyListeners();
 
-    final services = <ServiceHealth>[];
-    final startTime = DateTime.now();
+    try {
+      debugPrint('HealthService: Checking server health...');
+      final response = await _client!.health.check();
+      
+      _lastResponse = response;
+      _lastError = null;
+      
+      debugPrint('HealthService: ${response.status} - $healthyCount/$totalCount services (${response.totalLatencyMs}ms)');
+    } catch (e) {
+      debugPrint('HealthService: Error - $e');
+      _lastError = e.toString();
+    } finally {
+      _isChecking = false;
+      notifyListeners();
+    }
 
-    // Check API Server connectivity
-    services.add(await _checkApiServer());
+    return _lastResponse;
+  }
 
-    // Check Greeting endpoint (tests basic endpoint + rate limiting)
-    services.add(await _checkGreetingService());
-
-    // Check Translation service
-    services.add(await _checkTranslationService());
-
-    // Check App Config service
-    services.add(await _checkAppConfigService());
-
-    // Check Auth service (if authenticated)
-    services.add(await _checkAuthService());
-
-    final totalLatency = DateTime.now().difference(startTime).inMilliseconds;
-
-    // Determine overall status
-    final healthyCount = services.where((s) => s.isHealthy).length;
-    final degradedCount = services.where((s) => s.status == ServiceStatus.degraded).length;
+  /// Quick ping check
+  Future<bool> ping() async {
+    if (_client == null) return false;
     
-    ServiceStatus overall;
-    if (healthyCount == services.length) {
-      overall = ServiceStatus.healthy;
-    } else if (healthyCount > 0 || degradedCount > 0) {
-      overall = ServiceStatus.degraded;
-    } else {
-      overall = ServiceStatus.unhealthy;
-    }
-
-    _lastStatus = HealthStatus(
-      overall: overall,
-      services: services,
-      totalLatencyMs: totalLatency,
-    );
-
-    _isChecking = false;
-    notifyListeners();
-
-    return _lastStatus!;
-  }
-
-  /// Check API server connectivity
-  Future<ServiceHealth> _checkApiServer() async {
-    final start = DateTime.now();
     try {
-      // Simple connectivity check - try to reach the server
-      await _client!.greeting.hello('health-check');
-      final latency = DateTime.now().difference(start).inMilliseconds;
-      
-      return ServiceHealth(
-        name: 'API Server',
-        status: latency < 1000 ? ServiceStatus.healthy : ServiceStatus.degraded,
-        latencyMs: latency,
-        message: 'Connected',
-      );
+      final result = await _client!.health.ping();
+      return result == 'pong';
     } catch (e) {
-      return ServiceHealth(
-        name: 'API Server',
-        status: ServiceStatus.unhealthy,
-        latencyMs: DateTime.now().difference(start).inMilliseconds,
-        message: e.toString().split(':').first,
-      );
-    }
-  }
-
-  /// Check greeting service (includes rate limit test)
-  Future<ServiceHealth> _checkGreetingService() async {
-    final start = DateTime.now();
-    try {
-      final response = await _client!.greeting.hello('health-check');
-      final latency = DateTime.now().difference(start).inMilliseconds;
-      
-      // Check rate limit status
-      final remaining = response.rateLimitRemaining;
-      final limit = response.rateLimitMax;
-      
-      ServiceStatus status;
-      String message;
-      
-      if (remaining > limit * 0.5) {
-        status = ServiceStatus.healthy;
-        message = 'OK ($remaining/$limit requests remaining)';
-      } else if (remaining > 0) {
-        status = ServiceStatus.degraded;
-        message = 'Rate limit warning ($remaining/$limit)';
-      } else {
-        status = ServiceStatus.degraded;
-        message = 'Rate limited';
-      }
-      
-      return ServiceHealth(
-        name: 'Greeting Service',
-        status: status,
-        latencyMs: latency,
-        message: message,
-      );
-    } on RateLimitException catch (e) {
-      return ServiceHealth(
-        name: 'Greeting Service',
-        status: ServiceStatus.degraded,
-        latencyMs: DateTime.now().difference(start).inMilliseconds,
-        message: 'Rate limited (retry in ${e.retryAfterSeconds}s)',
-      );
-    } catch (e) {
-      return ServiceHealth(
-        name: 'Greeting Service',
-        status: ServiceStatus.unhealthy,
-        latencyMs: DateTime.now().difference(start).inMilliseconds,
-        message: e.toString().split(':').first,
-      );
-    }
-  }
-
-  /// Check translation service
-  Future<ServiceHealth> _checkTranslationService() async {
-    final start = DateTime.now();
-    try {
-      await _client!.translation.getTranslations(locale: 'en');
-      final latency = DateTime.now().difference(start).inMilliseconds;
-      
-      return ServiceHealth(
-        name: 'Translation Service',
-        status: ServiceStatus.healthy,
-        latencyMs: latency,
-        message: 'Translations available',
-      );
-    } catch (e) {
-      return ServiceHealth(
-        name: 'Translation Service',
-        status: ServiceStatus.unhealthy,
-        latencyMs: DateTime.now().difference(start).inMilliseconds,
-        message: e.toString().split(':').first,
-      );
-    }
-  }
-
-  /// Check app config service
-  Future<ServiceHealth> _checkAppConfigService() async {
-    final start = DateTime.now();
-    try {
-      await _client!.appConfig.getConfig();
-      final latency = DateTime.now().difference(start).inMilliseconds;
-      
-      return ServiceHealth(
-        name: 'App Config Service',
-        status: ServiceStatus.healthy,
-        latencyMs: latency,
-        message: 'Config loaded',
-      );
-    } catch (e) {
-      return ServiceHealth(
-        name: 'App Config Service',
-        status: ServiceStatus.unhealthy,
-        latencyMs: DateTime.now().difference(start).inMilliseconds,
-        message: e.toString().split(':').first,
-      );
-    }
-  }
-
-  /// Check auth service by trying to call password validation endpoint
-  /// This endpoint doesn't require authentication but tests auth infrastructure
-  Future<ServiceHealth> _checkAuthService() async {
-    final start = DateTime.now();
-    try {
-      // Try password validation endpoint - tests auth infrastructure
-      await _client!.passwordManagement.validatePasswordStrength(
-        password: 'TestPass123!',
-      );
-      final latency = DateTime.now().difference(start).inMilliseconds;
-      
-      return ServiceHealth(
-        name: 'Auth Service',
-        status: ServiceStatus.healthy,
-        latencyMs: latency,
-        message: 'Auth endpoints available',
-      );
-    } catch (e) {
-      return ServiceHealth(
-        name: 'Auth Service',
-        status: ServiceStatus.degraded,
-        latencyMs: DateTime.now().difference(start).inMilliseconds,
-        message: e.toString().split(':').first,
-      );
+      return false;
     }
   }
 

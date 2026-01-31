@@ -36,8 +36,10 @@ import 'package:masterfabric_serverpod_server/src/generated/services/auth/user_i
     as _i13;
 import 'package:masterfabric_serverpod_server/src/generated/services/greetings/greeting_response.dart'
     as _i14;
-import 'package:masterfabric_serverpod_server/src/generated/services/translations/translation_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/health/health_check_response.dart'
     as _i15;
+import 'package:masterfabric_serverpod_server/src/generated/services/translations/translation_response.dart'
+    as _i16;
 import 'package:masterfabric_serverpod_server/src/generated/protocol.dart';
 import 'package:masterfabric_serverpod_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -171,6 +173,8 @@ class TestEndpoints {
 
   late final _GreetingEndpoint greeting;
 
+  late final _HealthEndpoint health;
+
   late final _TranslationEndpoint translation;
 }
 
@@ -230,6 +234,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     greeting = _GreetingEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    health = _HealthEndpoint(
       endpoints,
       serializationManager,
     );
@@ -1843,6 +1851,75 @@ class _GreetingEndpoint {
   }
 }
 
+class _HealthEndpoint {
+  _HealthEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i15.HealthCheckResponse> check(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'health',
+            method: 'check',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'health',
+          methodName: 'check',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i15.HealthCheckResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<String> ping(_i1.TestSessionBuilder sessionBuilder) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'health',
+            method: 'ping',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'health',
+          methodName: 'ping',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<String>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _TranslationEndpoint {
   _TranslationEndpoint(
     this._endpointDispatch,
@@ -1853,7 +1930,7 @@ class _TranslationEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i15.TranslationResponse> getTranslations(
+  _i3.Future<_i16.TranslationResponse> getTranslations(
     _i1.TestSessionBuilder sessionBuilder, {
     String? locale,
     String? namespace,
@@ -1880,7 +1957,7 @@ class _TranslationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i15.TranslationResponse>);
+                as _i3.Future<_i16.TranslationResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1888,7 +1965,7 @@ class _TranslationEndpoint {
     });
   }
 
-  _i3.Future<_i15.TranslationResponse> saveTranslations(
+  _i3.Future<_i16.TranslationResponse> saveTranslations(
     _i1.TestSessionBuilder sessionBuilder,
     String locale,
     Map<String, dynamic> translations, {
@@ -1919,7 +1996,7 @@ class _TranslationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i15.TranslationResponse>);
+                as _i3.Future<_i16.TranslationResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

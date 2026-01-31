@@ -1,0 +1,7 @@
+### Health check response model
+class: HealthCheckResponse
+fields:
+  status: String
+  timestamp: DateTime
+  services: List<ServiceHealthInfo>
+  totalLatencyMs: int

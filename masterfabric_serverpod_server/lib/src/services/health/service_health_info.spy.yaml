@@ -1,0 +1,7 @@
+### Individual service health info
+class: ServiceHealthInfo
+fields:
+  name: String
+  status: String
+  latencyMs: int?
+  message: String?

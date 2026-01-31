@@ -24,11 +24,12 @@ import '../services/auth/two_factor_endpoint.dart' as _i11;
 import '../services/auth/user_management_endpoint.dart' as _i12;
 import '../services/auth/user_profile_endpoint.dart' as _i13;
 import '../services/greetings/greeting_endpoint.dart' as _i14;
-import '../services/translations/translation_endpoint.dart' as _i15;
+import '../services/health/health_endpoint.dart' as _i15;
+import '../services/translations/translation_endpoint.dart' as _i16;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i16;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i17;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i18;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -112,7 +113,13 @@ class Endpoints extends _i1.EndpointDispatch {
           'greeting',
           null,
         ),
-      'translation': _i15.TranslationEndpoint()
+      'health': _i15.HealthEndpoint()
+        ..initialize(
+          server,
+          'health',
+          null,
+        ),
+      'translation': _i16.TranslationEndpoint()
         ..initialize(
           server,
           'translation',
@@ -1108,6 +1115,32 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['health'] = _i1.EndpointConnector(
+      name: 'health',
+      endpoint: endpoints['health']!,
+      methodConnectors: {
+        'check': _i1.MethodConnector(
+          name: 'check',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['health'] as _i15.HealthEndpoint).check(session),
+        ),
+        'ping': _i1.MethodConnector(
+          name: 'ping',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['health'] as _i15.HealthEndpoint).ping(session),
+        ),
+      },
+    );
     connectors['translation'] = _i1.EndpointConnector(
       name: 'translation',
       endpoint: endpoints['translation']!,
@@ -1130,7 +1163,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i15.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i16.TranslationEndpoint)
                   .getTranslations(
                     session,
                     locale: params['locale'],
@@ -1165,7 +1198,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i15.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i16.TranslationEndpoint)
                   .saveTranslations(
                     session,
                     params['locale'],
@@ -1181,7 +1214,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i15.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i16.TranslationEndpoint)
                   .getAvailableLocales(session),
         ),
         'reseedFromAssets': _i1.MethodConnector(
@@ -1197,7 +1230,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i15.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i16.TranslationEndpoint)
                   .reseedFromAssets(
                     session,
                     forceReseed: params['forceReseed'],
@@ -1205,9 +1238,9 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i16.Endpoints()
+    modules['serverpod_auth_idp'] = _i17.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i17.Endpoints()
+    modules['serverpod_auth_core'] = _i18.Endpoints()
       ..initializeEndpoints(server);
   }
 }
