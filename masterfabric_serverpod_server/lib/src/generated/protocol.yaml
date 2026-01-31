@@ -30,6 +30,7 @@ rbac:
   - assignRoleToUser:
   - revokeRoleFromUser:
 sessionManagement:
+  - getCurrentSession:
   - getActiveSessions:
   - getSession:
   - revokeSession:

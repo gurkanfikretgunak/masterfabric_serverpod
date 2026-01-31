@@ -1,29 +1,72 @@
 import 'dart:convert';
 import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart';
 import '../../generated/protocol.dart';
 import '../../core/errors/base_error_handler.dart';
 import '../../core/errors/error_types.dart';
 import '../../core/logging/core_logger.dart';
 import 'session_management_service.dart';
+import 'auth_helper_service.dart';
 
 /// Endpoint for session management
 /// 
 /// Provides endpoints for managing user sessions (list, revoke, etc.).
 class SessionManagementEndpoint extends Endpoint {
   final SessionManagementService _sessionService = SessionManagementService();
+  final AuthHelperService _authHelper = AuthHelperService();
   final DefaultErrorHandler _errorHandler = DefaultErrorHandler();
 
   /// Require authentication for all methods
   @override
   bool get requireLogin => true;
 
+  /// Get current session info from JWT token
+  /// 
+  /// Returns the current authenticated session information
+  Future<SessionInfoResponse> getCurrentSession(Session session) async {
+    final logger = CoreLogger(session);
+
+    try {
+      final authInfo = session.authenticated;
+      if (authInfo == null) {
+        throw AuthenticationError('Not authenticated');
+      }
+
+      final userId = await _authHelper.requireAuth(session);
+      
+      logger.info('Current session info requested', context: {
+        'userId': userId.toString(),
+      });
+
+      return SessionInfoResponse(
+        id: 'jwt-session', // JWT doesn't have session ID
+        userId: userId.toString(),
+        createdAt: DateTime.now(), // JWT doesn't track creation time
+        lastUsedAt: DateTime.now(),
+        expiresAt: null, // Token expiry managed by client
+        method: 'jwt',
+        metadataJson: jsonEncode({
+          'scopes': authInfo.scopes.map((s) => s.name).toList(),
+          'type': 'jwt_token',
+        }),
+      );
+    } catch (e, stackTrace) {
+      await _errorHandler.logError(session, e, stackTrace);
+
+      if (e is AppException) {
+        rethrow;
+      }
+
+      throw InternalServerError(
+        'Failed to get current session: ${e.toString()}',
+      );
+    }
+  }
+
   /// Get all active sessions for the current user
   /// 
-  /// [session] - Serverpod session
-  /// 
-  /// Returns list of SessionInfoResponse for all active sessions
-  /// 
-  /// Throws AuthenticationError if not authenticated
+  /// Note: With JWT auth, this returns server-side sessions if any exist.
+  /// If no server-side sessions, returns current JWT session info.
   Future<List<SessionInfoResponse>> getActiveSessions(Session session) async {
     final logger = CoreLogger(session);
 
@@ -31,6 +74,12 @@ class SessionManagementEndpoint extends Endpoint {
       logger.info('Active sessions requested');
 
       final sessions = await _sessionService.getActiveSessions(session);
+
+      // If no server-side sessions, return current JWT session
+      if (sessions.isEmpty) {
+        final currentSession = await getCurrentSession(session);
+        return [currentSession];
+      }
 
       logger.info('Active sessions retrieved', context: {
         'count': sessions.length,

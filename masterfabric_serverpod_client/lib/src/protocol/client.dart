@@ -579,13 +579,20 @@ class EndpointSessionManagement extends _i1.EndpointRef {
   @override
   String get name => 'sessionManagement';
 
+  /// Get current session info from JWT token
+  ///
+  /// Returns the current authenticated session information
+  _i2.Future<_i10.SessionInfoResponse> getCurrentSession() =>
+      caller.callServerEndpoint<_i10.SessionInfoResponse>(
+        'sessionManagement',
+        'getCurrentSession',
+        {},
+      );
+
   /// Get all active sessions for the current user
   ///
-  /// [session] - Serverpod session
-  ///
-  /// Returns list of SessionInfoResponse for all active sessions
-  ///
-  /// Throws AuthenticationError if not authenticated
+  /// Note: With JWT auth, this returns server-side sessions if any exist.
+  /// If no server-side sessions, returns current JWT session info.
   _i2.Future<List<_i10.SessionInfoResponse>> getActiveSessions() =>
       caller.callServerEndpoint<List<_i10.SessionInfoResponse>>(
         'sessionManagement',
