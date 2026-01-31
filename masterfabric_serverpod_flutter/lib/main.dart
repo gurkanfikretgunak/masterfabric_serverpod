@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
-import 'screens/greetings_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/sign_in_screen.dart';
 import 'services/app_config_service.dart';
 import 'services/translation_service.dart';
+import 'services/health_service.dart';
 
 /// Sets up a global client object that can be used to talk to the server from
 /// anywhere in our app. The client is generated from your server code
@@ -62,6 +64,10 @@ void main() async {
     debugPrint('App will continue with fallback translations');
   }
 
+  // Initialize health service and start monitoring
+  HealthService.instance.initialize(client);
+  HealthService.instance.startAutoCheck(interval: const Duration(seconds: 60));
+
   runApp(const MyApp());
 }
 
@@ -70,97 +76,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get app configuration if loaded
     final config = AppConfigService.getConfig();
-    
-    // Build theme from configuration
-    final theme = _buildTheme(config);
-    final title = config?.appSettings.appName ?? 'Serverpod Demo';
-    final homeTitle = config?.appSettings.appName ?? 'Serverpod Example';
+    final title = config?.appSettings.appName ?? 'MasterFabric';
 
     return MaterialApp(
       title: title,
-      theme: theme,
-      home: MyHomePage(title: homeTitle),
-    );
-  }
-
-  /// Build theme from app configuration
-  ThemeData _buildTheme(AppConfig? config) {
-    if (config == null) {
-      return ThemeData(primarySwatch: Colors.blue);
-    }
-
-    // Parse primary color from hex string
-    Color primaryColor = Colors.blue;
-    try {
-      final colorString = config.splashConfiguration.primaryColor;
-      if (colorString.isNotEmpty && colorString.startsWith('#')) {
-        primaryColor = Color(int.parse(colorString.substring(1), radix: 16) + 0xFF000000);
-      }
-    } catch (e) {
-      // Use default if parsing fails
-      primaryColor = Colors.blue;
-    }
-
-    // Build theme based on configuration
-    return ThemeData(
-      primarySwatch: _colorToMaterialColor(primaryColor),
-      useMaterial3: true,
-      // Apply font scale if configured
-      textTheme: TextTheme(
-        bodyLarge: TextStyle(fontSize: 16 * (config.uiConfiguration.fontScale)),
-        bodyMedium: TextStyle(fontSize: 14 * (config.uiConfiguration.fontScale)),
-        bodySmall: TextStyle(fontSize: 12 * (config.uiConfiguration.fontScale)),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          surface: Colors.white,
+        ),
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black87,
+          elevation: 0,
+        ),
+      ),
+      home: SignInScreen(
+        child: HomeScreen(
+          onSignOut: () async {
+            await client.auth.signOutDevice();
+          },
+        ),
       ),
     );
   }
-
-  /// Convert Color to MaterialColor
-  MaterialColor _colorToMaterialColor(Color color) {
-    final int red = (color.r * 255.0).round().clamp(0, 255);
-    final int green = (color.g * 255.0).round().clamp(0, 255);
-    final int blue = (color.b * 255.0).round().clamp(0, 255);
-
-    final Map<int, Color> shades = {
-      50: Color.fromRGBO(red, green, blue, .1),
-      100: Color.fromRGBO(red, green, blue, .2),
-      200: Color.fromRGBO(red, green, blue, .3),
-      300: Color.fromRGBO(red, green, blue, .4),
-      400: Color.fromRGBO(red, green, blue, .5),
-      500: Color.fromRGBO(red, green, blue, .6),
-      600: Color.fromRGBO(red, green, blue, .7),
-      700: Color.fromRGBO(red, green, blue, .8),
-      800: Color.fromRGBO(red, green, blue, .9),
-      900: Color.fromRGBO(red, green, blue, 1),
-    };
-
-    return MaterialColor(color.toARGB32(), shades);
-  }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: const GreetingsScreen(),
-      // To test authentication in this example app, uncomment the line below
-      // and comment out the line above. This wraps the GreetingsScreen with a
-      // SignInScreen, which automatically shows a sign-in UI when the user is
-      // not authenticated and displays the GreetingsScreen once they sign in.
-      //
-      // body: SignInScreen(
-      //   child: GreetingsScreen(
-      //     onSignOut: () async {
-      //       await client.auth.signOutDevice();
-      //     },
-      //   ),
-      // ),
-    );
-  }
-}

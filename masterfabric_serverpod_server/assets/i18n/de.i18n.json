@@ -1,0 +1,35 @@
+{
+  "welcome": {
+    "title": "Willkommen $name",
+    "subtitle": "Starten Sie mit MasterFabric",
+    "description": "Ihre Reise beginnt hier"
+  },
+  "login": {
+    "title": "Anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "success": "Erfolgreich angemeldet",
+    "fail": "Anmeldung fehlgeschlagen",
+    "forgotPassword": "Passwort vergessen?"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "back": "Zurück",
+    "next": "Weiter",
+    "done": "Fertig",
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "retry": "Erneut versuchen",
+    "ok": "OK"
+  },
+  "errors": {
+    "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
+    "server": "Serverfehler. Bitte versuchen Sie es später erneut.",
+    "validation": "Bitte überprüfen Sie Ihre Eingabe.",
+    "unauthorized": "Sie sind nicht berechtigt, diese Aktion durchzuführen."
+  }
+}
