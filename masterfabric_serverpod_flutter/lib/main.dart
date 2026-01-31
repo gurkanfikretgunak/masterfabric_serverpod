@@ -5,6 +5,7 @@ import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
 import 'screens/greetings_screen.dart';
 import 'services/app_config_service.dart';
+import 'services/translation_service.dart';
 
 /// Sets up a global client object that can be used to talk to the server from
 /// anywhere in our app. The client is generated from your server code
@@ -46,6 +47,19 @@ void main() async {
     // App will use default configuration
     debugPrint('Warning: Failed to load app configuration: $e');
     debugPrint('App will continue with default settings');
+  }
+
+  // Load translations from server
+  // Translations are auto-detected based on device locale
+  try {
+    await TranslationService.loadTranslations(client);
+    await TranslationService.loadAvailableLocales(client);
+    debugPrint('Translations loaded successfully for locale: ${TranslationService.currentLocale}');
+  } catch (e) {
+    // Log error but continue app startup
+    // App will use translation keys as fallback
+    debugPrint('Warning: Failed to load translations: $e');
+    debugPrint('App will continue with fallback translations');
   }
 
   runApp(const MyApp());

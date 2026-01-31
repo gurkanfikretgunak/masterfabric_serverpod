@@ -144,4 +144,69 @@ class TranslationEndpoint extends Endpoint {
       );
     }
   }
+
+  /// Get all available locales
+  /// 
+  /// [session] - Serverpod session
+  /// 
+  /// Returns list of available locale codes
+  Future<List<String>> getAvailableLocales(Session session) async {
+    final logger = CoreLogger(session);
+
+    try {
+      logger.debug('Getting available locales');
+
+      final locales = await _translationService.getAvailableLocales(session);
+
+      logger.info('Available locales retrieved', context: {
+        'count': locales.length,
+        'locales': locales.join(', '),
+      });
+
+      return locales;
+    } catch (e, stackTrace) {
+      await _errorHandler.logError(session, e, stackTrace);
+      throw InternalServerError('Failed to get available locales: ${e.toString()}');
+    }
+  }
+
+  /// Reseed translations from assets/i18n/ folder
+  /// 
+  /// [session] - Serverpod session
+  /// [forceReseed] - If true, reseed even if already seeded
+  /// 
+  /// Returns number of locales seeded
+  /// 
+  /// Note: This should be protected by authentication/authorization in production
+  Future<int> reseedFromAssets(
+    Session session, {
+    bool forceReseed = true,
+  }) async {
+    final logger = CoreLogger(session);
+
+    try {
+      logger.info('Reseeding translations from assets', context: {
+        'forceReseed': forceReseed,
+      });
+
+      // Reset seeded flag if forcing
+      if (forceReseed) {
+        TranslationService.resetSeededFlag();
+      }
+
+      final count = await _translationService.seedFromAssets(
+        session,
+        forceReseed: forceReseed,
+      );
+
+      logger.info('Translations reseeded successfully', context: {
+        'localesSeeded': count,
+      });
+
+      return count;
+    } catch (e, stackTrace) {
+      await _errorHandler.logError(session, e, stackTrace);
+      throw InternalServerError('Failed to reseed translations: ${e.toString()}');
+    }
+  }
 }

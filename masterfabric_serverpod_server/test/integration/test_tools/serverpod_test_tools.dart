@@ -34,7 +34,7 @@ import 'package:masterfabric_serverpod_server/src/generated/services/auth/user_l
     as _i12;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/user_info_response.dart'
     as _i13;
-import 'package:masterfabric_serverpod_server/src/generated/greetings/greeting.dart'
+import 'package:masterfabric_serverpod_server/src/generated/greetings/greeting_response.dart'
     as _i14;
 import 'package:masterfabric_serverpod_server/src/generated/translations/translation_response.dart'
     as _i15;
@@ -1781,7 +1781,7 @@ class _GreetingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i14.Greeting> hello(
+  _i3.Future<_i14.GreetingResponse> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -1804,7 +1804,7 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i14.Greeting>);
+                as _i3.Future<_i14.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1890,6 +1890,67 @@ class _TranslationEndpoint {
                   _localCallContext.arguments,
                 )
                 as _i3.Future<_i15.TranslationResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<List<String>> getAvailableLocales(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'translation',
+            method: 'getAvailableLocales',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'translation',
+          methodName: 'getAvailableLocales',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<List<String>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<int> reseedFromAssets(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required bool forceReseed,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'translation',
+            method: 'reseedFromAssets',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'translation',
+          methodName: 'reseedFromAssets',
+          parameters: _i1.testObjectToJson({'forceReseed': forceReseed}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<int>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

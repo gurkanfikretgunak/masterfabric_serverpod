@@ -16,6 +16,7 @@ import 'src/core/session/session_manager.dart';
 import 'src/services/auth/email_validation_service.dart';
 import 'src/services/auth/email_service.dart';
 import 'src/services/auth/email_idp_endpoint.dart';
+import 'src/services/translations/translation_service.dart';
 
 /// Global instances for core components
 IntegrationManager? _integrationManager;
@@ -60,6 +61,9 @@ void run(List<String> args) async {
 
   // Set email validation service on EmailIdpEndpoint after endpoints are initialized
   _setEmailValidationServiceOnEndpoint(pod);
+
+  // Seed translations from assets/i18n/ folder
+  await _seedTranslations(pod);
 
   // Setup a default page at the web root.
   // These are used by the default page.
@@ -258,6 +262,39 @@ Map<String, dynamic> _yamlToMap(Map yaml) {
     }
   }
   return result;
+}
+
+/// Seed translations from assets/i18n/ folder on server startup
+Future<void> _seedTranslations(Serverpod pod) async {
+  try {
+    final session = await pod.createSession();
+    try {
+      final translationService = TranslationService();
+      final seededCount = await translationService.seedFromAssets(session);
+      
+      if (seededCount > 0) {
+        session.log(
+          'Translations seeded from assets/i18n/ - $seededCount locale(s)',
+          level: LogLevel.info,
+        );
+      }
+    } finally {
+      await session.close();
+    }
+  } catch (e, stackTrace) {
+    // Don't fail server startup if translation seeding fails
+    final session = await pod.createSession();
+    try {
+      session.log(
+        'Failed to seed translations: $e',
+        level: LogLevel.warning,
+        exception: e is Exception ? e : Exception(e.toString()),
+        stackTrace: stackTrace,
+      );
+    } finally {
+      await session.close();
+    }
+  }
 }
 
 void _sendRegistrationCode(

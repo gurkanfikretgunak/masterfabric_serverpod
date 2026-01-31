@@ -34,7 +34,7 @@ import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user_li
     as _i12;
 import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user_info_response.dart'
     as _i13;
-import 'package:masterfabric_serverpod_client/src/protocol/greetings/greeting.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/greetings/greeting_response.dart'
     as _i14;
 import 'package:masterfabric_serverpod_client/src/protocol/translations/translation_response.dart'
     as _i15;
@@ -932,6 +932,11 @@ class EndpointUserProfile extends _i1.EndpointRef {
 
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
+///
+/// Features:
+/// - Rate limited to 20 requests per minute per user/IP
+/// - Returns rate limit info in every response
+/// - Caches and replaces greeting with fresh timestamp each request
 /// {@category Endpoint}
 class EndpointGreeting extends _i1.EndpointRef {
   EndpointGreeting(_i1.EndpointCaller caller) : super(caller);
@@ -940,8 +945,12 @@ class EndpointGreeting extends _i1.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i2.Future<_i14.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i14.Greeting>(
+  ///
+  /// Rate limited to 20 requests per minute.
+  /// Returns rate limit info (remaining, limit, reset time) in response.
+  /// Throws RateLimitException with details if limit is exceeded.
+  _i2.Future<_i14.GreetingResponse> hello(String name) =>
+      caller.callServerEndpoint<_i14.GreetingResponse>(
         'greeting',
         'hello',
         {'name': name},
@@ -1007,6 +1016,33 @@ class EndpointTranslation extends _i1.EndpointRef {
       'isActive': isActive,
     },
   );
+
+  /// Get all available locales
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Returns list of available locale codes
+  _i2.Future<List<String>> getAvailableLocales() =>
+      caller.callServerEndpoint<List<String>>(
+        'translation',
+        'getAvailableLocales',
+        {},
+      );
+
+  /// Reseed translations from assets/i18n/ folder
+  ///
+  /// [session] - Serverpod session
+  /// [forceReseed] - If true, reseed even if already seeded
+  ///
+  /// Returns number of locales seeded
+  ///
+  /// Note: This should be protected by authentication/authorization in production
+  _i2.Future<int> reseedFromAssets({required bool forceReseed}) =>
+      caller.callServerEndpoint<int>(
+        'translation',
+        'reseedFromAssets',
+        {'forceReseed': forceReseed},
+      );
 }
 
 class Modules {

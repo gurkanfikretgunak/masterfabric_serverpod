@@ -1,0 +1,19 @@
+### Rate limit exception for API responses
+### This is a SerializableException that Serverpod can properly return to clients
+exception: RateLimitException
+
+fields:
+  ### Error message
+  message: String
+  ### Maximum requests allowed in window
+  limit: int
+  ### Remaining requests (always 0 when this exception is thrown)
+  remaining: int
+  ### Current request count (exceeded limit)
+  current: int
+  ### Time window in seconds
+  windowSeconds: int
+  ### Seconds until rate limit resets
+  retryAfterSeconds: int
+  ### ISO8601 timestamp when rate limit resets
+  resetAt: String

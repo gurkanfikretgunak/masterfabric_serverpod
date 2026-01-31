@@ -58,3 +58,5 @@ greeting:
 translation:
   - getTranslations:
   - saveTranslations:
+  - getAvailableLocales:
+  - reseedFromAssets:

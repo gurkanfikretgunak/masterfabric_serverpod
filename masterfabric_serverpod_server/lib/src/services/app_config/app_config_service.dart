@@ -337,18 +337,26 @@ class AppConfigService {
   }
 
   /// Load configuration from cache
+  /// 
+  /// Tries caches in order of speed: localPrio -> local -> global (Redis)
   Future<AppConfig?> _loadFromCache(Session session, String cacheKey) async {
     try {
-      // Try global cache first (Redis)
-      final cached = await session.caches.global.get<AppConfig>(cacheKey);
+      // Try priority local cache first (fastest, for frequently accessed)
+      var cached = await session.caches.localPrio.get<AppConfig>(cacheKey);
       if (cached != null) {
         return cached;
       }
 
-      // Try local cache
-      final localCached = await session.caches.local.get<AppConfig>(cacheKey);
-      if (localCached != null) {
-        return localCached;
+      // Try regular local cache
+      cached = await session.caches.local.get<AppConfig>(cacheKey);
+      if (cached != null) {
+        return cached;
+      }
+
+      // Try global cache (Redis - shared across servers)
+      cached = await session.caches.global.get<AppConfig>(cacheKey);
+      if (cached != null) {
+        return cached;
       }
 
       return null;
@@ -365,10 +373,20 @@ class AppConfigService {
     AppConfig config,
   ) async {
     try {
-      // Store in both local and global cache
+      // Store in priority local cache (frequently accessed)
       // AppConfig is SerializableModel, so it can be cached directly
-      await session.caches.local.put(cacheKey, config);
-      await session.caches.global.put(cacheKey, config);
+      await session.caches.localPrio.put(
+        cacheKey, 
+        config,
+        lifetime: cacheTtl,
+      );
+      
+      // Store in global cache (Redis - shared across servers)
+      await session.caches.global.put(
+        cacheKey, 
+        config,
+        lifetime: cacheTtl,
+      );
     } catch (e) {
       // Ignore cache errors - configuration will still be returned
       // Cache failures shouldn't break the endpoint
@@ -459,16 +477,27 @@ class AppConfigService {
   }
 
   /// Invalidate cache for a specific key
+  /// 
+  /// Invalidates both local and global (Redis) cache.
   Future<void> _invalidateCache(Session session, String cacheKey) async {
+    final logger = CoreLogger(session);
     try {
-      // Cache doesn't have explicit remove, but we can overwrite with null or just let it expire
-      // For now, we'll just log - cache will expire naturally
-      final logger = CoreLogger(session);
-      logger.debug('Cache invalidated (will expire naturally)', context: {
+      // Invalidate local priority cache
+      await session.caches.localPrio.invalidateKey(cacheKey);
+      
+      // Invalidate local cache
+      await session.caches.local.invalidateKey(cacheKey);
+      
+      // Invalidate global cache (Redis)
+      await session.caches.global.invalidateKey(cacheKey);
+      
+      logger.debug('Cache invalidated successfully', context: {
         'cacheKey': cacheKey,
       });
     } catch (e) {
-      // Ignore cache invalidation errors
+      logger.warning('Failed to invalidate cache: $e', context: {
+        'cacheKey': cacheKey,
+      });
     }
   }
 }

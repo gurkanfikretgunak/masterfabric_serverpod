@@ -1,0 +1,8 @@
+### Rate limit entry for tracking requests in cache
+### Used for distributed rate limiting across server cluster via Redis
+class: RateLimitEntry
+fields:
+  ### Number of requests in current window
+  count: int
+  ### Window start timestamp (milliseconds since epoch)
+  windowStart: int

@@ -1,6 +1,7 @@
 import 'package:serverpod/serverpod.dart';
 import '../../core/errors/error_types.dart';
 import '../../core/utils/common_utils.dart';
+import '../../generated/protocol.dart';
 
 /// Email validation service for registration restrictions
 /// 
@@ -42,7 +43,7 @@ class EmailValidationService {
   /// [email] - Email address to validate
   /// [session] - Serverpod session (for logging and IP detection)
   /// 
-  /// Throws ValidationError or RateLimitError if validation fails
+  /// Throws ValidationError or RateLimitException if validation fails
   Future<void> validateEmailForRegistration(
     String email,
     Session session,
@@ -179,19 +180,16 @@ class EmailValidationService {
   }
 
   /// Check rate limiting for email and IP
-  Future<void> _checkRateLimit(String email, Session session) async {
+  /// 
+  /// [clientIp] - Optional client IP address for IP-based rate limiting.
+  /// If not provided, only email-based rate limiting is applied.
+  Future<void> _checkRateLimit(
+    String email,
+    Session session, {
+    String? clientIp,
+  }) async {
     final now = DateTime.now();
     final windowStart = now.subtract(Duration(minutes: _windowMinutes));
-
-    // Get client IP (try multiple methods)
-    String? clientIp;
-    try {
-      // Note: Session doesn't directly expose httpRequest in endpoints
-      // IP detection would need to be passed separately or accessed differently
-      // For now, we'll leave it as null
-    } catch (e) {
-      // Ignore if httpRequest is not available
-    }
 
     // Check rate limit per email
     final emailKey = 'email:$email';
@@ -205,14 +203,15 @@ class EmailValidationService {
         'Rate limit exceeded for email: $email',
         level: LogLevel.warning,
       );
-      throw RateLimitError(
-        'Too many registration attempts for this email. Please try again later.',
-        details: {
-          'email': email,
-          'maxAttempts': _maxAttemptsPerEmail,
-          'windowMinutes': _windowMinutes,
-          'retryAfter': _windowMinutes,
-        },
+      final resetAt = now.add(Duration(minutes: _windowMinutes));
+      throw RateLimitException(
+        message: 'Too many registration attempts for this email. Please try again later.',
+        limit: _maxAttemptsPerEmail,
+        remaining: 0,
+        current: recentEmailAttempts.length,
+        windowSeconds: _windowMinutes * 60,
+        retryAfterSeconds: _windowMinutes * 60,
+        resetAt: resetAt.toIso8601String(),
       );
     }
 
@@ -229,14 +228,15 @@ class EmailValidationService {
           'Rate limit exceeded for IP: $clientIp',
           level: LogLevel.warning,
         );
-        throw RateLimitError(
-          'Too many registration attempts from this IP address. Please try again later.',
-          details: {
-            'ip': clientIp,
-            'maxAttempts': _maxAttemptsPerIp,
-            'windowMinutes': _windowMinutes,
-            'retryAfter': _windowMinutes,
-          },
+        final resetAt = now.add(Duration(minutes: _windowMinutes));
+        throw RateLimitException(
+          message: 'Too many registration attempts from this IP address. Please try again later.',
+          limit: _maxAttemptsPerIp,
+          remaining: 0,
+          current: recentIpAttempts.length,
+          windowSeconds: _windowMinutes * 60,
+          retryAfterSeconds: _windowMinutes * 60,
+          resetAt: resetAt.toIso8601String(),
         );
       }
 

@@ -168,15 +168,56 @@ class ExternalServiceError extends AppException {
 }
 
 /// Rate limit error exception
+/// 
+/// Contains detailed rate limit information for API response:
+/// - limit: Maximum requests allowed
+/// - remaining: Requests remaining (0 when exceeded)
+/// - current: Current request count
+/// - windowSeconds: Time window in seconds
+/// - retryAfterSeconds: Seconds until limit resets
+/// - resetAt: ISO8601 timestamp when limit resets
 class RateLimitError extends AppException {
+  /// Maximum requests allowed in window
+  final int limit;
+  
+  /// Current request count (exceeded limit)
+  final int current;
+  
+  /// Time window in seconds
+  final int windowSeconds;
+  
+  /// Seconds until rate limit resets
+  final int retryAfterSeconds;
+  
+  /// Timestamp when the rate limit window resets
+  final DateTime resetAt;
+
   RateLimitError(
     super.message, {
-    Map<String, dynamic>? details,
+    required this.limit,
+    required this.current,
+    required this.windowSeconds,
+    required this.retryAfterSeconds,
+    required this.resetAt,
+    Map<String, dynamic>? extraDetails,
   }) : super(
           errorType: ErrorType.rateLimit,
           errorCode: 'RATE_LIMIT_EXCEEDED',
-          details: details,
+          details: {
+            'limit': limit,
+            'remaining': 0,
+            'current': current,
+            'windowSeconds': windowSeconds,
+            'retryAfterSeconds': retryAfterSeconds,
+            'resetAt': resetAt.toIso8601String(),
+            if (extraDetails != null) ...extraDetails,
+          },
         );
+  
+  /// Create a user-friendly message with rate limit info
+  String get detailedMessage =>
+      'Rate limit exceeded: $current/$limit requests. '
+      'Try again in $retryAfterSeconds seconds.';
 }
 
 /// Bad request error exception

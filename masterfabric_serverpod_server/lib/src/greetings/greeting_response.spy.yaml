@@ -1,0 +1,20 @@
+### Greeting response with rate limit information
+class: GreetingResponse
+
+fields:
+  ### The greeting message.
+  message: String
+  ### The author of the greeting message.
+  author: String
+  ### The time when the message was created.
+  timestamp: DateTime
+  ### Rate limit - maximum requests allowed in window
+  rateLimitMax: int
+  ### Rate limit - remaining requests in current window
+  rateLimitRemaining: int
+  ### Rate limit - current request count
+  rateLimitCurrent: int
+  ### Rate limit - time window in seconds
+  rateLimitWindowSeconds: int
+  ### Rate limit - seconds until reset (null if no active window)
+  rateLimitResetInSeconds: int?
