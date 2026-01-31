@@ -1,0 +1,9 @@
+class: Permission
+table: permission
+fields:
+  id: int?
+  name: String
+  description: String?
+  resource: String
+  action: String
+  createdAt: DateTime

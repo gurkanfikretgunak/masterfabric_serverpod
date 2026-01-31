@@ -1,0 +1,10 @@
+class: Role
+table: role
+fields:
+  id: int?
+  name: String
+  description: String?
+  permissions: List<String>
+  createdAt: DateTime
+  updatedAt: DateTime
+  isActive: bool

@@ -14,15 +14,31 @@ import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
 import 'package:masterfabric_serverpod_client/src/protocol/app_config/app_config.dart'
     as _i3;
-import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/account_status_response.dart'
     as _i4;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
     as _i5;
-import 'package:masterfabric_serverpod_client/src/protocol/greetings/greeting.dart'
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i6;
-import 'package:masterfabric_serverpod_client/src/protocol/translations/translation_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/password_strength_response.dart'
     as _i7;
-import 'protocol.dart' as _i8;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/role.dart'
+    as _i8;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/permission.dart'
+    as _i9;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/session_info_response.dart'
+    as _i10;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/two_factor_setup_response.dart'
+    as _i11;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user_list_response.dart'
+    as _i12;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user_info_response.dart'
+    as _i13;
+import 'package:masterfabric_serverpod_client/src/protocol/greetings/greeting.dart'
+    as _i14;
+import 'package:masterfabric_serverpod_client/src/protocol/translations/translation_response.dart'
+    as _i15;
+import 'protocol.dart' as _i16;
 
 /// Endpoint for providing app configuration to mobile clients
 ///
@@ -52,15 +68,141 @@ class EndpointAppConfig extends _i1.EndpointRef {
       );
 }
 
+/// Endpoint for account management
+///
+/// Provides endpoints for managing user accounts (deactivate, reactivate, delete).
+/// {@category Endpoint}
+class EndpointAccountManagement extends _i1.EndpointRef {
+  EndpointAccountManagement(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'accountManagement';
+
+  /// Get account status
+  ///
+  /// [session] - Serverpod session
+  /// [userId] - Optional user ID (defaults to current user)
+  ///
+  /// Returns AccountStatusResponse
+  ///
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<_i4.AccountStatusResponse> getAccountStatus({String? userId}) =>
+      caller.callServerEndpoint<_i4.AccountStatusResponse>(
+        'accountManagement',
+        'getAccountStatus',
+        {'userId': userId},
+      );
+
+  /// Deactivate user account
+  ///
+  /// [session] - Serverpod session
+  /// [userId] - Optional user ID (defaults to current user)
+  ///
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<void> deactivateAccount({String? userId}) =>
+      caller.callServerEndpoint<void>(
+        'accountManagement',
+        'deactivateAccount',
+        {'userId': userId},
+      );
+
+  /// Reactivate user account
+  ///
+  /// [session] - Serverpod session
+  /// [userId] - User ID to reactivate
+  ///
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<void> reactivateAccount(String userId) =>
+      caller.callServerEndpoint<void>(
+        'accountManagement',
+        'reactivateAccount',
+        {'userId': userId},
+      );
+
+  /// Delete user account (soft delete)
+  ///
+  /// [session] - Serverpod session
+  /// [confirmation] - Confirmation string (must be "DELETE" to confirm)
+  /// [userId] - Optional user ID (defaults to current user)
+  ///
+  /// Throws ValidationError if confirmation is incorrect
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<void> deleteAccount({
+    required String confirmation,
+    String? userId,
+  }) => caller.callServerEndpoint<void>(
+    'accountManagement',
+    'deleteAccount',
+    {
+      'confirmation': confirmation,
+      'userId': userId,
+    },
+  );
+}
+
+/// Apple Sign-In endpoint
+///
+/// By extending [AppleIdpBaseEndpoint], Apple Sign-In endpoints
+/// are made available on the server and enable the corresponding sign-in widget
+/// on the client.
+///
+/// Apple Sign-In credentials must be configured in the server configuration.
+/// {@category Endpoint}
+class EndpointAppleAuth extends _i5.EndpointAppleIdpBase {
+  EndpointAppleAuth(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'appleAuth';
+
+  /// Signs in a user with their Apple account.
+  ///
+  /// If no user exists yet linked to the Apple-provided identifier, a new one
+  /// will be created (without any `Scope`s). Further their provided name and
+  /// email (if any) will be used for the `UserProfile` which will be linked to
+  /// their `AuthUser`.
+  ///
+  /// Returns a session for the user upon successful login.
+  @override
+  _i2.Future<_i6.AuthSuccess> login({
+    required String identityToken,
+    required String authorizationCode,
+    required bool isNativeApplePlatformSignIn,
+    String? firstName,
+    String? lastName,
+  }) => caller.callServerEndpoint<_i6.AuthSuccess>(
+    'appleAuth',
+    'login',
+    {
+      'identityToken': identityToken,
+      'authorizationCode': authorizationCode,
+      'isNativeApplePlatformSignIn': isNativeApplePlatformSignIn,
+      'firstName': firstName,
+      'lastName': lastName,
+    },
+  );
+}
+
+/// Email identity provider endpoint with email validation
+///
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
 /// are made available on the server and enable the corresponding sign-in widget
 /// on the client.
+///
+/// This implementation adds email validation before allowing registration.
 /// {@category Endpoint}
-class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
+class EndpointEmailIdp extends _i5.EndpointEmailIdpBase {
   EndpointEmailIdp(_i1.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'emailIdp';
+
+  @override
+  _i2.Future<_i1.UuidValue> startRegistration({required String email}) =>
+      caller.callServerEndpoint<_i1.UuidValue>(
+        'emailIdp',
+        'startRegistration',
+        {'email': email},
+      );
 
   /// Logs in the user and returns a new session.
   ///
@@ -72,10 +214,10 @@ class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
   ///
   /// Throws an [AuthUserBlockedException] if the auth user is blocked.
   @override
-  _i2.Future<_i5.AuthSuccess> login({
+  _i2.Future<_i6.AuthSuccess> login({
     required String email,
     required String password,
-  }) => caller.callServerEndpoint<_i5.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i6.AuthSuccess>(
     'emailIdp',
     'login',
     {
@@ -83,24 +225,6 @@ class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
       'password': password,
     },
   );
-
-  /// Starts the registration for a new user account with an email-based login
-  /// associated to it.
-  ///
-  /// Upon successful completion of this method, an email will have been
-  /// sent to [email] with a verification link, which the user must open to
-  /// complete the registration.
-  ///
-  /// Always returns a account request ID, which can be used to complete the
-  /// registration. If the email is already registered, the returned ID will not
-  /// be valid.
-  @override
-  _i2.Future<_i1.UuidValue> startRegistration({required String email}) =>
-      caller.callServerEndpoint<_i1.UuidValue>(
-        'emailIdp',
-        'startRegistration',
-        {'email': email},
-      );
 
   /// Verifies an account request code and returns a token
   /// that can be used to complete the account creation.
@@ -140,10 +264,10 @@ class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
   ///
   /// Returns a session for the newly created user.
   @override
-  _i2.Future<_i5.AuthSuccess> finishRegistration({
+  _i2.Future<_i6.AuthSuccess> finishRegistration({
     required String registrationToken,
     required String password,
-  }) => caller.callServerEndpoint<_i5.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i6.AuthSuccess>(
     'emailIdp',
     'finishRegistration',
     {
@@ -228,10 +352,42 @@ class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
   );
 }
 
+/// Google Sign-In endpoint
+///
+/// By extending [GoogleIdpBaseEndpoint], Google Sign-In endpoints
+/// are made available on the server and enable the corresponding sign-in widget
+/// on the client.
+///
+/// Google OAuth credentials must be configured in the server configuration.
+/// {@category Endpoint}
+class EndpointGoogleAuth extends _i5.EndpointGoogleIdpBase {
+  EndpointGoogleAuth(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'googleAuth';
+
+  /// Validates a Google ID token and either logs in the associated user or
+  /// creates a new user account if the Google account ID is not yet known.
+  ///
+  /// If a new user is created an associated [UserProfile] is also created.
+  @override
+  _i2.Future<_i6.AuthSuccess> login({
+    required String idToken,
+    required String? accessToken,
+  }) => caller.callServerEndpoint<_i6.AuthSuccess>(
+    'googleAuth',
+    'login',
+    {
+      'idToken': idToken,
+      'accessToken': accessToken,
+    },
+  );
+}
+
 /// By extending [RefreshJwtTokensEndpoint], the JWT token refresh endpoint
 /// is made available on the server and enables automatic token refresh on the client.
 /// {@category Endpoint}
-class EndpointJwtRefresh extends _i5.EndpointRefreshJwtTokens {
+class EndpointJwtRefresh extends _i6.EndpointRefreshJwtTokens {
   EndpointJwtRefresh(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -256,14 +412,522 @@ class EndpointJwtRefresh extends _i5.EndpointRefreshJwtTokens {
   /// This endpoint is unauthenticated, meaning the client won't include any
   /// authentication information with the call.
   @override
-  _i2.Future<_i5.AuthSuccess> refreshAccessToken({
+  _i2.Future<_i6.AuthSuccess> refreshAccessToken({
     required String refreshToken,
-  }) => caller.callServerEndpoint<_i5.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i6.AuthSuccess>(
     'jwtRefresh',
     'refreshAccessToken',
     {'refreshToken': refreshToken},
     authenticated: false,
   );
+}
+
+/// Endpoint for password management
+///
+/// Provides endpoints for changing passwords and validating password strength.
+/// {@category Endpoint}
+class EndpointPasswordManagement extends _i1.EndpointRef {
+  EndpointPasswordManagement(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'passwordManagement';
+
+  /// Change user password
+  ///
+  /// [session] - Serverpod session
+  /// [currentPassword] - Current password for verification
+  /// [newPassword] - New password
+  ///
+  /// Throws ValidationError if password validation fails
+  /// Throws AuthenticationError if current password is incorrect
+  _i2.Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) => caller.callServerEndpoint<void>(
+    'passwordManagement',
+    'changePassword',
+    {
+      'currentPassword': currentPassword,
+      'newPassword': newPassword,
+    },
+  );
+
+  /// Validate password strength
+  ///
+  /// [session] - Serverpod session
+  /// [password] - Password to validate
+  ///
+  /// Returns PasswordStrengthResponse with validation result
+  _i2.Future<_i7.PasswordStrengthResponse> validatePasswordStrength({
+    required String password,
+  }) => caller.callServerEndpoint<_i7.PasswordStrengthResponse>(
+    'passwordManagement',
+    'validatePasswordStrength',
+    {'password': password},
+  );
+}
+
+/// Endpoint for RBAC (Role-Based Access Control)
+///
+/// Provides endpoints for managing roles, permissions, and user-role assignments.
+/// {@category Endpoint}
+class EndpointRbac extends _i1.EndpointRef {
+  EndpointRbac(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'rbac';
+
+  /// Get all roles
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Returns list of all active roles
+  _i2.Future<List<_i8.Role>> getRoles() =>
+      caller.callServerEndpoint<List<_i8.Role>>(
+        'rbac',
+        'getRoles',
+        {},
+      );
+
+  /// Get all permissions
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Returns list of all permissions
+  _i2.Future<List<_i9.Permission>> getPermissions() =>
+      caller.callServerEndpoint<List<_i9.Permission>>(
+        'rbac',
+        'getPermissions',
+        {},
+      );
+
+  /// Get user's roles
+  ///
+  /// [session] - Serverpod session
+  /// [userId] - Optional user ID (defaults to current user)
+  ///
+  /// Returns list of role names for the user
+  _i2.Future<List<String>> getUserRoles({String? userId}) =>
+      caller.callServerEndpoint<List<String>>(
+        'rbac',
+        'getUserRoles',
+        {'userId': userId},
+      );
+
+  /// Get user's permissions
+  ///
+  /// [session] - Serverpod session
+  /// [userId] - Optional user ID (defaults to current user)
+  ///
+  /// Returns set of permission names for the user
+  _i2.Future<Set<String>> getUserPermissions({String? userId}) =>
+      caller.callServerEndpoint<Set<String>>(
+        'rbac',
+        'getUserPermissions',
+        {'userId': userId},
+      );
+
+  /// Assign a role to a user
+  ///
+  /// [session] - Serverpod session
+  /// [userId] - User ID
+  /// [roleName] - Role name to assign
+  ///
+  /// Throws NotFoundError if role not found
+  /// Throws ValidationError if user already has the role
+  /// Throws AuthorizationError if current user doesn't have admin permission
+  _i2.Future<void> assignRoleToUser(
+    String userId,
+    String roleName,
+  ) => caller.callServerEndpoint<void>(
+    'rbac',
+    'assignRoleToUser',
+    {
+      'userId': userId,
+      'roleName': roleName,
+    },
+  );
+
+  /// Revoke a role from a user
+  ///
+  /// [session] - Serverpod session
+  /// [userId] - User ID
+  /// [roleName] - Role name to revoke
+  ///
+  /// Throws NotFoundError if role or assignment not found
+  /// Throws AuthorizationError if current user doesn't have admin permission
+  _i2.Future<void> revokeRoleFromUser(
+    String userId,
+    String roleName,
+  ) => caller.callServerEndpoint<void>(
+    'rbac',
+    'revokeRoleFromUser',
+    {
+      'userId': userId,
+      'roleName': roleName,
+    },
+  );
+}
+
+/// Endpoint for session management
+///
+/// Provides endpoints for managing user sessions (list, revoke, etc.).
+/// {@category Endpoint}
+class EndpointSessionManagement extends _i1.EndpointRef {
+  EndpointSessionManagement(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'sessionManagement';
+
+  /// Get all active sessions for the current user
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Returns list of SessionInfoResponse for all active sessions
+  ///
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<List<_i10.SessionInfoResponse>> getActiveSessions() =>
+      caller.callServerEndpoint<List<_i10.SessionInfoResponse>>(
+        'sessionManagement',
+        'getActiveSessions',
+        {},
+      );
+
+  /// Get session details by session ID
+  ///
+  /// [session] - Serverpod session
+  /// [sessionId] - Session ID to retrieve
+  ///
+  /// Returns SessionInfoResponse if found
+  ///
+  /// Throws NotFoundError if session not found
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<_i10.SessionInfoResponse> getSession(String sessionId) =>
+      caller.callServerEndpoint<_i10.SessionInfoResponse>(
+        'sessionManagement',
+        'getSession',
+        {'sessionId': sessionId},
+      );
+
+  /// Revoke a specific session
+  ///
+  /// [session] - Serverpod session
+  /// [sessionId] - Session ID to revoke
+  ///
+  /// Throws NotFoundError if session not found
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<void> revokeSession(String sessionId) =>
+      caller.callServerEndpoint<void>(
+        'sessionManagement',
+        'revokeSession',
+        {'sessionId': sessionId},
+      );
+
+  /// Revoke all sessions except the current one
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<void> revokeAllOtherSessions() => caller.callServerEndpoint<void>(
+    'sessionManagement',
+    'revokeAllOtherSessions',
+    {},
+  );
+
+  /// Revoke all sessions including current
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<void> revokeAllSessions() => caller.callServerEndpoint<void>(
+    'sessionManagement',
+    'revokeAllSessions',
+    {},
+  );
+}
+
+/// Endpoint for two-factor authentication
+///
+/// Provides endpoints for enabling, disabling, and managing 2FA.
+/// {@category Endpoint}
+class EndpointTwoFactor extends _i1.EndpointRef {
+  EndpointTwoFactor(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'twoFactor';
+
+  /// Check if 2FA is enabled
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Returns true if 2FA is enabled
+  _i2.Future<bool> isTwoFactorEnabled() => caller.callServerEndpoint<bool>(
+    'twoFactor',
+    'isTwoFactorEnabled',
+    {},
+  );
+
+  /// Start 2FA setup (generate secret and QR code)
+  ///
+  /// [session] - Serverpod session
+  /// [email] - User email (for QR code label)
+  ///
+  /// Returns TwoFactorSetupResponse with secret, QR code URI, and backup codes
+  ///
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<_i11.TwoFactorSetupResponse> startSetup(String email) =>
+      caller.callServerEndpoint<_i11.TwoFactorSetupResponse>(
+        'twoFactor',
+        'startSetup',
+        {'email': email},
+      );
+
+  /// Verify TOTP code and complete 2FA setup
+  ///
+  /// [session] - Serverpod session
+  /// [code] - TOTP code from authenticator app
+  ///
+  /// Throws ValidationError if code is invalid
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<void> verifyAndEnable(String code) =>
+      caller.callServerEndpoint<void>(
+        'twoFactor',
+        'verifyAndEnable',
+        {'code': code},
+      );
+
+  /// Disable 2FA
+  ///
+  /// [session] - Serverpod session
+  /// [verificationCode] - TOTP code or backup code for verification
+  ///
+  /// Throws ValidationError if verification code is invalid
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<void> disable(String verificationCode) =>
+      caller.callServerEndpoint<void>(
+        'twoFactor',
+        'disable',
+        {'verificationCode': verificationCode},
+      );
+
+  /// Get backup codes
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Returns list of backup codes
+  ///
+  /// Throws NotFoundError if 2FA is not enabled
+  _i2.Future<List<String>> getBackupCodes() =>
+      caller.callServerEndpoint<List<String>>(
+        'twoFactor',
+        'getBackupCodes',
+        {},
+      );
+
+  /// Regenerate backup codes
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Returns new list of backup codes
+  ///
+  /// Throws NotFoundError if 2FA is not enabled
+  _i2.Future<List<String>> regenerateBackupCodes() =>
+      caller.callServerEndpoint<List<String>>(
+        'twoFactor',
+        'regenerateBackupCodes',
+        {},
+      );
+}
+
+/// Endpoint for user management (admin features)
+///
+/// Provides endpoints for listing, viewing, blocking, and managing users.
+/// {@category Endpoint}
+class EndpointUserManagement extends _i1.EndpointRef {
+  EndpointUserManagement(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'userManagement';
+
+  /// List users with pagination and filtering
+  ///
+  /// [session] - Serverpod session
+  /// [page] - Page number (1-based)
+  /// [pageSize] - Number of items per page
+  /// [search] - Optional search term
+  /// [blocked] - Optional filter by blocked status
+  ///
+  /// Returns UserListResponse with paginated users
+  ///
+  /// Throws AuthorizationError if user doesn't have admin permission
+  _i2.Future<_i12.UserListResponse> listUsers({
+    required int page,
+    required int pageSize,
+    String? search,
+    bool? blocked,
+  }) => caller.callServerEndpoint<_i12.UserListResponse>(
+    'userManagement',
+    'listUsers',
+    {
+      'page': page,
+      'pageSize': pageSize,
+      'search': search,
+      'blocked': blocked,
+    },
+  );
+
+  /// Get user by ID
+  ///
+  /// [session] - Serverpod session
+  /// [userId] - User ID
+  ///
+  /// Returns UserInfoResponse
+  ///
+  /// Throws NotFoundError if user not found
+  /// Throws AuthorizationError if user doesn't have admin permission
+  _i2.Future<_i13.UserInfoResponse> getUser(String userId) =>
+      caller.callServerEndpoint<_i13.UserInfoResponse>(
+        'userManagement',
+        'getUser',
+        {'userId': userId},
+      );
+
+  /// Block or unblock a user
+  ///
+  /// [session] - Serverpod session
+  /// [userId] - User ID
+  /// [blocked] - Whether to block (true) or unblock (false)
+  ///
+  /// Throws NotFoundError if user not found
+  /// Throws AuthorizationError if user doesn't have admin permission
+  _i2.Future<void> blockUser(
+    String userId,
+    bool blocked,
+  ) => caller.callServerEndpoint<void>(
+    'userManagement',
+    'blockUser',
+    {
+      'userId': userId,
+      'blocked': blocked,
+    },
+  );
+
+  /// Delete a user (soft delete)
+  ///
+  /// [session] - Serverpod session
+  /// [userId] - User ID to delete
+  ///
+  /// Throws NotFoundError if user not found
+  /// Throws AuthorizationError if user doesn't have admin permission
+  _i2.Future<void> deleteUser(String userId) => caller.callServerEndpoint<void>(
+    'userManagement',
+    'deleteUser',
+    {'userId': userId},
+  );
+
+  /// Update user roles
+  ///
+  /// [session] - Serverpod session
+  /// [userId] - User ID
+  /// [roleNames] - List of role names to assign
+  ///
+  /// Throws NotFoundError if user or role not found
+  /// Throws AuthorizationError if user doesn't have admin permission
+  _i2.Future<void> updateUserRoles(
+    String userId,
+    List<String> roleNames,
+  ) => caller.callServerEndpoint<void>(
+    'userManagement',
+    'updateUserRoles',
+    {
+      'userId': userId,
+      'roleNames': roleNames,
+    },
+  );
+}
+
+/// Endpoint for user profile management
+///
+/// Provides endpoints for getting, updating, and managing user profiles.
+/// {@category Endpoint}
+class EndpointUserProfile extends _i1.EndpointRef {
+  EndpointUserProfile(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'userProfile';
+
+  /// Get current user's profile
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Returns UserProfileModel for the authenticated user
+  ///
+  /// Throws AuthenticationError if not authenticated
+  /// Throws NotFoundError if profile not found
+  _i2.Future<_i6.UserProfileModel> getProfile() =>
+      caller.callServerEndpoint<_i6.UserProfileModel>(
+        'userProfile',
+        'getProfile',
+        {},
+      );
+
+  /// Update user profile
+  ///
+  /// [session] - Serverpod session
+  /// [fullName] - Optional full name
+  /// [userName] - Optional username
+  ///
+  /// Returns updated UserProfileModel
+  ///
+  /// Throws ValidationError if validation fails
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<_i6.UserProfileModel> updateProfile({
+    String? fullName,
+    String? userName,
+  }) => caller.callServerEndpoint<_i6.UserProfileModel>(
+    'userProfile',
+    'updateProfile',
+    {
+      'fullName': fullName,
+      'userName': userName,
+    },
+  );
+
+  /// Upload profile image
+  ///
+  /// [session] - Serverpod session
+  /// [image] - Image file bytes
+  /// [fileName] - Original file name
+  ///
+  /// Returns updated UserProfileModel with image URL
+  ///
+  /// Throws ValidationError if image is invalid
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<_i6.UserProfileModel> uploadProfileImage(
+    List<int> image,
+    String fileName,
+  ) => caller.callServerEndpoint<_i6.UserProfileModel>(
+    'userProfile',
+    'uploadProfileImage',
+    {
+      'image': image,
+      'fileName': fileName,
+    },
+  );
+
+  /// Delete profile image
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Returns updated UserProfileModel without image
+  ///
+  /// Throws AuthenticationError if not authenticated
+  _i2.Future<_i6.UserProfileModel> deleteProfileImage() =>
+      caller.callServerEndpoint<_i6.UserProfileModel>(
+        'userProfile',
+        'deleteProfileImage',
+        {},
+      );
 }
 
 /// This is an example endpoint that returns a greeting message through
@@ -276,8 +940,8 @@ class EndpointGreeting extends _i1.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i2.Future<_i6.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i6.Greeting>(
+  _i2.Future<_i14.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i14.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -305,10 +969,10 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse containing translations in slang JSON format
   ///
   /// Throws InternalServerError if translations cannot be loaded
-  _i2.Future<_i7.TranslationResponse> getTranslations({
+  _i2.Future<_i15.TranslationResponse> getTranslations({
     String? locale,
     String? namespace,
-  }) => caller.callServerEndpoint<_i7.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i15.TranslationResponse>(
     'translation',
     'getTranslations',
     {
@@ -328,12 +992,12 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse with saved translations
   ///
   /// Note: This should be protected by authentication/authorization in production
-  _i2.Future<_i7.TranslationResponse> saveTranslations(
+  _i2.Future<_i15.TranslationResponse> saveTranslations(
     String locale,
     Map<String, dynamic> translations, {
     String? namespace,
     required bool isActive,
-  }) => caller.callServerEndpoint<_i7.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i15.TranslationResponse>(
     'translation',
     'saveTranslations',
     {
@@ -347,13 +1011,13 @@ class EndpointTranslation extends _i1.EndpointRef {
 
 class Modules {
   Modules(Client client) {
-    serverpod_auth_idp = _i4.Caller(client);
-    serverpod_auth_core = _i5.Caller(client);
+    serverpod_auth_idp = _i5.Caller(client);
+    serverpod_auth_core = _i6.Caller(client);
   }
 
-  late final _i4.Caller serverpod_auth_idp;
+  late final _i5.Caller serverpod_auth_idp;
 
-  late final _i5.Caller serverpod_auth_core;
+  late final _i6.Caller serverpod_auth_core;
 }
 
 class Client extends _i1.ServerpodClientShared {
@@ -376,7 +1040,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i8.Protocol(),
+         _i16.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -386,8 +1050,17 @@ class Client extends _i1.ServerpodClientShared {
              disconnectStreamsOnLostInternetConnection,
        ) {
     appConfig = EndpointAppConfig(this);
+    accountManagement = EndpointAccountManagement(this);
+    appleAuth = EndpointAppleAuth(this);
     emailIdp = EndpointEmailIdp(this);
+    googleAuth = EndpointGoogleAuth(this);
     jwtRefresh = EndpointJwtRefresh(this);
+    passwordManagement = EndpointPasswordManagement(this);
+    rbac = EndpointRbac(this);
+    sessionManagement = EndpointSessionManagement(this);
+    twoFactor = EndpointTwoFactor(this);
+    userManagement = EndpointUserManagement(this);
+    userProfile = EndpointUserProfile(this);
     greeting = EndpointGreeting(this);
     translation = EndpointTranslation(this);
     modules = Modules(this);
@@ -395,9 +1068,27 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointAppConfig appConfig;
 
+  late final EndpointAccountManagement accountManagement;
+
+  late final EndpointAppleAuth appleAuth;
+
   late final EndpointEmailIdp emailIdp;
 
+  late final EndpointGoogleAuth googleAuth;
+
   late final EndpointJwtRefresh jwtRefresh;
+
+  late final EndpointPasswordManagement passwordManagement;
+
+  late final EndpointRbac rbac;
+
+  late final EndpointSessionManagement sessionManagement;
+
+  late final EndpointTwoFactor twoFactor;
+
+  late final EndpointUserManagement userManagement;
+
+  late final EndpointUserProfile userProfile;
 
   late final EndpointGreeting greeting;
 
@@ -408,8 +1099,17 @@ class Client extends _i1.ServerpodClientShared {
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
     'appConfig': appConfig,
+    'accountManagement': accountManagement,
+    'appleAuth': appleAuth,
     'emailIdp': emailIdp,
+    'googleAuth': googleAuth,
     'jwtRefresh': jwtRefresh,
+    'passwordManagement': passwordManagement,
+    'rbac': rbac,
+    'sessionManagement': sessionManagement,
+    'twoFactor': twoFactor,
+    'userManagement': userManagement,
+    'userProfile': userProfile,
     'greeting': greeting,
     'translation': translation,
   };

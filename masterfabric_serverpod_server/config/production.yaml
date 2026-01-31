@@ -81,6 +81,34 @@ integrations:
     token: "" # Your Mixpanel token (store in passwords.yaml for production)
     projectId: "" # Your Mixpanel project ID
     # Additional Mixpanel config can be added here
+  
+  email:
+    enabled: false  # Set to true when SMTP is configured
+    smtp:
+      host: ""  # e.g., smtp.gmail.com
+      port: 587
+      username: ""  # SMTP username (store in passwords.yaml)
+      password: ""  # SMTP password (store in passwords.yaml)
+      encryption: "tls"  # tls, ssl, or none
+      fromAddress: ""  # Sender email address
+      fromName: "MasterFabric"  # Sender name
+
+# Email validation configuration
+emailValidation:
+  enabled: true
+  domainWhitelist: []  # Empty = allow all, or ["@company.com", "@partner.com"]
+  domainBlacklist: 
+    - "@tempmail.com"
+    - "@10minutemail.com"
+    - "@guerrillamail.com"
+    - "@mailinator.com"
+    - "@throwaway.email"
+  emailBlacklist: []  # Specific emails to block
+  rateLimiting:
+    enabled: true
+    maxAttemptsPerEmail: 5  # Max registration attempts per email
+    maxAttemptsPerIp: 10  # Max registration attempts per IP
+    windowMinutes: 60  # Time window in minutes
 
 # Session management configuration
 session:
@@ -91,3 +119,27 @@ session:
 scheduling:
   enabled: true # Enable scheduler
   checkInterval: 60 # Check interval in seconds (default: 60 seconds / 1 minute)
+
+# Authentication configuration
+auth:
+  passwordPolicy:
+    minLength: 8
+    requireUppercase: true
+    requireLowercase: true
+    requireNumbers: true
+    requireSpecialChars: true
+    preventReuse: true
+    maxPasswordAge: 90  # days
+  
+  session:
+    defaultTtl: 1800  # seconds (30 minutes)
+    maxSessionsPerUser: 5
+    allowConcurrentSessions: true
+  
+  twoFactor:
+    enabled: true
+    required: false  # Can be required for admins
+  
+  accountVerification:
+    emailVerificationRequired: true
+    phoneVerificationRequired: false

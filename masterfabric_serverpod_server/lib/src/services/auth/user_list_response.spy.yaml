@@ -1,0 +1,6 @@
+class: UserListResponse
+fields:
+  users: List<UserInfoResponse>
+  total: int
+  page: int
+  pageSize: int

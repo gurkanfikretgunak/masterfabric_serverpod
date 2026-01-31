@@ -1,4 +1,5 @@
 import 'base_integration.dart';
+import 'email_integration.dart';
 import 'firebase_integration.dart';
 import 'sentry_integration.dart';
 import 'mixpanel_integration.dart';
@@ -66,6 +67,29 @@ class IntegrationManager {
         _integrations.add(mixpanel);
       }
     }
+
+    // Initialize Email
+    if (integrationsConfig.containsKey('email')) {
+      final emailConfig = integrationsConfig['email'] as Map<String, dynamic>;
+      final smtpConfig = emailConfig['smtp'] as Map<String, dynamic>?;
+      
+      final email = EmailIntegration(
+        enabled: emailConfig['enabled'] as bool? ?? false,
+        smtpHost: smtpConfig?['host'] as String?,
+        smtpPort: smtpConfig?['port'] as int?,
+        smtpUsername: smtpConfig?['username'] as String?,
+        smtpPassword: smtpConfig?['password'] as String?,
+        encryption: smtpConfig?['encryption'] as String?,
+        fromAddress: smtpConfig?['fromAddress'] as String?,
+        fromName: smtpConfig?['fromName'] as String?,
+        additionalConfig: emailConfig,
+      );
+      
+      if (email.enabled) {
+        await email.initialize();
+        _integrations.add(email);
+      }
+    }
   }
 
   /// Get an integration by name
@@ -91,6 +115,9 @@ class IntegrationManager {
 
   /// Get Mixpanel integration
   MixpanelIntegration? get mixpanel => getIntegration<MixpanelIntegration>('mixpanel');
+
+  /// Get Email integration
+  EmailIntegration? get email => getIntegration<EmailIntegration>('email');
 
   /// Get all integrations
   List<BaseIntegration> getAllIntegrations() {

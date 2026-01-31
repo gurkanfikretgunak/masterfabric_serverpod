@@ -1,0 +1,8 @@
+class: UserRole
+table: user_role
+fields:
+  id: int?
+  userId: String
+  roleId: int
+  assignedAt: DateTime
+  assignedBy: String?

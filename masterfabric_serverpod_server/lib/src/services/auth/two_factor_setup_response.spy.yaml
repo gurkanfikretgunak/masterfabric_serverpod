@@ -1,0 +1,5 @@
+class: TwoFactorSetupResponse
+fields:
+  secret: String
+  qrCodeUri: String
+  backupCodes: List<String>

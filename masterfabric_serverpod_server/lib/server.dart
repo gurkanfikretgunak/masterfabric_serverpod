@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:serverpod/serverpod.dart';
+import 'package:yaml/yaml.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:serverpod_auth_idp_server/providers/email.dart';
 
@@ -12,11 +13,16 @@ import 'src/core/integrations/integration_manager.dart';
 import 'src/core/health/health_check_handler.dart';
 import 'src/core/scheduling/scheduler_manager.dart';
 import 'src/core/session/session_manager.dart';
+import 'src/services/auth/email_validation_service.dart';
+import 'src/services/auth/email_service.dart';
+import 'src/services/auth/email_idp_endpoint.dart';
 
 /// Global instances for core components
 IntegrationManager? _integrationManager;
 SessionManager? _sessionManager;
 SchedulerManager? _schedulerManager;
+EmailValidationService? _emailValidationService;
+EmailService? _emailService;
 
 /// The starting point of the Serverpod server.
 void run(List<String> args) async {
@@ -51,6 +57,9 @@ void run(List<String> args) async {
 
   // Initialize core components
   await _initializeCoreComponents(pod);
+
+  // Set email validation service on EmailIdpEndpoint after endpoints are initialized
+  _setEmailValidationServiceOnEndpoint(pod);
 
   // Setup a default page at the web root.
   // These are used by the default page.
@@ -103,31 +112,58 @@ Future<void> _initializeCoreComponents(Serverpod pod) async {
   try {
     // Load config from YAML - Serverpod loads config automatically
     // We'll initialize integrations based on environment variables or config files
-    // For now, integrations are disabled by default in config files
-      final sessionFuture = pod.createSession();
-      final session = await sessionFuture;
-      try {
-        // Config is accessed via pod.config, but custom sections need to be read from YAML
-        // For now, integrations will be initialized as empty (all disabled)
-        // Users can enable them by setting enabled: true in config files
-        await _integrationManager!.initializeFromConfig({});
-        
-        final enabledIntegrations = _integrationManager!.getEnabledIntegrations();
-        if (enabledIntegrations.isNotEmpty) {
-          session.log('Initialized integrations: ${enabledIntegrations.map((i) => i.name).join(", ")}');
-        }
-      } finally {
-        await session.close();
+    final sessionFuture = pod.createSession();
+    final session = await sessionFuture;
+    try {
+      // Read config from pod.config (Serverpod handles YAML parsing)
+      // Custom sections like 'integrations' and 'emailValidation' are available
+      final config = _readConfigFromPod(pod);
+      
+      // Initialize integrations
+      await _integrationManager!.initializeFromConfig(config);
+      
+      final enabledIntegrations = _integrationManager!.getEnabledIntegrations();
+      if (enabledIntegrations.isNotEmpty) {
+        session.log('Initialized integrations: ${enabledIntegrations.map((i) => i.name).join(", ")}');
       }
-    } catch (e, stackTrace) {
-      final sessionFuture = pod.createSession();
-      final session = await sessionFuture;
-      try {
-        session.log('Failed to initialize integrations: $e', level: LogLevel.error, exception: e is Exception ? e : Exception(e.toString()), stackTrace: stackTrace);
-      } finally {
-        await session.close();
+
+      // Initialize Email Validation Service
+      final emailValidationConfig = config['emailValidation'] as Map<String, dynamic>?;
+      if (emailValidationConfig != null) {
+        final rateLimitingConfig = emailValidationConfig['rateLimiting'] as Map<String, dynamic>?;
+        _emailValidationService = EmailValidationService(
+          enabled: emailValidationConfig['enabled'] as bool? ?? true,
+          domainWhitelist: (emailValidationConfig['domainWhitelist'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList(),
+          domainBlacklist: (emailValidationConfig['domainBlacklist'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList(),
+          emailBlacklist: (emailValidationConfig['emailBlacklist'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList(),
+          rateLimitingEnabled: rateLimitingConfig?['enabled'] as bool? ?? true,
+          maxAttemptsPerEmail: rateLimitingConfig?['maxAttemptsPerEmail'] as int? ?? 5,
+          maxAttemptsPerIp: rateLimitingConfig?['maxAttemptsPerIp'] as int? ?? 10,
+          windowMinutes: rateLimitingConfig?['windowMinutes'] as int? ?? 60,
+        );
+        session.log('Email validation service initialized', level: LogLevel.info);
       }
+
+      // Initialize Email Service
+      _emailService = EmailService(_integrationManager);
+    } finally {
+      await session.close();
     }
+  } catch (e, stackTrace) {
+    final sessionFuture = pod.createSession();
+    final session = await sessionFuture;
+    try {
+      session.log('Failed to initialize integrations: $e', level: LogLevel.error, exception: e is Exception ? e : Exception(e.toString()), stackTrace: stackTrace);
+    } finally {
+      await session.close();
+    }
+  }
 
   // Initialize Scheduler Manager
   // Scheduler is enabled by default, can be disabled via config
@@ -148,6 +184,24 @@ Future<void> _initializeCoreComponents(Serverpod pod) async {
   _schedulerManager!.start();
 }
 
+/// Set email validation service on EmailIdpEndpoint
+void _setEmailValidationServiceOnEndpoint(Serverpod pod) {
+  try {
+    // Access endpoint through Endpoints class
+    final endpoints = pod.endpoints;
+    final emailIdpConnector = endpoints.connectors['emailIdp'];
+    if (emailIdpConnector != null) {
+      final emailIdpEndpoint = emailIdpConnector.endpoint;
+      if (emailIdpEndpoint is EmailIdpEndpoint && _emailValidationService != null) {
+        emailIdpEndpoint.setEmailValidationService(_emailValidationService);
+      }
+    }
+  } catch (e) {
+    // Endpoint might not be available yet, this is okay
+    // The endpoint will work without validation if not set
+  }
+}
+
 /// Cleanup core components on server shutdown
 Future<void> _cleanupCoreComponents() async {
   // Stop scheduler
@@ -157,6 +211,55 @@ Future<void> _cleanupCoreComponents() async {
   await _integrationManager?.disposeAll();
 }
 
+/// Read configuration from YAML config file
+/// 
+/// Reads custom configuration sections (integrations, emailValidation) from config files
+Map<String, dynamic> _readConfigFromPod(Serverpod pod) {
+  try {
+    // Determine config file path based on environment
+    final environment = Platform.environment['SERVERPOD_ENVIRONMENT'] ?? 'development';
+    final configPath = 'config/$environment.yaml';
+    
+    final configFile = File(configPath);
+    if (!configFile.existsSync()) {
+      // Fallback to development.yaml if environment-specific file doesn't exist
+      final fallbackPath = 'config/development.yaml';
+      final fallbackFile = File(fallbackPath);
+      if (!fallbackFile.existsSync()) {
+        return {};
+      }
+      final content = fallbackFile.readAsStringSync();
+      final yaml = loadYaml(content) as Map;
+      return _yamlToMap(yaml);
+    }
+
+    final content = configFile.readAsStringSync();
+    final yaml = loadYaml(content) as Map;
+    return _yamlToMap(yaml);
+  } catch (e) {
+    // If config reading fails, return empty map (components will use defaults)
+    return {};
+  }
+}
+
+/// Convert YAML map to Dart Map<String, dynamic>
+Map<String, dynamic> _yamlToMap(Map yaml) {
+  final result = <String, dynamic>{};
+  for (final entry in yaml.entries) {
+    final key = entry.key.toString();
+    final value = entry.value;
+    
+    if (value is Map) {
+      result[key] = _yamlToMap(value);
+    } else if (value is List) {
+      result[key] = value.map((e) => e is Map ? _yamlToMap(e) : e).toList();
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
 void _sendRegistrationCode(
   Session session, {
   required String email,
@@ -164,9 +267,17 @@ void _sendRegistrationCode(
   required String verificationCode,
   required Transaction? transaction,
 }) {
-  // NOTE: Here you call your mail service to send the verification code to
-  // the user. For testing, we will just log the verification code.
-  session.log('[EmailIdp] Registration code ($email): $verificationCode');
+  // Use EmailService to send verification code
+  if (_emailService != null) {
+    _emailService!.sendRegistrationVerificationCode(
+      email: email,
+      verificationCode: verificationCode,
+      session: session,
+    );
+  } else {
+    // Fallback to logging if EmailService is not initialized
+    session.log('[EmailIdp] Registration code ($email): $verificationCode');
+  }
 }
 
 void _sendPasswordResetCode(
@@ -176,7 +287,15 @@ void _sendPasswordResetCode(
   required String verificationCode,
   required Transaction? transaction,
 }) {
-  // NOTE: Here you call your mail service to send the verification code to
-  // the user. For testing, we will just log the verification code.
-  session.log('[EmailIdp] Password reset code ($email): $verificationCode');
+  // Use EmailService to send verification code
+  if (_emailService != null) {
+    _emailService!.sendPasswordResetVerificationCode(
+      email: email,
+      verificationCode: verificationCode,
+      session: session,
+    );
+  } else {
+    // Fallback to logging if EmailService is not initialized
+    session.log('[EmailIdp] Password reset code ($email): $verificationCode');
+  }
 }

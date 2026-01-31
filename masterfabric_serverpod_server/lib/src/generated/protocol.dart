@@ -31,8 +31,25 @@ import 'app_config/system/permissions_configuration.dart' as _i16;
 import 'app_config/system/storage_configuration.dart' as _i17;
 import 'app_config/system/store_url.dart' as _i18;
 import 'greetings/greeting.dart' as _i19;
-import 'translations/translation_entry.dart' as _i20;
-import 'translations/translation_response.dart' as _i21;
+import 'services/auth/account_status_response.dart' as _i20;
+import 'services/auth/auth_audit_log.dart' as _i21;
+import 'services/auth/password_strength_response.dart' as _i22;
+import 'services/auth/permission.dart' as _i23;
+import 'services/auth/role.dart' as _i24;
+import 'services/auth/session_info_response.dart' as _i25;
+import 'services/auth/two_factor_secret.dart' as _i26;
+import 'services/auth/two_factor_setup_response.dart' as _i27;
+import 'services/auth/user_info_response.dart' as _i28;
+import 'services/auth/user_list_response.dart' as _i29;
+import 'services/auth/user_role.dart' as _i30;
+import 'translations/translation_entry.dart' as _i31;
+import 'translations/translation_response.dart' as _i32;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/role.dart'
+    as _i33;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/permission.dart'
+    as _i34;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/session_info_response.dart'
+    as _i35;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -48,6 +65,17 @@ export 'app_config/system/permissions_configuration.dart';
 export 'app_config/system/storage_configuration.dart';
 export 'app_config/system/store_url.dart';
 export 'greetings/greeting.dart';
+export 'services/auth/account_status_response.dart';
+export 'services/auth/auth_audit_log.dart';
+export 'services/auth/password_strength_response.dart';
+export 'services/auth/permission.dart';
+export 'services/auth/role.dart';
+export 'services/auth/session_info_response.dart';
+export 'services/auth/two_factor_secret.dart';
+export 'services/auth/two_factor_setup_response.dart';
+export 'services/auth/user_info_response.dart';
+export 'services/auth/user_list_response.dart';
+export 'services/auth/user_role.dart';
 export 'translations/translation_entry.dart';
 export 'translations/translation_response.dart';
 
@@ -128,6 +156,204 @@ class Protocol extends _i1.SerializationManagerServer {
       managed: true,
     ),
     _i2.TableDefinition(
+      name: 'auth_audit_log',
+      dartName: 'AuthAuditLog',
+      schema: 'public',
+      module: 'masterfabric_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'auth_audit_log_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'eventType',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'eventData',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'ipAddress',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userAgent',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'timestamp',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'auth_audit_log_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'permission',
+      dartName: 'Permission',
+      schema: 'public',
+      module: 'masterfabric_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'permission_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'name',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'description',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'resource',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'action',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'permission_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'role',
+      dartName: 'Role',
+      schema: 'public',
+      module: 'masterfabric_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'role_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'name',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'description',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'permissions',
+          columnType: _i2.ColumnType.json,
+          isNullable: false,
+          dartType: 'List<String>',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'updatedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'isActive',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'role_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
       name: 'translation_entry',
       dartName: 'TranslationEntry',
       schema: 'public',
@@ -187,6 +413,130 @@ class Protocol extends _i1.SerializationManagerServer {
       indexes: [
         _i2.IndexDefinition(
           indexName: 'translation_entry_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'two_factor_secret',
+      dartName: 'TwoFactorSecret',
+      schema: 'public',
+      module: 'masterfabric_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'two_factor_secret_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'secret',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'backupCodes',
+          columnType: _i2.ColumnType.json,
+          isNullable: false,
+          dartType: 'List<String>',
+        ),
+        _i2.ColumnDefinition(
+          name: 'enabled',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'updatedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'two_factor_secret_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'user_role',
+      dartName: 'UserRole',
+      schema: 'public',
+      module: 'masterfabric_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'user_role_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'roleId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'assignedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'assignedBy',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'user_role_pkey',
           tableSpace: null,
           elements: [
             _i2.IndexElementDefinition(
@@ -278,11 +628,44 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i19.Greeting) {
       return _i19.Greeting.fromJson(data) as T;
     }
-    if (t == _i20.TranslationEntry) {
-      return _i20.TranslationEntry.fromJson(data) as T;
+    if (t == _i20.AccountStatusResponse) {
+      return _i20.AccountStatusResponse.fromJson(data) as T;
     }
-    if (t == _i21.TranslationResponse) {
-      return _i21.TranslationResponse.fromJson(data) as T;
+    if (t == _i21.AuthAuditLog) {
+      return _i21.AuthAuditLog.fromJson(data) as T;
+    }
+    if (t == _i22.PasswordStrengthResponse) {
+      return _i22.PasswordStrengthResponse.fromJson(data) as T;
+    }
+    if (t == _i23.Permission) {
+      return _i23.Permission.fromJson(data) as T;
+    }
+    if (t == _i24.Role) {
+      return _i24.Role.fromJson(data) as T;
+    }
+    if (t == _i25.SessionInfoResponse) {
+      return _i25.SessionInfoResponse.fromJson(data) as T;
+    }
+    if (t == _i26.TwoFactorSecret) {
+      return _i26.TwoFactorSecret.fromJson(data) as T;
+    }
+    if (t == _i27.TwoFactorSetupResponse) {
+      return _i27.TwoFactorSetupResponse.fromJson(data) as T;
+    }
+    if (t == _i28.UserInfoResponse) {
+      return _i28.UserInfoResponse.fromJson(data) as T;
+    }
+    if (t == _i29.UserListResponse) {
+      return _i29.UserListResponse.fromJson(data) as T;
+    }
+    if (t == _i30.UserRole) {
+      return _i30.UserRole.fromJson(data) as T;
+    }
+    if (t == _i31.TranslationEntry) {
+      return _i31.TranslationEntry.fromJson(data) as T;
+    }
+    if (t == _i32.TranslationResponse) {
+      return _i32.TranslationResponse.fromJson(data) as T;
     }
     if (t == _i1.getType<_i5.AppConfig?>()) {
       return (data != null ? _i5.AppConfig.fromJson(data) : null) as T;
@@ -344,15 +727,82 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i19.Greeting?>()) {
       return (data != null ? _i19.Greeting.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i20.TranslationEntry?>()) {
-      return (data != null ? _i20.TranslationEntry.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i20.AccountStatusResponse?>()) {
+      return (data != null ? _i20.AccountStatusResponse.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i21.TranslationResponse?>()) {
-      return (data != null ? _i21.TranslationResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i21.AuthAuditLog?>()) {
+      return (data != null ? _i21.AuthAuditLog.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i22.PasswordStrengthResponse?>()) {
+      return (data != null
+              ? _i22.PasswordStrengthResponse.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _i1.getType<_i23.Permission?>()) {
+      return (data != null ? _i23.Permission.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i24.Role?>()) {
+      return (data != null ? _i24.Role.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i25.SessionInfoResponse?>()) {
+      return (data != null ? _i25.SessionInfoResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i26.TwoFactorSecret?>()) {
+      return (data != null ? _i26.TwoFactorSecret.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i27.TwoFactorSetupResponse?>()) {
+      return (data != null ? _i27.TwoFactorSetupResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i28.UserInfoResponse?>()) {
+      return (data != null ? _i28.UserInfoResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i29.UserListResponse?>()) {
+      return (data != null ? _i29.UserListResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i30.UserRole?>()) {
+      return (data != null ? _i30.UserRole.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i31.TranslationEntry?>()) {
+      return (data != null ? _i31.TranslationEntry.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i32.TranslationResponse?>()) {
+      return (data != null ? _i32.TranslationResponse.fromJson(data) : null)
           as T;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == List<_i28.UserInfoResponse>) {
+      return (data as List)
+              .map((e) => deserialize<_i28.UserInfoResponse>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i33.Role>) {
+      return (data as List).map((e) => deserialize<_i33.Role>(e)).toList() as T;
+    }
+    if (t == List<_i34.Permission>) {
+      return (data as List).map((e) => deserialize<_i34.Permission>(e)).toList()
+          as T;
+    }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == Set<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
+    }
+    if (t == List<_i35.SessionInfoResponse>) {
+      return (data as List)
+              .map((e) => deserialize<_i35.SessionInfoResponse>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
     }
     if (t == Map<String, dynamic>) {
       return (data as Map).map(
@@ -389,8 +839,19 @@ class Protocol extends _i1.SerializationManagerServer {
       _i17.StorageConfiguration => 'StorageConfiguration',
       _i18.StoreUrl => 'StoreUrl',
       _i19.Greeting => 'Greeting',
-      _i20.TranslationEntry => 'TranslationEntry',
-      _i21.TranslationResponse => 'TranslationResponse',
+      _i20.AccountStatusResponse => 'AccountStatusResponse',
+      _i21.AuthAuditLog => 'AuthAuditLog',
+      _i22.PasswordStrengthResponse => 'PasswordStrengthResponse',
+      _i23.Permission => 'Permission',
+      _i24.Role => 'Role',
+      _i25.SessionInfoResponse => 'SessionInfoResponse',
+      _i26.TwoFactorSecret => 'TwoFactorSecret',
+      _i27.TwoFactorSetupResponse => 'TwoFactorSetupResponse',
+      _i28.UserInfoResponse => 'UserInfoResponse',
+      _i29.UserListResponse => 'UserListResponse',
+      _i30.UserRole => 'UserRole',
+      _i31.TranslationEntry => 'TranslationEntry',
+      _i32.TranslationResponse => 'TranslationResponse',
       _ => null,
     };
   }
@@ -438,9 +899,31 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'StoreUrl';
       case _i19.Greeting():
         return 'Greeting';
-      case _i20.TranslationEntry():
+      case _i20.AccountStatusResponse():
+        return 'AccountStatusResponse';
+      case _i21.AuthAuditLog():
+        return 'AuthAuditLog';
+      case _i22.PasswordStrengthResponse():
+        return 'PasswordStrengthResponse';
+      case _i23.Permission():
+        return 'Permission';
+      case _i24.Role():
+        return 'Role';
+      case _i25.SessionInfoResponse():
+        return 'SessionInfoResponse';
+      case _i26.TwoFactorSecret():
+        return 'TwoFactorSecret';
+      case _i27.TwoFactorSetupResponse():
+        return 'TwoFactorSetupResponse';
+      case _i28.UserInfoResponse():
+        return 'UserInfoResponse';
+      case _i29.UserListResponse():
+        return 'UserListResponse';
+      case _i30.UserRole():
+        return 'UserRole';
+      case _i31.TranslationEntry():
         return 'TranslationEntry';
-      case _i21.TranslationResponse():
+      case _i32.TranslationResponse():
         return 'TranslationResponse';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -509,11 +992,44 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'Greeting') {
       return deserialize<_i19.Greeting>(data['data']);
     }
+    if (dataClassName == 'AccountStatusResponse') {
+      return deserialize<_i20.AccountStatusResponse>(data['data']);
+    }
+    if (dataClassName == 'AuthAuditLog') {
+      return deserialize<_i21.AuthAuditLog>(data['data']);
+    }
+    if (dataClassName == 'PasswordStrengthResponse') {
+      return deserialize<_i22.PasswordStrengthResponse>(data['data']);
+    }
+    if (dataClassName == 'Permission') {
+      return deserialize<_i23.Permission>(data['data']);
+    }
+    if (dataClassName == 'Role') {
+      return deserialize<_i24.Role>(data['data']);
+    }
+    if (dataClassName == 'SessionInfoResponse') {
+      return deserialize<_i25.SessionInfoResponse>(data['data']);
+    }
+    if (dataClassName == 'TwoFactorSecret') {
+      return deserialize<_i26.TwoFactorSecret>(data['data']);
+    }
+    if (dataClassName == 'TwoFactorSetupResponse') {
+      return deserialize<_i27.TwoFactorSetupResponse>(data['data']);
+    }
+    if (dataClassName == 'UserInfoResponse') {
+      return deserialize<_i28.UserInfoResponse>(data['data']);
+    }
+    if (dataClassName == 'UserListResponse') {
+      return deserialize<_i29.UserListResponse>(data['data']);
+    }
+    if (dataClassName == 'UserRole') {
+      return deserialize<_i30.UserRole>(data['data']);
+    }
     if (dataClassName == 'TranslationEntry') {
-      return deserialize<_i20.TranslationEntry>(data['data']);
+      return deserialize<_i31.TranslationEntry>(data['data']);
     }
     if (dataClassName == 'TranslationResponse') {
-      return deserialize<_i21.TranslationResponse>(data['data']);
+      return deserialize<_i32.TranslationResponse>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -553,8 +1069,18 @@ class Protocol extends _i1.SerializationManagerServer {
     switch (t) {
       case _i6.AppConfigEntry:
         return _i6.AppConfigEntry.t;
-      case _i20.TranslationEntry:
-        return _i20.TranslationEntry.t;
+      case _i21.AuthAuditLog:
+        return _i21.AuthAuditLog.t;
+      case _i23.Permission:
+        return _i23.Permission.t;
+      case _i24.Role:
+        return _i24.Role.t;
+      case _i26.TwoFactorSecret:
+        return _i26.TwoFactorSecret.t;
+      case _i30.UserRole:
+        return _i30.UserRole.t;
+      case _i31.TranslationEntry:
+        return _i31.TranslationEntry.t;
     }
     return null;
   }

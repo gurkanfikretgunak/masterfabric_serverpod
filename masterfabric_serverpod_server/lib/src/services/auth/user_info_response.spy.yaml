@@ -1,0 +1,8 @@
+class: UserInfoResponse
+fields:
+  id: String
+  createdAt: DateTime
+  blocked: bool
+  email: String?
+  fullName: String?
+  userName: String?

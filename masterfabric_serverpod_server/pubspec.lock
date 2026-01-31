@@ -145,6 +145,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.15.0"
+  cron:
+    dependency: "direct main"
+    description:
+      name: cron
+      sha256: "2af3de2cabcc81346c00ff9db06296cdaf37ad17bd6f97fb63777a9ddefcacf3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.2"
   crypto:
     dependency: transitive
     description:
@@ -458,7 +466,7 @@ packages:
     source: hosted
     version: "3.2.3"
   serverpod_auth_core_server:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: serverpod_auth_core_server
       sha256: "58f8551e827688db6061f51cc39b12d81b3e7f74038201888240f533c3a684ea"
@@ -722,7 +730,7 @@ packages:
     source: hosted
     version: "6.6.1"
   yaml:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: yaml
       sha256: b9da305ac7c39faa3f030eccd175340f968459dae4af175130b3fc47e40d76ce

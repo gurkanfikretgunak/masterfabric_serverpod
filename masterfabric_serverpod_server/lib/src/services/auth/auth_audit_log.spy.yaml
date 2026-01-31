@@ -1,0 +1,10 @@
+class: AuthAuditLog
+table: auth_audit_log
+fields:
+  id: int?
+  userId: String?
+  eventType: String
+  eventData: String
+  ipAddress: String?
+  userAgent: String?
+  timestamp: DateTime

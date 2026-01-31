@@ -1,0 +1,7 @@
+class: AccountStatusResponse
+fields:
+  isActive: bool
+  isBlocked: bool
+  isDeleted: bool
+  deletedAt: DateTime?
+  createdAt: DateTime

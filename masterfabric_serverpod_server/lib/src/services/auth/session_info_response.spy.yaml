@@ -1,0 +1,9 @@
+class: SessionInfoResponse
+fields:
+  id: String
+  userId: String
+  createdAt: DateTime
+  lastUsedAt: DateTime
+  expiresAt: DateTime?
+  method: String
+  metadataJson: String?

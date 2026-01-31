@@ -9,11 +9,14 @@ environment:
 dependencies:
   serverpod: 3.2.3
   serverpod_auth_idp_server: 3.2.3
+  serverpod_auth_core_server: 3.2.3
   uuid: ^4.5.1
-  firebase_admin: ^1.0.0  # For Firebase integration
-  sentry: ^7.0.0  # For Sentry integration
-  mixpanel_dart: ^1.0.0  # For Mixpanel integration
+  # firebase_admin: ^1.0.0  # For Firebase integration (uncomment if needed)
+  # sentry: ^7.0.0  # For Sentry integration (uncomment if needed)
+  # mixpanel_dart: ^1.0.0  # For Mixpanel integration (uncomment if needed)
   cron: ^0.6.0  # For cron expression parsing
+  yaml: ^3.1.2  # For reading YAML config files
+  # totp_generator and qr packages removed - 2FA uses custom TOTP implementation
 
 dev_dependencies:
   lints: '>=3.0.0 <7.0.0'

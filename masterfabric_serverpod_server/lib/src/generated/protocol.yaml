@@ -1,15 +1,58 @@
 appConfig:
   - getConfig:
-emailIdp:
+accountManagement:
+  - getAccountStatus:
+  - deactivateAccount:
+  - reactivateAccount:
+  - deleteAccount:
+appleAuth:
   - login:
+emailIdp:
   - startRegistration:
+  - login:
   - verifyRegistrationCode:
   - finishRegistration:
   - startPasswordReset:
   - verifyPasswordResetCode:
   - finishPasswordReset:
+googleAuth:
+  - login:
 jwtRefresh:
   - refreshAccessToken:
+passwordManagement:
+  - changePassword:
+  - validatePasswordStrength:
+rbac:
+  - getRoles:
+  - getPermissions:
+  - getUserRoles:
+  - getUserPermissions:
+  - assignRoleToUser:
+  - revokeRoleFromUser:
+sessionManagement:
+  - getActiveSessions:
+  - getSession:
+  - revokeSession:
+  - revokeAllOtherSessions:
+  - revokeAllSessions:
+twoFactor:
+  - isTwoFactorEnabled:
+  - startSetup:
+  - verifyAndEnable:
+  - disable:
+  - getBackupCodes:
+  - regenerateBackupCodes:
+userManagement:
+  - listUsers:
+  - getUser:
+  - blockUser:
+  - deleteUser:
+  - updateUserRoles:
+userProfile:
+  - getProfile:
+  - updateProfile:
+  - uploadProfileImage:
+  - deleteProfileImage:
 greeting:
   - hello:
 translation:
