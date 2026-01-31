@@ -15,7 +15,19 @@
 
 </div>
 
-A full-stack Flutter application built with Serverpod, featuring app configuration management, authentication, and integrations with Firebase, Sentry, and Mixpanel.
+A production-ready full-stack Flutter application built with Serverpod, featuring rate limiting, multi-level caching, internationalization, app configuration management, authentication, and integrations with Firebase, Sentry, and Mixpanel.
+
+## Highlights
+
+| Feature | Description |
+|---------|-------------|
+| **Rate Limiting** | Distributed rate limiting with Redis, configurable per endpoint |
+| **Multi-Level Caching** | Local, LocalPrio, and Global (Redis) caching strategies |
+| **Internationalization** | Auto-seeding translations from JSON files with runtime locale switching |
+| **Modern Error Handling** | SerializableExceptions with detailed error responses |
+| **Beautiful Flutter UI** | Rate limit banners, countdown timers, loading states |
+| **Authentication** | Email/password auth with JWT tokens and 2FA support |
+| **Integrations** | Firebase, Sentry, Mixpanel (configurable) |
 
 ## Overview
 
@@ -58,15 +70,20 @@ graph LR
     subgraph "Client Layer"
         FlutterApp[Flutter App<br/>Mobile/Web]
         ClientSDK[Serverpod Client SDK]
+        i18nClient[Translation<br/>Service]
+        RateLimitUI[Rate Limit<br/>UI Components]
     end
     
     subgraph "Server Layer"
         ServerpodServer[Serverpod Server]
-        Auth[Authentication<br/>Email/JWT]
-        Endpoints[Endpoints<br/>Greeting, AppConfig]
+        Auth[Authentication<br/>Email/JWT/2FA]
+        Endpoints[Endpoints<br/>Greeting, AppConfig<br/>Translations]
     end
     
     subgraph "Core Services"
+        RateLimitSvc[Rate Limit<br/>Service]
+        TranslationSvc[Translation<br/>Service]
+        CacheSvc[Multi-Level<br/>Cache]
         SessionMgr[Session Manager]
         IntMgr[Integration Manager]
         Scheduler[Scheduler Manager]
@@ -79,14 +96,19 @@ graph LR
     end
     
     subgraph "Infrastructure"
-        PostgreSQL[(PostgreSQL)]
-        Redis[(Redis)]
+        PostgreSQL[(PostgreSQL<br/>Data Storage)]
+        Redis[(Redis<br/>Cache & Rate Limits)]
     end
     
     FlutterApp --> ClientSDK
+    FlutterApp --> i18nClient
+    FlutterApp --> RateLimitUI
     ClientSDK <--> ServerpodServer
     ServerpodServer --> Auth
     ServerpodServer --> Endpoints
+    ServerpodServer --> RateLimitSvc
+    ServerpodServer --> TranslationSvc
+    ServerpodServer --> CacheSvc
     ServerpodServer --> SessionMgr
     ServerpodServer --> IntMgr
     ServerpodServer --> Scheduler
@@ -94,7 +116,9 @@ graph LR
     IntMgr --> Sentry
     IntMgr --> Mixpanel
     ServerpodServer --> PostgreSQL
-    ServerpodServer --> Redis
+    CacheSvc --> Redis
+    RateLimitSvc --> Redis
+    TranslationSvc --> Redis
 ```
 
 ## Prerequisites
@@ -191,21 +215,43 @@ flutter run
 
 ### Server (`masterfabric_serverpod_server`)
 
+```
+lib/src/
+├── core/
+│   ├── errors/           # Custom error types (ValidationError, etc.)
+│   ├── exceptions/       # SerializableExceptions (RateLimitException)
+│   ├── integrations/     # Firebase, Sentry, Mixpanel
+│   ├── logging/          # Structured logging
+│   ├── rate_limit/       # Rate limiting service
+│   ├── session/          # Session management
+│   └── utils/            # Common utilities
+├── services/
+│   ├── app_config/       # App configuration service
+│   ├── auth/             # Authentication services
+│   ├── greetings/        # Example greeting endpoint
+│   └── translations/     # i18n translation service
+└── generated/            # Serverpod generated code
+```
+
 - **Core Services**:
+  - `RateLimitService`: Distributed rate limiting with Redis
+  - `TranslationService`: i18n with auto-seeding from JSON files
   - `SessionManager`: Manages user sessions with configurable TTL
   - `IntegrationManager`: Manages integrations (Firebase, Sentry, Mixpanel)
   - `SchedulerManager`: Handles cron-based scheduled tasks
-  - `HealthCheckHandler`: Custom health check implementation
 
 - **Features**:
-  - App Configuration: Centralized app settings, feature flags, UI configuration
-  - Authentication: Email/password authentication with JWT tokens
-  - Integrations: Firebase, Sentry, Mixpanel (configurable)
-  - Scheduling: Cron-based job scheduling
+  - **Rate Limiting**: Per-endpoint configurable limits with Redis
+  - **Caching**: LocalPrio → Local → Global (Redis) strategy
+  - **Translations**: Auto-seed from `assets/i18n/*.json`
+  - **App Configuration**: Centralized settings, feature flags
+  - **Authentication**: Email/password with JWT tokens, 2FA
+  - **Integrations**: Firebase, Sentry, Mixpanel (configurable)
 
 - **Endpoints**:
-  - `GreetingEndpoint`: Example greeting endpoint
+  - `GreetingEndpoint`: Example with rate limiting & caching
   - `AppConfigEndpoint`: App configuration management
+  - `TranslationEndpoint`: Translation retrieval & management
 
 ### Client (`masterfabric_serverpod_client`)
 
@@ -213,10 +259,29 @@ Generated client code that provides:
 - Protocol definitions
 - Endpoint clients
 - App configuration models
+- **SerializableExceptions** (RateLimitException, etc.)
 
 ### Flutter App (`masterfabric_serverpod_flutter`)
 
-Flutter application that uses the Serverpod client to communicate with the backend.
+```
+lib/
+├── main.dart             # App entry point with bootstrap
+├── screens/
+│   ├── greetings_screen.dart  # Main screen with rate limit UI
+│   └── sign_in_screen.dart    # Authentication screen
+├── services/
+│   ├── app_config_service.dart    # App config client
+│   └── translation_service.dart   # i18n client with locale switching
+└── widgets/
+    └── rate_limit_banner.dart     # Rate limit UI components
+```
+
+**Features**:
+- Rate limit banner with countdown timer
+- Rate limit indicator showing remaining requests
+- Modern greeting result cards
+- Locale switching at runtime
+- Loading states & error handling
 
 ## Available Scripts
 
@@ -253,6 +318,160 @@ flowchart LR
 4. **Commit changes**: The generated code will be committed to version control
 
 ## Key Features
+
+### Rate Limiting
+
+```mermaid
+graph LR
+    Request[API Request] --> RateLimit{Rate Limit<br/>Check}
+    RateLimit -->|Under Limit| Process[Process Request]
+    RateLimit -->|Exceeded| Error[RateLimitException]
+    
+    Process --> Response[Response with<br/>Rate Limit Info]
+    Error --> Retry[Retry After X seconds]
+    
+    subgraph "Redis Cache"
+        Counter[Request Counter]
+        Window[Time Window]
+    end
+    
+    RateLimit --> Counter
+    RateLimit --> Window
+```
+
+**Server-side rate limiting with Redis:**
+
+```dart
+// Configure rate limit per endpoint
+static const _rateLimitConfig = RateLimitConfig(
+  maxRequests: 20,           // Max requests allowed
+  windowDuration: Duration(minutes: 1),  // Time window
+  keyPrefix: 'greeting',     // Cache key prefix
+);
+
+// Check rate limit (throws RateLimitException if exceeded)
+await RateLimitService.checkLimit(session, _rateLimitConfig, identifier);
+```
+
+**Response includes rate limit info:**
+
+```json
+{
+  "message": "Hello John",
+  "rateLimitMax": 20,
+  "rateLimitRemaining": 15,
+  "rateLimitCurrent": 5,
+  "rateLimitWindowSeconds": 60,
+  "rateLimitResetInSeconds": 45
+}
+```
+
+**When limit is exceeded (SerializableException):**
+
+```json
+{
+  "__className__": "RateLimitException",
+  "message": "Rate limit exceeded. You have made 21 requests...",
+  "limit": 20,
+  "remaining": 0,
+  "current": 21,
+  "retryAfterSeconds": 45,
+  "resetAt": "2026-01-31T15:46:33.000Z"
+}
+```
+
+---
+
+### Multi-Level Caching
+
+```mermaid
+graph TD
+    Request[Request] --> LocalPrio{LocalPrio<br/>Cache}
+    LocalPrio -->|Hit| Return[Return Data]
+    LocalPrio -->|Miss| Local{Local<br/>Cache}
+    Local -->|Hit| Return
+    Local -->|Miss| Global{Global<br/>Redis Cache}
+    Global -->|Hit| Return
+    Global -->|Miss| DB[(Database)]
+    DB --> StoreAll[Store in All Caches]
+    StoreAll --> Return
+```
+
+**Three-tier caching strategy:**
+
+| Cache Level | Storage | Speed | Scope | Use Case |
+|-------------|---------|-------|-------|----------|
+| **LocalPrio** | In-Memory | Fastest | Single Server | Hot data, frequently accessed |
+| **Local** | In-Memory | Fast | Single Server | General caching |
+| **Global** | Redis | Network | Cluster-wide | Distributed data, rate limits |
+
+**Usage example:**
+
+```dart
+// Try all cache levels in order
+var data = await session.caches.localPrio.get<MyModel>(key);
+data ??= await session.caches.local.get<MyModel>(key);
+data ??= await session.caches.global.get<MyModel>(key);
+
+// Store with TTL
+await session.caches.global.put(key, data, lifetime: Duration(hours: 1));
+```
+
+---
+
+### Internationalization (i18n)
+
+```mermaid
+graph LR
+    Assets[assets/i18n/*.json] -->|Server Startup| Seed[Auto-Seed to DB]
+    Seed --> Cache[Cache in Redis]
+    
+    Flutter[Flutter App] -->|Request| Server[Translation Endpoint]
+    Server --> Cache
+    Cache --> Response[Translations JSON]
+    Response --> Flutter
+    
+    Flutter -->|Runtime| Switch[Switch Locale]
+```
+
+**Auto-seeding translations on server startup:**
+
+```
+assets/i18n/
+├── en.i18n.json    # English translations
+├── tr.i18n.json    # Turkish translations
+└── de.i18n.json    # German translations
+```
+
+**Translation file format:**
+
+```json
+{
+  "welcome": {
+    "title": "Welcome, {name}!",
+    "subtitle": "We're glad to have you here"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}
+```
+
+**Flutter usage:**
+
+```dart
+// Load translations on app start
+await TranslationService.loadTranslations(client);
+
+// Use translations with interpolation
+Text(tr('welcome.title', args: {'name': 'John'}));
+
+// Switch locale at runtime
+await TranslationService.changeLocale(client, 'tr');
+```
+
+---
 
 ### App Configuration
 
@@ -328,6 +547,98 @@ graph TD
 ```
 
 Cron-based job scheduling system for background tasks.
+
+---
+
+### Flutter UI Components
+
+**Rate Limit Banner** - Shows when user is rate limited:
+
+```
+┌─────────────────────────────────────────┐
+│ ████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │
+├─────────────────────────────────────────┤
+│ ⏱️  Rate limit reached                  │
+│                                         │
+│ ┌─────────┐ ┌─────────┐ ┌─────────┐    │
+│ │Wait time│ │Requests │ │ Window  │    │
+│ │  45s    │ │ 21/20   │ │  60s    │    │
+│ └─────────┘ └─────────┘ └─────────┘    │
+│                                         │
+│ When ready: [   Try Again   ]           │
+└─────────────────────────────────────────┘
+```
+
+**Rate Limit Indicator** - Shows remaining requests:
+
+```
+Normal:   [🟢 15 left ████████░░]
+Warning:  [🟠  3 left ██████████████░░░]  
+Danger:   [🔴  1 left ███████████████████░]
+```
+
+**Greeting Result Card** - Modern response display:
+
+```
+┌─────────────────────────────────────────┐
+│ ✓ Server Response              Just now │
+├─────────────────────────────────────────┤
+│ 💬 Message                              │
+│ ┌─────────────────────────────────────┐ │
+│ │ Hello John                          │ │
+│ └─────────────────────────────────────┘ │
+│                                         │
+│ ┌─────────────┐  ┌─────────────┐       │
+│ │ 👤 Author   │  │ ⏰ Time      │       │
+│ │ Serverpod   │  │ 15:45:30    │       │
+│ └─────────────┘  └─────────────┘       │
+└─────────────────────────────────────────┘
+```
+
+**Features:**
+- Countdown timer with live seconds remaining
+- Color-coded status indicators
+- Loading states with disabled inputs
+- Auto-retry button when countdown finishes
+- Beautiful gradient cards
+
+---
+
+### Error Handling
+
+```mermaid
+graph LR
+    Exception[SerializableException] --> Client[Flutter Client]
+    Client --> Catch[catch RateLimitException]
+    Catch --> UI[Show Error UI]
+    
+    subgraph "Exception Types"
+        RateLimit[RateLimitException]
+        Validation[ValidationError]
+        Auth[AuthenticationError]
+    end
+```
+
+**SerializableExceptions** are properly returned to clients instead of generic "Internal Server Error":
+
+```dart
+// Server throws SerializableException
+throw RateLimitException(
+  message: 'Rate limit exceeded...',
+  limit: 20,
+  current: 21,
+  retryAfterSeconds: 45,
+  ...
+);
+
+// Flutter catches specific exception
+try {
+  await client.greeting.hello(name);
+} on RateLimitException catch (e) {
+  // Show rate limit UI with countdown
+  showRateLimitBanner(e);
+}
+```
 
 ## CI/CD
 
