@@ -29,6 +29,147 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 | **Authentication** | Email/password auth with JWT tokens and 2FA support |
 | **Integrations** | Firebase, Sentry, Mixpanel (configurable) |
 
+## Quick Start
+
+### One Command Development
+
+```bash
+# Full stack (Docker + Server + Flutter)
+./dev.sh
+
+# Server only (Docker + Server)
+./dev-server.sh
+```
+
+This will:
+1. **Check prerequisites** (Docker, Dart, Flutter, Serverpod CLI)
+2. **Start Docker** services (PostgreSQL + Redis)
+3. **Generate** Serverpod code
+4. **Run** the server with clean logs
+5. **Launch** Flutter app (dev.sh only)
+
+### Manual Setup
+
+```bash
+# 1. Start Docker services
+cd masterfabric_serverpod_server
+docker compose up -d
+
+# 2. Install dependencies
+dart pub get
+
+# 3. Generate code
+serverpod generate
+
+# 4. Run server
+dart run bin/main.dart
+
+# 5. Run Flutter (in another terminal)
+cd ../masterfabric_serverpod_flutter
+flutter run
+```
+
+## Development Scripts
+
+| Script | Location | Description |
+|--------|----------|-------------|
+| `dev.sh` | Root | Full stack development (Docker + Server + Flutter) |
+| `dev-server.sh` | Root | Server only development (Docker + Server) |
+| `run_clean.sh` | `server/bin/` | Run server with filtered logs (no stack traces) |
+
+### `./dev.sh` - Full Stack Development
+
+The main development script that sets up everything automatically:
+
+```
+╔═══════════════════════════════════════════════════════════════════════╗
+║   MasterFabric Serverpod                                              ║
+║   Local Development Environment                                        ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+[0] Checking prerequisites...
+  ✓ Docker is installed
+  ✓ Dart: Dart SDK version: 3.8.0
+  ✓ Flutter: Flutter 3.32.0
+  ✓ Serverpod CLI is installed
+
+[1] 🐳 Starting Docker services...
+  ✓ PostgreSQL is ready on port 8090
+  ✓ Redis is ready on port 8091
+
+[2] 🔧 Installing dependencies & generating code...
+  ✓ Serverpod code generated
+
+[3] 🖥 Starting Serverpod server...
+  ✓ Server running at http://localhost:8080
+
+[4] 📱 Starting Flutter app...
+```
+
+**Features:**
+- Automatic prerequisite checking
+- Docker container management (starts if needed, skips if running)
+- Waits for services to be ready before proceeding
+- Clean colored terminal output
+- Graceful shutdown with `Ctrl+C`
+
+### `./dev-server.sh` - Server Only Development
+
+Lightweight script for backend-only development:
+
+```bash
+./dev-server.sh
+```
+
+**Use when:**
+- Working on backend/API changes
+- Testing endpoints with Postman/Insomnia
+- Running integration tests
+- Don't need the Flutter app
+
+### Clean Logs
+
+The scripts filter out noisy Dart async stack traces for cleaner output:
+
+**Before (default Serverpod logs):**
+```
+ERROR          RateLimitException(message: Rate limit exceeded...)
+STACK TRACE    #0      RateLimitService.checkLimit (package:...)
+<asynchronous suspension>
+#1      GreetingEndpoint.hello (package:...)
+<asynchronous suspension>
+```
+
+**After (with dev scripts):**
+```
+⚡ RATE LIMITED │ greeting/hello │ 21/20 requests │ retry in 38s
+ERROR          RateLimitException(message: Rate limit exceeded...)
+```
+
+### Services & Ports
+
+| Service | Port | Description |
+|---------|------|-------------|
+| PostgreSQL | 8090 | Database |
+| Redis | 8091 | Cache & Rate Limiting |
+| API Server | 8080 | Main API endpoint |
+| Insights | 8081 | Serverpod Insights dashboard |
+| Web Server | 8082 | Static files & Flutter web |
+
+### Stopping Services
+
+```bash
+# Stop dev script (Ctrl+C stops server & Flutter)
+# Docker containers keep running for quick restart
+
+# To fully stop Docker:
+cd masterfabric_serverpod_server
+docker compose down
+
+# To stop and remove volumes (fresh start):
+docker compose down -v
+```
+
 ## Overview
 
 This is a monorepo containing three main components:
