@@ -1,0 +1,8 @@
+### Request for profile update with verification
+class: ProfileUpdateRequest
+fields:
+  verificationCode: String
+  fullName: String?
+  userName: String?
+  birthDate: DateTime?
+  gender: Gender?

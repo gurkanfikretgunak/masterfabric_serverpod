@@ -147,3 +147,13 @@ auth:
   accountVerification:
     emailVerificationRequired: true
     phoneVerificationRequired: false
+  
+  # Verification code (OTP) configuration
+  verificationCode:
+    codeLength: 6  # Length of verification code
+    expirationMinutes: 5  # Code expires after 5 minutes
+    resendCooldownSeconds: 30  # Wait time before requesting new code
+    secretSalt: "staging-verification-salt-change-in-production"  # Secret for hashing
+    useAlphanumeric: true  # Test alphanumeric codes in staging
+    maxAttempts: 5  # Max verification attempts before lockout
+    lockoutMinutes: 15  # Lockout duration after max attempts

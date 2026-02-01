@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:masterfabric_serverpod_client/masterfabric_serverpod_client.dart';
 
 /// A banner widget that displays rate limit information and countdown
@@ -119,7 +120,7 @@ class _RateLimitBannerState extends State<RateLimitBanner> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
-                        _canRetry ? Icons.check_circle : Icons.timer,
+                        _canRetry ? LucideIcons.circleCheck : LucideIcons.timer,
                         color: _canRetry ? Colors.green : Colors.orange.shade700,
                         size: 24,
                       ),
@@ -154,7 +155,7 @@ class _RateLimitBannerState extends State<RateLimitBanner> {
                     ),
                     if (widget.onDismiss != null)
                       IconButton(
-                        icon: const Icon(Icons.close, size: 20),
+                        icon: const Icon(LucideIcons.x, size: 20),
                         onPressed: widget.onDismiss,
                         color: Colors.grey.shade500,
                       ),
@@ -178,7 +179,7 @@ class _RateLimitBannerState extends State<RateLimitBanner> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         _StatItem(
-                          icon: Icons.access_time,
+                          icon: LucideIcons.clock,
                           label: 'Wait time',
                           value: _formatTime(_secondsRemaining),
                           color: Colors.orange,
@@ -189,7 +190,7 @@ class _RateLimitBannerState extends State<RateLimitBanner> {
                           color: Colors.grey.shade200,
                         ),
                         _StatItem(
-                          icon: Icons.repeat,
+                          icon: LucideIcons.repeat,
                           label: 'Requests',
                           value: '${widget.exception.current}/${widget.exception.limit}',
                           color: Colors.red,
@@ -200,7 +201,7 @@ class _RateLimitBannerState extends State<RateLimitBanner> {
                           color: Colors.grey.shade200,
                         ),
                         _StatItem(
-                          icon: Icons.schedule,
+                          icon: LucideIcons.calendarClock,
                           label: 'Window',
                           value: '${widget.exception.windowSeconds}s',
                           color: Colors.blue,
@@ -217,7 +218,7 @@ class _RateLimitBannerState extends State<RateLimitBanner> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: widget.onRetry,
-                      icon: const Icon(Icons.refresh),
+                      icon: const Icon(LucideIcons.refreshCw),
                       label: const Text('Try Again'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
@@ -314,7 +315,7 @@ class RateLimitIndicator extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            isDanger ? Icons.warning : Icons.speed,
+            isDanger ? LucideIcons.triangleAlert : LucideIcons.gauge,
             size: 16,
             color: getColor(),
           ),

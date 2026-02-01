@@ -142,3 +142,13 @@ auth:
   accountVerification:
     emailVerificationRequired: true
     phoneVerificationRequired: false
+  
+  # Verification code (OTP) configuration
+  verificationCode:
+    codeLength: 6  # Length of verification code (6 digits)
+    expirationMinutes: 5  # Code expires after 5 minutes
+    resendCooldownSeconds: 30  # Wait time before requesting new code
+    secretSalt: "dev-verification-salt-change-in-production"  # Secret for hashing (CHANGE IN PRODUCTION!)
+    useAlphanumeric: false  # true = alphanumeric codes (A3K7NP), false = numeric only (123456)
+    maxAttempts: 5  # Max verification attempts before lockout
+    lockoutMinutes: 15  # Lockout duration after max attempts

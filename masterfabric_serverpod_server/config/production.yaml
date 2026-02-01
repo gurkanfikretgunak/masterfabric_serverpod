@@ -143,3 +143,14 @@ auth:
   accountVerification:
     emailVerificationRequired: true
     phoneVerificationRequired: false
+  
+  # Verification code (OTP) configuration
+  # NOTE: secretSalt is loaded from passwords.yaml (verificationCodeSecretSalt)
+  verificationCode:
+    codeLength: 6  # Length of verification code
+    expirationMinutes: 5  # Code expires after 5 minutes
+    resendCooldownSeconds: 60  # Wait time before requesting new code (longer in production)
+    # secretSalt loaded from passwords.yaml -> verificationCodeSecretSalt
+    useAlphanumeric: true  # More secure alphanumeric codes (A3K7NP)
+    maxAttempts: 3  # Stricter limit in production
+    lockoutMinutes: 30  # Longer lockout in production

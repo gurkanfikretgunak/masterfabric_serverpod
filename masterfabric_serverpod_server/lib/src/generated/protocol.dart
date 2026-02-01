@@ -32,29 +32,37 @@ import 'app_config/system/storage_configuration.dart' as _i17;
 import 'app_config/system/store_url.dart' as _i18;
 import 'core/exceptions/rate_limit_exception.dart' as _i19;
 import 'core/rate_limit/rate_limit_entry.dart' as _i20;
-import 'services/auth/account_status_response.dart' as _i21;
-import 'services/auth/auth_audit_log.dart' as _i22;
-import 'services/auth/password_strength_response.dart' as _i23;
-import 'services/auth/permission.dart' as _i24;
-import 'services/auth/role.dart' as _i25;
-import 'services/auth/session_info_response.dart' as _i26;
-import 'services/auth/two_factor_secret.dart' as _i27;
-import 'services/auth/two_factor_setup_response.dart' as _i28;
-import 'services/auth/user_info_response.dart' as _i29;
-import 'services/auth/user_list_response.dart' as _i30;
-import 'services/auth/user_role.dart' as _i31;
-import 'services/greetings/greeting.dart' as _i32;
-import 'services/greetings/greeting_response.dart' as _i33;
-import 'services/health/health_check_response.dart' as _i34;
-import 'services/health/service_health_info.dart' as _i35;
-import 'services/translations/translation_entry.dart' as _i36;
-import 'services/translations/translation_response.dart' as _i37;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/role.dart'
-    as _i38;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/permission.dart'
-    as _i39;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/session_info_response.dart'
-    as _i40;
+import 'services/auth/core/auth_audit_log.dart' as _i21;
+import 'services/auth/password/password_strength_response.dart' as _i22;
+import 'services/auth/rbac/permission.dart' as _i23;
+import 'services/auth/rbac/role.dart' as _i24;
+import 'services/auth/rbac/user_role.dart' as _i25;
+import 'services/auth/session/session_info_response.dart' as _i26;
+import 'services/auth/two_factor/two_factor_secret.dart' as _i27;
+import 'services/auth/two_factor/two_factor_setup_response.dart' as _i28;
+import 'services/auth/user/account_status_response.dart' as _i29;
+import 'services/auth/user/current_user_response.dart' as _i30;
+import 'services/auth/user/gender.dart' as _i31;
+import 'services/auth/user/profile_update_request.dart' as _i32;
+import 'services/auth/user/user_info_response.dart' as _i33;
+import 'services/auth/user/user_list_response.dart' as _i34;
+import 'services/auth/user/user_profile_extended.dart' as _i35;
+import 'services/auth/verification/verification_code.dart' as _i36;
+import 'services/auth/verification/verification_response.dart' as _i37;
+import 'services/greetings/greeting.dart' as _i38;
+import 'services/greetings/greeting_response.dart' as _i39;
+import 'services/health/health_check_response.dart' as _i40;
+import 'services/health/service_health_info.dart' as _i41;
+import 'services/translations/translation_entry.dart' as _i42;
+import 'services/translations/translation_response.dart' as _i43;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/role.dart'
+    as _i44;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/permission.dart'
+    as _i45;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/session/session_info_response.dart'
+    as _i46;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
+    as _i47;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -71,17 +79,23 @@ export 'app_config/system/storage_configuration.dart';
 export 'app_config/system/store_url.dart';
 export 'core/exceptions/rate_limit_exception.dart';
 export 'core/rate_limit/rate_limit_entry.dart';
-export 'services/auth/account_status_response.dart';
-export 'services/auth/auth_audit_log.dart';
-export 'services/auth/password_strength_response.dart';
-export 'services/auth/permission.dart';
-export 'services/auth/role.dart';
-export 'services/auth/session_info_response.dart';
-export 'services/auth/two_factor_secret.dart';
-export 'services/auth/two_factor_setup_response.dart';
-export 'services/auth/user_info_response.dart';
-export 'services/auth/user_list_response.dart';
-export 'services/auth/user_role.dart';
+export 'services/auth/core/auth_audit_log.dart';
+export 'services/auth/password/password_strength_response.dart';
+export 'services/auth/rbac/permission.dart';
+export 'services/auth/rbac/role.dart';
+export 'services/auth/rbac/user_role.dart';
+export 'services/auth/session/session_info_response.dart';
+export 'services/auth/two_factor/two_factor_secret.dart';
+export 'services/auth/two_factor/two_factor_setup_response.dart';
+export 'services/auth/user/account_status_response.dart';
+export 'services/auth/user/current_user_response.dart';
+export 'services/auth/user/gender.dart';
+export 'services/auth/user/profile_update_request.dart';
+export 'services/auth/user/user_info_response.dart';
+export 'services/auth/user/user_list_response.dart';
+export 'services/auth/user/user_profile_extended.dart';
+export 'services/auth/verification/verification_code.dart';
+export 'services/auth/verification/verification_response.dart';
 export 'services/greetings/greeting.dart';
 export 'services/greetings/greeting_response.dart';
 export 'services/health/health_check_response.dart';
@@ -506,6 +520,69 @@ class Protocol extends _i1.SerializationManagerServer {
       managed: true,
     ),
     _i2.TableDefinition(
+      name: 'user_profile_extended',
+      dartName: 'UserProfileExtended',
+      schema: 'public',
+      module: 'masterfabric_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'user_profile_extended_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'birthDate',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'gender',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'protocol:Gender?',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'user_profile_extended_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'user_profile_extended_user_id_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'userId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
       name: 'user_role',
       dartName: 'UserRole',
       schema: 'public',
@@ -557,6 +634,104 @@ class Protocol extends _i1.SerializationManagerServer {
           type: 'btree',
           isUnique: true,
           isPrimary: true,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'verification_codes',
+      dartName: 'VerificationCode',
+      schema: 'public',
+      module: 'masterfabric_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'verification_codes_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'code',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'purpose',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'expiresAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'used',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'verification_codes_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'verification_codes_user_purpose_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'userId',
+            ),
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'purpose',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'verification_codes_expires_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'expiresAt',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
         ),
       ],
       managed: true,
@@ -641,20 +816,20 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i20.RateLimitEntry) {
       return _i20.RateLimitEntry.fromJson(data) as T;
     }
-    if (t == _i21.AccountStatusResponse) {
-      return _i21.AccountStatusResponse.fromJson(data) as T;
+    if (t == _i21.AuthAuditLog) {
+      return _i21.AuthAuditLog.fromJson(data) as T;
     }
-    if (t == _i22.AuthAuditLog) {
-      return _i22.AuthAuditLog.fromJson(data) as T;
+    if (t == _i22.PasswordStrengthResponse) {
+      return _i22.PasswordStrengthResponse.fromJson(data) as T;
     }
-    if (t == _i23.PasswordStrengthResponse) {
-      return _i23.PasswordStrengthResponse.fromJson(data) as T;
+    if (t == _i23.Permission) {
+      return _i23.Permission.fromJson(data) as T;
     }
-    if (t == _i24.Permission) {
-      return _i24.Permission.fromJson(data) as T;
+    if (t == _i24.Role) {
+      return _i24.Role.fromJson(data) as T;
     }
-    if (t == _i25.Role) {
-      return _i25.Role.fromJson(data) as T;
+    if (t == _i25.UserRole) {
+      return _i25.UserRole.fromJson(data) as T;
     }
     if (t == _i26.SessionInfoResponse) {
       return _i26.SessionInfoResponse.fromJson(data) as T;
@@ -665,32 +840,50 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i28.TwoFactorSetupResponse) {
       return _i28.TwoFactorSetupResponse.fromJson(data) as T;
     }
-    if (t == _i29.UserInfoResponse) {
-      return _i29.UserInfoResponse.fromJson(data) as T;
+    if (t == _i29.AccountStatusResponse) {
+      return _i29.AccountStatusResponse.fromJson(data) as T;
     }
-    if (t == _i30.UserListResponse) {
-      return _i30.UserListResponse.fromJson(data) as T;
+    if (t == _i30.CurrentUserResponse) {
+      return _i30.CurrentUserResponse.fromJson(data) as T;
     }
-    if (t == _i31.UserRole) {
-      return _i31.UserRole.fromJson(data) as T;
+    if (t == _i31.Gender) {
+      return _i31.Gender.fromJson(data) as T;
     }
-    if (t == _i32.Greeting) {
-      return _i32.Greeting.fromJson(data) as T;
+    if (t == _i32.ProfileUpdateRequest) {
+      return _i32.ProfileUpdateRequest.fromJson(data) as T;
     }
-    if (t == _i33.GreetingResponse) {
-      return _i33.GreetingResponse.fromJson(data) as T;
+    if (t == _i33.UserInfoResponse) {
+      return _i33.UserInfoResponse.fromJson(data) as T;
     }
-    if (t == _i34.HealthCheckResponse) {
-      return _i34.HealthCheckResponse.fromJson(data) as T;
+    if (t == _i34.UserListResponse) {
+      return _i34.UserListResponse.fromJson(data) as T;
     }
-    if (t == _i35.ServiceHealthInfo) {
-      return _i35.ServiceHealthInfo.fromJson(data) as T;
+    if (t == _i35.UserProfileExtended) {
+      return _i35.UserProfileExtended.fromJson(data) as T;
     }
-    if (t == _i36.TranslationEntry) {
-      return _i36.TranslationEntry.fromJson(data) as T;
+    if (t == _i36.VerificationCode) {
+      return _i36.VerificationCode.fromJson(data) as T;
     }
-    if (t == _i37.TranslationResponse) {
-      return _i37.TranslationResponse.fromJson(data) as T;
+    if (t == _i37.VerificationResponse) {
+      return _i37.VerificationResponse.fromJson(data) as T;
+    }
+    if (t == _i38.Greeting) {
+      return _i38.Greeting.fromJson(data) as T;
+    }
+    if (t == _i39.GreetingResponse) {
+      return _i39.GreetingResponse.fromJson(data) as T;
+    }
+    if (t == _i40.HealthCheckResponse) {
+      return _i40.HealthCheckResponse.fromJson(data) as T;
+    }
+    if (t == _i41.ServiceHealthInfo) {
+      return _i41.ServiceHealthInfo.fromJson(data) as T;
+    }
+    if (t == _i42.TranslationEntry) {
+      return _i42.TranslationEntry.fromJson(data) as T;
+    }
+    if (t == _i43.TranslationResponse) {
+      return _i43.TranslationResponse.fromJson(data) as T;
     }
     if (t == _i1.getType<_i5.AppConfig?>()) {
       return (data != null ? _i5.AppConfig.fromJson(data) : null) as T;
@@ -756,24 +949,23 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i20.RateLimitEntry?>()) {
       return (data != null ? _i20.RateLimitEntry.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i21.AccountStatusResponse?>()) {
-      return (data != null ? _i21.AccountStatusResponse.fromJson(data) : null)
-          as T;
+    if (t == _i1.getType<_i21.AuthAuditLog?>()) {
+      return (data != null ? _i21.AuthAuditLog.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i22.AuthAuditLog?>()) {
-      return (data != null ? _i22.AuthAuditLog.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i23.PasswordStrengthResponse?>()) {
+    if (t == _i1.getType<_i22.PasswordStrengthResponse?>()) {
       return (data != null
-              ? _i23.PasswordStrengthResponse.fromJson(data)
+              ? _i22.PasswordStrengthResponse.fromJson(data)
               : null)
           as T;
     }
-    if (t == _i1.getType<_i24.Permission?>()) {
-      return (data != null ? _i24.Permission.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i23.Permission?>()) {
+      return (data != null ? _i23.Permission.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i25.Role?>()) {
-      return (data != null ? _i25.Role.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i24.Role?>()) {
+      return (data != null ? _i24.Role.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i25.UserRole?>()) {
+      return (data != null ? _i25.UserRole.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i26.SessionInfoResponse?>()) {
       return (data != null ? _i26.SessionInfoResponse.fromJson(data) : null)
@@ -786,55 +978,78 @@ class Protocol extends _i1.SerializationManagerServer {
       return (data != null ? _i28.TwoFactorSetupResponse.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i29.UserInfoResponse?>()) {
-      return (data != null ? _i29.UserInfoResponse.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i30.UserListResponse?>()) {
-      return (data != null ? _i30.UserListResponse.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i31.UserRole?>()) {
-      return (data != null ? _i31.UserRole.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i32.Greeting?>()) {
-      return (data != null ? _i32.Greeting.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i33.GreetingResponse?>()) {
-      return (data != null ? _i33.GreetingResponse.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i34.HealthCheckResponse?>()) {
-      return (data != null ? _i34.HealthCheckResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i29.AccountStatusResponse?>()) {
+      return (data != null ? _i29.AccountStatusResponse.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i35.ServiceHealthInfo?>()) {
-      return (data != null ? _i35.ServiceHealthInfo.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i30.CurrentUserResponse?>()) {
+      return (data != null ? _i30.CurrentUserResponse.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i36.TranslationEntry?>()) {
-      return (data != null ? _i36.TranslationEntry.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i31.Gender?>()) {
+      return (data != null ? _i31.Gender.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i37.TranslationResponse?>()) {
-      return (data != null ? _i37.TranslationResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i32.ProfileUpdateRequest?>()) {
+      return (data != null ? _i32.ProfileUpdateRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i33.UserInfoResponse?>()) {
+      return (data != null ? _i33.UserInfoResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i34.UserListResponse?>()) {
+      return (data != null ? _i34.UserListResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i35.UserProfileExtended?>()) {
+      return (data != null ? _i35.UserProfileExtended.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i36.VerificationCode?>()) {
+      return (data != null ? _i36.VerificationCode.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i37.VerificationResponse?>()) {
+      return (data != null ? _i37.VerificationResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i38.Greeting?>()) {
+      return (data != null ? _i38.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i39.GreetingResponse?>()) {
+      return (data != null ? _i39.GreetingResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i40.HealthCheckResponse?>()) {
+      return (data != null ? _i40.HealthCheckResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i41.ServiceHealthInfo?>()) {
+      return (data != null ? _i41.ServiceHealthInfo.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i42.TranslationEntry?>()) {
+      return (data != null ? _i42.TranslationEntry.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i43.TranslationResponse?>()) {
+      return (data != null ? _i43.TranslationResponse.fromJson(data) : null)
           as T;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == List<_i29.UserInfoResponse>) {
+    if (t == List<_i33.UserInfoResponse>) {
       return (data as List)
-              .map((e) => deserialize<_i29.UserInfoResponse>(e))
+              .map((e) => deserialize<_i33.UserInfoResponse>(e))
               .toList()
           as T;
     }
-    if (t == List<_i35.ServiceHealthInfo>) {
+    if (t == List<_i41.ServiceHealthInfo>) {
       return (data as List)
-              .map((e) => deserialize<_i35.ServiceHealthInfo>(e))
+              .map((e) => deserialize<_i41.ServiceHealthInfo>(e))
               .toList()
           as T;
     }
-    if (t == List<_i38.Role>) {
-      return (data as List).map((e) => deserialize<_i38.Role>(e)).toList() as T;
+    if (t == List<_i44.Role>) {
+      return (data as List).map((e) => deserialize<_i44.Role>(e)).toList() as T;
     }
-    if (t == List<_i39.Permission>) {
-      return (data as List).map((e) => deserialize<_i39.Permission>(e)).toList()
+    if (t == List<_i45.Permission>) {
+      return (data as List).map((e) => deserialize<_i45.Permission>(e)).toList()
           as T;
     }
     if (t == List<String>) {
@@ -843,10 +1058,14 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == Set<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
     }
-    if (t == List<_i40.SessionInfoResponse>) {
+    if (t == List<_i46.SessionInfoResponse>) {
       return (data as List)
-              .map((e) => deserialize<_i40.SessionInfoResponse>(e))
+              .map((e) => deserialize<_i46.SessionInfoResponse>(e))
               .toList()
+          as T;
+    }
+    if (t == List<_i47.Gender>) {
+      return (data as List).map((e) => deserialize<_i47.Gender>(e)).toList()
           as T;
     }
     if (t == List<int>) {
@@ -888,23 +1107,29 @@ class Protocol extends _i1.SerializationManagerServer {
       _i18.StoreUrl => 'StoreUrl',
       _i19.RateLimitException => 'RateLimitException',
       _i20.RateLimitEntry => 'RateLimitEntry',
-      _i21.AccountStatusResponse => 'AccountStatusResponse',
-      _i22.AuthAuditLog => 'AuthAuditLog',
-      _i23.PasswordStrengthResponse => 'PasswordStrengthResponse',
-      _i24.Permission => 'Permission',
-      _i25.Role => 'Role',
+      _i21.AuthAuditLog => 'AuthAuditLog',
+      _i22.PasswordStrengthResponse => 'PasswordStrengthResponse',
+      _i23.Permission => 'Permission',
+      _i24.Role => 'Role',
+      _i25.UserRole => 'UserRole',
       _i26.SessionInfoResponse => 'SessionInfoResponse',
       _i27.TwoFactorSecret => 'TwoFactorSecret',
       _i28.TwoFactorSetupResponse => 'TwoFactorSetupResponse',
-      _i29.UserInfoResponse => 'UserInfoResponse',
-      _i30.UserListResponse => 'UserListResponse',
-      _i31.UserRole => 'UserRole',
-      _i32.Greeting => 'Greeting',
-      _i33.GreetingResponse => 'GreetingResponse',
-      _i34.HealthCheckResponse => 'HealthCheckResponse',
-      _i35.ServiceHealthInfo => 'ServiceHealthInfo',
-      _i36.TranslationEntry => 'TranslationEntry',
-      _i37.TranslationResponse => 'TranslationResponse',
+      _i29.AccountStatusResponse => 'AccountStatusResponse',
+      _i30.CurrentUserResponse => 'CurrentUserResponse',
+      _i31.Gender => 'Gender',
+      _i32.ProfileUpdateRequest => 'ProfileUpdateRequest',
+      _i33.UserInfoResponse => 'UserInfoResponse',
+      _i34.UserListResponse => 'UserListResponse',
+      _i35.UserProfileExtended => 'UserProfileExtended',
+      _i36.VerificationCode => 'VerificationCode',
+      _i37.VerificationResponse => 'VerificationResponse',
+      _i38.Greeting => 'Greeting',
+      _i39.GreetingResponse => 'GreetingResponse',
+      _i40.HealthCheckResponse => 'HealthCheckResponse',
+      _i41.ServiceHealthInfo => 'ServiceHealthInfo',
+      _i42.TranslationEntry => 'TranslationEntry',
+      _i43.TranslationResponse => 'TranslationResponse',
       _ => null,
     };
   }
@@ -954,39 +1179,51 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'RateLimitException';
       case _i20.RateLimitEntry():
         return 'RateLimitEntry';
-      case _i21.AccountStatusResponse():
-        return 'AccountStatusResponse';
-      case _i22.AuthAuditLog():
+      case _i21.AuthAuditLog():
         return 'AuthAuditLog';
-      case _i23.PasswordStrengthResponse():
+      case _i22.PasswordStrengthResponse():
         return 'PasswordStrengthResponse';
-      case _i24.Permission():
+      case _i23.Permission():
         return 'Permission';
-      case _i25.Role():
+      case _i24.Role():
         return 'Role';
+      case _i25.UserRole():
+        return 'UserRole';
       case _i26.SessionInfoResponse():
         return 'SessionInfoResponse';
       case _i27.TwoFactorSecret():
         return 'TwoFactorSecret';
       case _i28.TwoFactorSetupResponse():
         return 'TwoFactorSetupResponse';
-      case _i29.UserInfoResponse():
+      case _i29.AccountStatusResponse():
+        return 'AccountStatusResponse';
+      case _i30.CurrentUserResponse():
+        return 'CurrentUserResponse';
+      case _i31.Gender():
+        return 'Gender';
+      case _i32.ProfileUpdateRequest():
+        return 'ProfileUpdateRequest';
+      case _i33.UserInfoResponse():
         return 'UserInfoResponse';
-      case _i30.UserListResponse():
+      case _i34.UserListResponse():
         return 'UserListResponse';
-      case _i31.UserRole():
-        return 'UserRole';
-      case _i32.Greeting():
+      case _i35.UserProfileExtended():
+        return 'UserProfileExtended';
+      case _i36.VerificationCode():
+        return 'VerificationCode';
+      case _i37.VerificationResponse():
+        return 'VerificationResponse';
+      case _i38.Greeting():
         return 'Greeting';
-      case _i33.GreetingResponse():
+      case _i39.GreetingResponse():
         return 'GreetingResponse';
-      case _i34.HealthCheckResponse():
+      case _i40.HealthCheckResponse():
         return 'HealthCheckResponse';
-      case _i35.ServiceHealthInfo():
+      case _i41.ServiceHealthInfo():
         return 'ServiceHealthInfo';
-      case _i36.TranslationEntry():
+      case _i42.TranslationEntry():
         return 'TranslationEntry';
-      case _i37.TranslationResponse():
+      case _i43.TranslationResponse():
         return 'TranslationResponse';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -1058,20 +1295,20 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'RateLimitEntry') {
       return deserialize<_i20.RateLimitEntry>(data['data']);
     }
-    if (dataClassName == 'AccountStatusResponse') {
-      return deserialize<_i21.AccountStatusResponse>(data['data']);
-    }
     if (dataClassName == 'AuthAuditLog') {
-      return deserialize<_i22.AuthAuditLog>(data['data']);
+      return deserialize<_i21.AuthAuditLog>(data['data']);
     }
     if (dataClassName == 'PasswordStrengthResponse') {
-      return deserialize<_i23.PasswordStrengthResponse>(data['data']);
+      return deserialize<_i22.PasswordStrengthResponse>(data['data']);
     }
     if (dataClassName == 'Permission') {
-      return deserialize<_i24.Permission>(data['data']);
+      return deserialize<_i23.Permission>(data['data']);
     }
     if (dataClassName == 'Role') {
-      return deserialize<_i25.Role>(data['data']);
+      return deserialize<_i24.Role>(data['data']);
+    }
+    if (dataClassName == 'UserRole') {
+      return deserialize<_i25.UserRole>(data['data']);
     }
     if (dataClassName == 'SessionInfoResponse') {
       return deserialize<_i26.SessionInfoResponse>(data['data']);
@@ -1082,32 +1319,50 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'TwoFactorSetupResponse') {
       return deserialize<_i28.TwoFactorSetupResponse>(data['data']);
     }
+    if (dataClassName == 'AccountStatusResponse') {
+      return deserialize<_i29.AccountStatusResponse>(data['data']);
+    }
+    if (dataClassName == 'CurrentUserResponse') {
+      return deserialize<_i30.CurrentUserResponse>(data['data']);
+    }
+    if (dataClassName == 'Gender') {
+      return deserialize<_i31.Gender>(data['data']);
+    }
+    if (dataClassName == 'ProfileUpdateRequest') {
+      return deserialize<_i32.ProfileUpdateRequest>(data['data']);
+    }
     if (dataClassName == 'UserInfoResponse') {
-      return deserialize<_i29.UserInfoResponse>(data['data']);
+      return deserialize<_i33.UserInfoResponse>(data['data']);
     }
     if (dataClassName == 'UserListResponse') {
-      return deserialize<_i30.UserListResponse>(data['data']);
+      return deserialize<_i34.UserListResponse>(data['data']);
     }
-    if (dataClassName == 'UserRole') {
-      return deserialize<_i31.UserRole>(data['data']);
+    if (dataClassName == 'UserProfileExtended') {
+      return deserialize<_i35.UserProfileExtended>(data['data']);
+    }
+    if (dataClassName == 'VerificationCode') {
+      return deserialize<_i36.VerificationCode>(data['data']);
+    }
+    if (dataClassName == 'VerificationResponse') {
+      return deserialize<_i37.VerificationResponse>(data['data']);
     }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i32.Greeting>(data['data']);
+      return deserialize<_i38.Greeting>(data['data']);
     }
     if (dataClassName == 'GreetingResponse') {
-      return deserialize<_i33.GreetingResponse>(data['data']);
+      return deserialize<_i39.GreetingResponse>(data['data']);
     }
     if (dataClassName == 'HealthCheckResponse') {
-      return deserialize<_i34.HealthCheckResponse>(data['data']);
+      return deserialize<_i40.HealthCheckResponse>(data['data']);
     }
     if (dataClassName == 'ServiceHealthInfo') {
-      return deserialize<_i35.ServiceHealthInfo>(data['data']);
+      return deserialize<_i41.ServiceHealthInfo>(data['data']);
     }
     if (dataClassName == 'TranslationEntry') {
-      return deserialize<_i36.TranslationEntry>(data['data']);
+      return deserialize<_i42.TranslationEntry>(data['data']);
     }
     if (dataClassName == 'TranslationResponse') {
-      return deserialize<_i37.TranslationResponse>(data['data']);
+      return deserialize<_i43.TranslationResponse>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -1147,18 +1402,22 @@ class Protocol extends _i1.SerializationManagerServer {
     switch (t) {
       case _i6.AppConfigEntry:
         return _i6.AppConfigEntry.t;
-      case _i22.AuthAuditLog:
-        return _i22.AuthAuditLog.t;
-      case _i24.Permission:
-        return _i24.Permission.t;
-      case _i25.Role:
-        return _i25.Role.t;
+      case _i21.AuthAuditLog:
+        return _i21.AuthAuditLog.t;
+      case _i23.Permission:
+        return _i23.Permission.t;
+      case _i24.Role:
+        return _i24.Role.t;
+      case _i25.UserRole:
+        return _i25.UserRole.t;
       case _i27.TwoFactorSecret:
         return _i27.TwoFactorSecret.t;
-      case _i31.UserRole:
-        return _i31.UserRole.t;
-      case _i36.TranslationEntry:
-        return _i36.TranslationEntry.t;
+      case _i35.UserProfileExtended:
+        return _i35.UserProfileExtended.t;
+      case _i36.VerificationCode:
+        return _i36.VerificationCode.t;
+      case _i42.TranslationEntry:
+        return _i42.TranslationEntry.t;
     }
     return null;
   }

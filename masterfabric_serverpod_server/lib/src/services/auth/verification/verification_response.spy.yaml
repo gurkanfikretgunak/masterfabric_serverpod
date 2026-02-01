@@ -1,0 +1,7 @@
+### Response for verification code request
+class: VerificationResponse
+fields:
+  success: bool
+  message: String
+  expiresInSeconds: int?
+  resendCooldownSeconds: int?

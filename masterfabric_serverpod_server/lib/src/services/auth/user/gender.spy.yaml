@@ -1,0 +1,7 @@
+### Gender enum for user profiles
+enum: Gender
+values:
+  - male
+  - female
+  - other
+  - preferNotToSay

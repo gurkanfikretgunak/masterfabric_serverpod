@@ -27,8 +27,10 @@ dependencies:
   cupertino_icons: ^1.0.5
   flutter:
     sdk: flutter
+  lucide_icons_flutter: ^3.1.9
   masterfabric_serverpod_client:
     path: ../masterfabric_serverpod_client
+  serverpod_auth_core_client: 3.2.3
   serverpod_auth_idp_flutter: 3.2.3
   serverpod_flutter: 3.2.3
 

@@ -13,9 +13,9 @@ import 'src/core/integrations/integration_manager.dart';
 import 'src/core/health/health_check_handler.dart';
 import 'src/core/scheduling/scheduler_manager.dart';
 import 'src/core/session/session_manager.dart';
-import 'src/services/auth/email_validation_service.dart';
-import 'src/services/auth/email_service.dart';
-import 'src/services/auth/email_idp_endpoint.dart';
+import 'src/services/auth/email/email_validation_service.dart';
+import 'src/services/auth/email/email_service.dart';
+import 'src/services/auth/email/email_idp_endpoint.dart';
 import 'src/services/translations/translation_service.dart';
 
 /// Global instances for core components

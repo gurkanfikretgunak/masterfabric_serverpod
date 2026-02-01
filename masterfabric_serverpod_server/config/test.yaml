@@ -81,3 +81,37 @@ session:
 scheduling:
   enabled: false # Disable scheduler in tests
   checkInterval: 60 # Check interval in seconds
+
+# Authentication configuration
+auth:
+  passwordPolicy:
+    minLength: 8
+    requireUppercase: true
+    requireLowercase: true
+    requireNumbers: true
+    requireSpecialChars: false  # Relaxed for tests
+    preventReuse: false
+    maxPasswordAge: null
+  
+  session:
+    defaultTtl: 1800
+    maxSessionsPerUser: 10
+    allowConcurrentSessions: true
+  
+  twoFactor:
+    enabled: false  # Disabled for tests
+    required: false
+  
+  accountVerification:
+    emailVerificationRequired: false  # Disabled for tests
+    phoneVerificationRequired: false
+  
+  # Verification code (OTP) configuration - relaxed for tests
+  verificationCode:
+    codeLength: 6
+    expirationMinutes: 10  # Longer expiration for tests
+    resendCooldownSeconds: 1  # Minimal cooldown for tests
+    secretSalt: "test-verification-salt"
+    useAlphanumeric: false
+    maxAttempts: 100  # High limit for tests
+    lockoutMinutes: 1

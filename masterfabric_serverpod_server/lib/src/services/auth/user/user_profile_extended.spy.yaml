@@ -1,0 +1,11 @@
+### Extended user profile data (stored in database)
+class: UserProfileExtended
+table: user_profile_extended
+fields:
+  userId: String
+  birthDate: DateTime?
+  gender: Gender?
+indexes:
+  user_profile_extended_user_id_idx:
+    fields: userId
+    unique: true

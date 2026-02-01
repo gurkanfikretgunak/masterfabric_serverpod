@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../services/health_service.dart';
 import '../widgets/health_status_bar.dart';
 import 'service_test_screen.dart';
+import 'profile_screen.dart';
 
 /// Home screen after authentication
 class HomeScreen extends StatelessWidget {
@@ -20,7 +22,12 @@ class HomeScreen extends StatelessWidget {
             onTap: () => HealthService.instance.checkHealth(),
           ),
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(LucideIcons.circleUser),
+            tooltip: 'Profile',
+            onPressed: () => _navigateToProfile(context),
+          ),
+          IconButton(
+            icon: const Icon(LucideIcons.logOut),
             tooltip: 'Sign Out',
             onPressed: onSignOut,
           ),
@@ -61,10 +68,18 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 12),
               _buildToolCard(
                 context,
-                icon: Icons.science_outlined,
+                icon: LucideIcons.flaskConical,
                 title: 'Service Testing',
                 description: 'Test API endpoints, authentication flows, and rate limiting behavior',
                 onTap: () => _navigateToServiceTest(context),
+              ),
+              const SizedBox(height: 12),
+              _buildToolCard(
+                context,
+                icon: LucideIcons.userCog,
+                title: 'User Profile',
+                description: 'View and edit your account information and settings',
+                onTap: () => _navigateToProfile(context),
               ),
               const SizedBox(height: 24),
 
@@ -141,7 +156,7 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: Colors.grey[400]),
+              Icon(LucideIcons.chevronRight, color: Colors.grey[400]),
             ],
           ),
         ),
@@ -163,7 +178,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.info_outline, color: Colors.grey[600], size: 20),
+                Icon(LucideIcons.info, color: Colors.grey[600], size: 20),
                 const SizedBox(width: 8),
                 Text(
                   'MasterFabric Serverpod',
@@ -218,6 +233,13 @@ class HomeScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const ServiceTestScreen()),
+    );
+  }
+
+  void _navigateToProfile(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ProfileScreen()),
     );
   }
 }

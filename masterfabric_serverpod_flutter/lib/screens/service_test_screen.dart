@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:masterfabric_serverpod_client/masterfabric_serverpod_client.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 import '../main.dart';
@@ -42,10 +43,10 @@ class _ServiceTestScreenState extends State<ServiceTestScreen>
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(icon: Icon(Icons.monitor_heart), text: 'Health'),
-            Tab(icon: Icon(Icons.api), text: 'API'),
-            Tab(icon: Icon(Icons.lock), text: 'Auth'),
-            Tab(icon: Icon(Icons.speed), text: 'Rate Limit'),
+            Tab(icon: Icon(LucideIcons.activity), text: 'Health'),
+            Tab(icon: Icon(LucideIcons.plug), text: 'API'),
+            Tab(icon: Icon(LucideIcons.lock), text: 'Auth'),
+            Tab(icon: Icon(LucideIcons.gauge), text: 'Rate Limit'),
           ],
         ),
       ),
@@ -76,7 +77,7 @@ class _HealthTab extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () => HealthService.instance.checkHealth(),
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(LucideIcons.refreshCw),
             label: const Text('Run Health Check'),
           ),
           const SizedBox(height: 24),
@@ -175,7 +176,7 @@ class _ApiTestTabState extends State<_ApiTestTab> {
           children: [
             const Row(
               children: [
-                Icon(Icons.waving_hand, color: Colors.orange),
+                Icon(LucideIcons.handMetal, color: Colors.orange),
                 SizedBox(width: 8),
                 Text(
                   'Greeting Service',
@@ -228,7 +229,7 @@ class _ApiTestTabState extends State<_ApiTestTab> {
           children: [
             const Row(
               children: [
-                Icon(Icons.translate, color: Colors.blue),
+                Icon(LucideIcons.languages, color: Colors.blue),
                 SizedBox(width: 8),
                 Text(
                   'Translation Service',
@@ -288,7 +289,7 @@ class _ApiTestTabState extends State<_ApiTestTab> {
           children: [
             const Row(
               children: [
-                Icon(Icons.settings, color: Colors.purple),
+                Icon(LucideIcons.settings, color: Colors.purple),
                 SizedBox(width: 8),
                 Text(
                   'App Config Service',
@@ -332,11 +333,11 @@ class _ApiTestTabState extends State<_ApiTestTab> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.error, color: Colors.red),
+          const Icon(LucideIcons.circleAlert, color: Colors.red),
           const SizedBox(width: 8),
           Expanded(child: Text(_error!, style: const TextStyle(color: Colors.red))),
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: const Icon(LucideIcons.x),
             onPressed: () => setState(() => _error = null),
           ),
         ],
@@ -455,7 +456,7 @@ class _AuthTestTabState extends State<_AuthTestTab> {
             Row(
               children: [
                 Icon(
-                  _isSignedIn ? Icons.lock_open : Icons.lock,
+                  _isSignedIn ? LucideIcons.lockOpen : LucideIcons.lock,
                   color: _isSignedIn ? Colors.green : Colors.grey,
                 ),
                 const SizedBox(width: 8),
@@ -469,7 +470,7 @@ class _AuthTestTabState extends State<_AuthTestTab> {
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.refresh),
+                  icon: const Icon(LucideIcons.refreshCw),
                   onPressed: _checkAuthStatus,
                 ),
               ],
@@ -502,22 +503,22 @@ class _AuthTestTabState extends State<_AuthTestTab> {
               children: [
                 ElevatedButton.icon(
                   onPressed: _testGetProfile,
-                  icon: const Icon(Icons.person),
+                  icon: const Icon(LucideIcons.user),
                   label: const Text('Get Profile'),
                 ),
                 ElevatedButton.icon(
                   onPressed: _testGetSessions,
-                  icon: const Icon(Icons.devices),
+                  icon: const Icon(LucideIcons.smartphone),
                   label: const Text('Get Sessions'),
                 ),
                 ElevatedButton.icon(
                   onPressed: _testPasswordValidation,
-                  icon: const Icon(Icons.password),
+                  icon: const Icon(LucideIcons.keyRound),
                   label: const Text('Test Password'),
                 ),
                 OutlinedButton.icon(
                   onPressed: _signOut,
-                  icon: const Icon(Icons.logout),
+                  icon: const Icon(LucideIcons.logOut),
                   label: const Text('Sign Out'),
                   style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
                 ),
@@ -555,7 +556,7 @@ class _AuthTestTabState extends State<_AuthTestTab> {
                   ),
                 );
               },
-              icon: const Icon(Icons.login),
+              icon: const Icon(LucideIcons.logIn),
               label: const Text('Go to Sign In'),
             ),
           ],
@@ -573,11 +574,11 @@ class _AuthTestTabState extends State<_AuthTestTab> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.error, color: Colors.red),
+          const Icon(LucideIcons.circleAlert, color: Colors.red),
           const SizedBox(width: 8),
           Expanded(child: Text(_error!, style: const TextStyle(color: Colors.red))),
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: const Icon(LucideIcons.x),
             onPressed: () => setState(() => _error = null),
           ),
         ],
@@ -806,7 +807,7 @@ class _RateLimitTestTabState extends State<_RateLimitTestTab> {
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.delete_outline),
+                  icon: const Icon(LucideIcons.trash2),
                   onPressed: () => setState(() => _logs.clear()),
                   tooltip: 'Clear logs',
                 ),

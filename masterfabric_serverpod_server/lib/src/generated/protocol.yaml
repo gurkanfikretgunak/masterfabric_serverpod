@@ -1,12 +1,5 @@
 appConfig:
   - getConfig:
-accountManagement:
-  - getAccountStatus:
-  - deactivateAccount:
-  - reactivateAccount:
-  - deleteAccount:
-appleAuth:
-  - login:
 emailIdp:
   - startRegistration:
   - login:
@@ -15,10 +8,12 @@ emailIdp:
   - startPasswordReset:
   - verifyPasswordResetCode:
   - finishPasswordReset:
-googleAuth:
-  - login:
 jwtRefresh:
   - refreshAccessToken:
+appleAuth:
+  - login:
+googleAuth:
+  - login:
 passwordManagement:
   - changePassword:
   - validatePasswordStrength:
@@ -43,6 +38,11 @@ twoFactor:
   - disable:
   - getBackupCodes:
   - regenerateBackupCodes:
+accountManagement:
+  - getAccountStatus:
+  - deactivateAccount:
+  - reactivateAccount:
+  - deleteAccount:
 userManagement:
   - listUsers:
   - getUser:
@@ -50,7 +50,12 @@ userManagement:
   - deleteUser:
   - updateUserRoles:
 userProfile:
+  - getGenderOptions:
+  - requestProfileUpdateCode:
+  - updateProfileWithVerification:
+  - getCurrentUser:
   - getProfile:
+  - updateExtendedProfile:
   - updateProfile:
   - uploadProfileImage:
   - deleteProfileImage:

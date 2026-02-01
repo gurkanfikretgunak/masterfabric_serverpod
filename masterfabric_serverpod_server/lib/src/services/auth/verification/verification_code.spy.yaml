@@ -1,0 +1,15 @@
+### Verification code for profile updates
+class: VerificationCode
+table: verification_codes
+fields:
+  userId: String
+  code: String
+  purpose: String
+  expiresAt: DateTime
+  used: bool
+  createdAt: DateTime
+indexes:
+  verification_codes_user_purpose_idx:
+    fields: userId, purpose
+  verification_codes_expires_idx:
+    fields: expiresAt

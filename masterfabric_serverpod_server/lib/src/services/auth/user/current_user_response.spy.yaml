@@ -1,0 +1,13 @@
+### Current user information response
+class: CurrentUserResponse
+fields:
+  id: String
+  email: String?
+  fullName: String?
+  userName: String?
+  imageUrl: String?
+  createdAt: DateTime
+  blocked: bool
+  emailVerified: bool
+  birthDate: DateTime?
+  gender: Gender?

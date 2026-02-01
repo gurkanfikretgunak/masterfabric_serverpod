@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:masterfabric_serverpod_client/masterfabric_serverpod_client.dart';
 import '../services/health_service.dart';
 
@@ -23,32 +24,32 @@ class HealthStatusIndicator extends StatelessWidget {
 
         if (isChecking) {
           statusColor = Colors.blue;
-          statusIcon = Icons.sync;
+          statusIcon = LucideIcons.refreshCw;
           tooltip = 'Checking health...';
         } else if (health.lastResponse == null) {
           statusColor = Colors.grey;
-          statusIcon = Icons.help_outline;
+          statusIcon = LucideIcons.circleQuestionMark;
           tooltip = health.lastError ?? 'Health unknown';
         } else {
           switch (status) {
             case ServiceStatus.healthy:
               statusColor = Colors.green;
-              statusIcon = Icons.check_circle;
+              statusIcon = LucideIcons.circleCheck;
               tooltip = 'All services healthy (${health.lastResponse!.totalLatencyMs}ms)';
               break;
             case ServiceStatus.degraded:
               statusColor = Colors.orange;
-              statusIcon = Icons.warning;
+              statusIcon = LucideIcons.triangleAlert;
               tooltip = '${health.healthyCount}/${health.totalCount} services healthy';
               break;
             case ServiceStatus.unhealthy:
               statusColor = Colors.red;
-              statusIcon = Icons.error;
+              statusIcon = LucideIcons.circleAlert;
               tooltip = 'Services unhealthy';
               break;
             case ServiceStatus.unknown:
               statusColor = Colors.grey;
-              statusIcon = Icons.help_outline;
+              statusIcon = LucideIcons.circleQuestionMark;
               tooltip = 'Health unknown';
               break;
           }
@@ -118,7 +119,7 @@ class HealthStatusCard extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      Icons.monitor_heart,
+                      LucideIcons.activity,
                       color: Theme.of(context).primaryColor,
                     ),
                     const SizedBox(width: 8),
@@ -138,7 +139,7 @@ class HealthStatusCard extends StatelessWidget {
                       )
                     else
                       IconButton(
-                        icon: const Icon(Icons.refresh),
+                        icon: const Icon(LucideIcons.refreshCw),
                         onPressed: () => health.checkHealth(),
                         tooltip: 'Refresh',
                       ),
@@ -191,17 +192,17 @@ class HealthStatusCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (infrastructure.isNotEmpty) ...[
-          _buildCategoryHeader('Infrastructure', Icons.storage),
+          _buildCategoryHeader('Infrastructure', LucideIcons.server),
           ...infrastructure.map((s) => _buildServiceRow(s)),
           const SizedBox(height: 12),
         ],
         if (application.isNotEmpty) ...[
-          _buildCategoryHeader('Application', Icons.apps),
+          _buildCategoryHeader('Application', LucideIcons.layoutGrid),
           ...application.map((s) => _buildServiceRow(s)),
           const SizedBox(height: 12),
         ],
         if (auth.isNotEmpty) ...[
-          _buildCategoryHeader('Authentication', Icons.security),
+          _buildCategoryHeader('Authentication', LucideIcons.shield),
           ...auth.map((s) => _buildServiceRow(s)),
         ],
       ],
@@ -240,22 +241,22 @@ class HealthStatusCard extends StatelessWidget {
       case 'healthy':
         color = Colors.green;
         text = 'All Systems Operational';
-        icon = Icons.check_circle;
+        icon = LucideIcons.circleCheck;
         break;
       case 'degraded':
         color = Colors.orange;
         text = 'Partial Outage ($healthyCount/$total)';
-        icon = Icons.warning;
+        icon = LucideIcons.triangleAlert;
         break;
       case 'unhealthy':
         color = Colors.red;
         text = 'Major Outage ($healthyCount/$total)';
-        icon = Icons.error;
+        icon = LucideIcons.circleAlert;
         break;
       default:
         color = Colors.grey;
         text = 'Unknown';
-        icon = Icons.help_outline;
+        icon = LucideIcons.circleQuestionMark;
     }
 
     return Container(
@@ -297,19 +298,19 @@ class HealthStatusCard extends StatelessWidget {
     switch (service.status) {
       case 'healthy':
         color = Colors.green;
-        icon = Icons.check_circle_outline;
+        icon = LucideIcons.circleCheck;
         break;
       case 'degraded':
         color = Colors.orange;
-        icon = Icons.warning_amber_outlined;
+        icon = LucideIcons.triangleAlert;
         break;
       case 'unhealthy':
         color = Colors.red;
-        icon = Icons.error_outline;
+        icon = LucideIcons.circleX;
         break;
       default:
         color = Colors.grey;
-        icon = Icons.help_outline;
+        icon = LucideIcons.circleQuestionMark;
     }
 
     // Remove "Auth: " prefix for cleaner display
