@@ -82,6 +82,10 @@ userProfile:
   - deleteProfileImage:
 greeting:
   - hello:
+greetingV2:
+  - hello:
+  - helloPublic:
+  - helloStrict:
 health:
   - check:
   - ping:

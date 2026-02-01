@@ -1,0 +1,15 @@
+### Middleware error exception that can be serialized to client
+exception: MiddlewareError
+fields:
+  ### Error message
+  message: String
+  ### Error code for client handling
+  code: String
+  ### HTTP status code equivalent
+  statusCode: int
+  ### Middleware that caused the error
+  middleware: String?
+  ### Additional error details
+  details: Map<String, String>?
+  ### Timestamp when error occurred
+  timestamp: DateTime

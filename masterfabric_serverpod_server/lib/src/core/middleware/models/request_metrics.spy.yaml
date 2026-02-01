@@ -1,0 +1,33 @@
+### Request metrics collected by middleware
+class: RequestMetrics
+fields:
+  ### Unique request ID
+  requestId: String
+  ### Endpoint name
+  endpoint: String
+  ### Method name
+  method: String
+  ### Total request duration in milliseconds
+  totalDurationMs: int
+  ### Middleware execution duration in milliseconds
+  middlewareDurationMs: int
+  ### Handler execution duration in milliseconds
+  handlerDurationMs: int
+  ### Whether request was successful
+  success: bool
+  ### HTTP status code equivalent
+  statusCode: int
+  ### Client IP address
+  clientIp: String?
+  ### User ID if authenticated
+  userId: String?
+  ### Timestamp when request started
+  startTime: DateTime
+  ### Timestamp when request completed
+  endTime: DateTime
+  ### List of middleware that executed
+  middlewareExecuted: List<MiddlewareExecutionInfo>
+  ### Error message if request failed
+  errorMessage: String?
+  ### Error type if request failed
+  errorType: String?

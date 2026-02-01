@@ -18,6 +18,9 @@ export 'integrations/integrations.dart';
 // Logging
 export 'logging/logging.dart';
 
+// Middleware system
+export 'middleware/middleware.dart';
+
 // Rate limiting
 export 'rate_limit/rate_limit.dart';
 

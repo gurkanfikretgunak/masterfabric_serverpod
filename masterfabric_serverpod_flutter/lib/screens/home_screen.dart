@@ -7,6 +7,7 @@ import '../widgets/notification_badge.dart';
 import 'service_test_screen.dart';
 import 'profile_screen.dart';
 import 'notifications/notification_center_screen.dart';
+import 'greeting_v2_screen.dart';
 
 /// Home screen after authentication
 class HomeScreen extends StatelessWidget {
@@ -80,6 +81,15 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 12),
               _buildToolCard(
                 context,
+                icon: LucideIcons.layers,
+                title: 'Middleware Test (V2)',
+                description: 'Test GreetingV2Endpoint with automatic logging, rate limiting, and metrics',
+                onTap: () => _navigateToGreetingV2(context),
+                color: Colors.indigo,
+              ),
+              const SizedBox(height: 12),
+              _buildToolCard(
+                context,
                 icon: LucideIcons.flaskConical,
                 title: 'Service Testing',
                 description: 'Test API endpoints, authentication flows, and rate limiting behavior',
@@ -123,7 +133,9 @@ class HomeScreen extends StatelessWidget {
     required String title,
     required String description,
     required VoidCallback onTap,
+    Color? color,
   }) {
+    final cardColor = color ?? Colors.blue;
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -140,10 +152,10 @@ class HomeScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withAlpha(25),
+                  color: cardColor.withAlpha(25),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, color: Colors.blue, size: 24),
+                child: Icon(icon, color: cardColor, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -373,6 +385,13 @@ class HomeScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const NotificationCenterScreen()),
+    );
+  }
+
+  void _navigateToGreetingV2(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const GreetingV2Screen()),
     );
   }
 

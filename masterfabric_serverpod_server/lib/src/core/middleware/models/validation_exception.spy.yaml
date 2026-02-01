@@ -1,0 +1,11 @@
+### Validation exception thrown when request validation fails
+exception: ValidationException
+fields:
+  ### Overall validation error message
+  message: String
+  ### List of validation errors
+  errors: List<ValidationErrorDetail>
+  ### Endpoint where validation failed
+  endpoint: String?
+  ### Method where validation failed
+  method: String?

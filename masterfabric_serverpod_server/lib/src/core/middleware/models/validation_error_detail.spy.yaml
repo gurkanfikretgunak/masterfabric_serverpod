@@ -1,0 +1,11 @@
+### Validation error detail for a single field
+class: ValidationErrorDetail
+fields:
+  ### Name of the field that failed validation
+  field: String
+  ### Error message describing the validation failure
+  message: String
+  ### The invalid value (sanitized)
+  value: String?
+  ### Validation rule that failed
+  rule: String?

@@ -17,7 +17,9 @@ enum Gender implements _i1.SerializableModel {
   male,
   female,
   other,
-  preferNotToSay;
+  preferNotToSay,
+  notApplicable,
+  unknown;
 
   static Gender fromJson(String name) {
     switch (name) {
@@ -29,6 +31,10 @@ enum Gender implements _i1.SerializableModel {
         return Gender.other;
       case 'preferNotToSay':
         return Gender.preferNotToSay;
+      case 'notApplicable':
+        return Gender.notApplicable;
+      case 'unknown':
+        return Gender.unknown;
       default:
         throw ArgumentError('Value "$name" cannot be converted to "Gender"');
     }

@@ -1,0 +1,15 @@
+### Middleware execution information for metrics/logging
+class: MiddlewareExecutionInfo
+fields:
+  ### Name of the middleware that executed
+  middlewareName: String
+  ### Phase of execution (request, response, error)
+  phase: String
+  ### Duration in milliseconds
+  durationMs: int
+  ### Whether execution was successful
+  success: bool
+  ### Optional message from middleware
+  message: String?
+  ### Timestamp of execution
+  timestamp: DateTime

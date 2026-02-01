@@ -64,6 +64,38 @@ import 'package:masterfabric_serverpod_client/src/protocol/services/translations
     as _i27;
 import 'protocol.dart' as _i28;
 
+/// Base class for MasterFabric endpoints with built-in middleware support
+///
+/// Extend this class instead of [Endpoint] to automatically get
+/// middleware execution for all methods.
+///
+/// Example:
+/// ```dart
+/// class PaymentEndpoint extends MasterfabricEndpoint {
+///   @override
+///   EndpointMiddlewareConfig? get middlewareConfig => EndpointMiddlewareConfig(
+///     requiredPermissions: ['payment:read'],
+///     customRateLimit: RateLimitConfig(maxRequests: 10, windowDuration: Duration(minutes: 1)),
+///   );
+///
+///   Future<PaymentResponse> process(Session session, PaymentRequest request) async {
+///     return executeWithMiddleware(
+///       session: session,
+///       methodName: 'process',
+///       parameters: {'request': request.toJson()},
+///       handler: () async {
+///         // Your business logic here
+///         return PaymentResponse(success: true);
+///       },
+///     );
+///   }
+/// }
+/// ```
+/// {@category Endpoint}
+abstract class EndpointMasterfabric extends _i1.EndpointRef {
+  EndpointMasterfabric(_i1.EndpointCaller caller) : super(caller);
+}
+
 /// REST API endpoint for notification operations
 ///
 /// Provides HTTP endpoints for sending notifications, managing channels,
@@ -1396,6 +1428,63 @@ class EndpointGreeting extends _i1.EndpointRef {
       );
 }
 
+/// Example endpoint using the MasterFabric middleware system.
+///
+/// This demonstrates how to use the new middleware-based approach
+/// instead of manual rate limiting and logging calls.
+///
+/// Key differences from the original GreetingEndpoint:
+/// - Extends [MasterfabricEndpoint] instead of [Endpoint]
+/// - Uses [executeWithMiddleware] to wrap method logic
+/// - Rate limiting, logging, auth, and metrics are handled automatically
+/// - Can customize middleware behavior via [middlewareConfig]
+///
+/// Usage from client:
+/// ```dart
+/// final response = await client.greetingV2.hello('World');
+/// ```
+/// {@category Endpoint}
+class EndpointGreetingV2 extends EndpointMasterfabric {
+  EndpointGreetingV2(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'greetingV2';
+
+  /// Returns a personalized greeting message: "Hello {name}".
+  ///
+  /// Middleware automatically handles:
+  /// - Rate limiting (20 requests/minute)
+  /// - Request/response logging
+  /// - Metrics collection
+  /// - Error handling
+  _i2.Future<_i25.GreetingResponse> hello(String name) =>
+      caller.callServerEndpoint<_i25.GreetingResponse>(
+        'greetingV2',
+        'hello',
+        {'name': name},
+      );
+
+  /// Example of a public method (no authentication required).
+  ///
+  /// Uses per-method configuration to skip auth middleware.
+  _i2.Future<_i25.GreetingResponse> helloPublic(String name) =>
+      caller.callServerEndpoint<_i25.GreetingResponse>(
+        'greetingV2',
+        'helloPublic',
+        {'name': name},
+      );
+
+  /// Example of a method with strict rate limiting.
+  ///
+  /// Uses per-method configuration for stricter limits.
+  _i2.Future<_i25.GreetingResponse> helloStrict(String name) =>
+      caller.callServerEndpoint<_i25.GreetingResponse>(
+        'greetingV2',
+        'helloStrict',
+        {'name': name},
+      );
+}
+
 /// Health check endpoint for monitoring ALL service status
 /// {@category Endpoint}
 class EndpointHealth extends _i1.EndpointRef {
@@ -1565,6 +1654,7 @@ class Client extends _i1.ServerpodClientShared {
     userManagement = EndpointUserManagement(this);
     userProfile = EndpointUserProfile(this);
     greeting = EndpointGreeting(this);
+    greetingV2 = EndpointGreetingV2(this);
     health = EndpointHealth(this);
     translation = EndpointTranslation(this);
     modules = Modules(this);
@@ -1600,6 +1690,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointGreeting greeting;
 
+  late final EndpointGreetingV2 greetingV2;
+
   late final EndpointHealth health;
 
   late final EndpointTranslation translation;
@@ -1623,6 +1715,7 @@ class Client extends _i1.ServerpodClientShared {
     'userManagement': userManagement,
     'userProfile': userProfile,
     'greeting': greeting,
+    'greetingV2': greetingV2,
     'health': health,
     'translation': translation,
   };

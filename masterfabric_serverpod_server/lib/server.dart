@@ -17,6 +17,9 @@ import 'src/services/auth/email/email_validation_service.dart';
 import 'src/services/auth/email/email_service.dart';
 import 'src/services/auth/email/email_idp_endpoint.dart';
 import 'src/services/translations/services/translation_service.dart';
+import 'src/core/middleware/services/middleware_registry.dart';
+import 'src/core/middleware/base/middleware_config.dart';
+import 'src/core/rate_limit/services/rate_limit_service.dart';
 
 /// Global instances for core components
 IntegrationManager? _integrationManager;
@@ -186,6 +189,64 @@ Future<void> _initializeCoreComponents(Serverpod pod) async {
   // );
 
   _schedulerManager!.start();
+
+  // Initialize Middleware Registry
+  await _initializeMiddleware(pod);
+}
+
+/// Initialize middleware system
+Future<void> _initializeMiddleware(Serverpod pod) async {
+  final session = await pod.createSession();
+  try {
+    // Configure global middleware settings
+    final globalConfig = MiddlewareGlobalConfig(
+      enableLogging: true,
+      enableRateLimit: true,
+      enableAuth: true,
+      enableValidation: true,
+      enableMetrics: true,
+      enableErrorHandling: true,
+      defaultRateLimit: RateLimitConfig(
+        maxRequests: 100,
+        windowDuration: Duration(minutes: 1),
+        keyPrefix: 'global',
+      ),
+      logLevel: MiddlewareLogLevel.info,
+      maskedFields: [
+        'password',
+        'token',
+        'secret',
+        'apiKey',
+        'api_key',
+        'accessToken',
+        'access_token',
+        'refreshToken',
+        'refresh_token',
+        'credit_card',
+        'creditCard',
+        'ssn',
+        'pin',
+        'cvv',
+      ],
+    );
+
+    // Register default middleware
+    MiddlewareRegistry.instance.registerDefaults(config: globalConfig);
+
+    session.log(
+      'Middleware system initialized with ${MiddlewareRegistry.instance.middleware.length} middleware',
+      level: LogLevel.info,
+    );
+  } catch (e, stackTrace) {
+    session.log(
+      'Failed to initialize middleware: $e',
+      level: LogLevel.error,
+      exception: e is Exception ? e : Exception(e.toString()),
+      stackTrace: stackTrace,
+    );
+  } finally {
+    await session.close();
+  }
 }
 
 /// Set email validation service on EmailIdpEndpoint

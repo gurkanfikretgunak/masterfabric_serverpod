@@ -5,3 +5,5 @@ values:
   - female
   - other
   - preferNotToSay
+  - notApplicable
+  - unknown

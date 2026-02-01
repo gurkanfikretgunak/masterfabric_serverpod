@@ -497,13 +497,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildCompactGenderField() {
+    // Show loading state if gender options haven't loaded yet
+    if (_genderOptions.isEmpty) {
+      return InputDecorator(
+        decoration: InputDecoration(
+          labelText: 'Gender',
+          labelStyle: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+          prefixIcon: const Icon(LucideIcons.user, size: 18),
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.grey.shade400,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Loading options...',
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+            ),
+          ],
+        ),
+      );
+    }
+
     return DropdownButtonFormField<Gender>(
       value: _selectedGender,
       style: const TextStyle(fontSize: 14, color: Colors.black87),
       decoration: InputDecoration(
         labelText: 'Gender',
         labelStyle: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-        prefixIcon: const Icon(LucideIcons.user, size: 18),
+        prefixIcon: Icon(
+          _selectedGender != null ? _getGenderIcon(_selectedGender!) : LucideIcons.user,
+          size: 18,
+        ),
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         border: OutlineInputBorder(
@@ -514,17 +555,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.blue.shade400, width: 1.5),
+        ),
       ),
       items: _genderOptions.map((gender) {
         return DropdownMenuItem<Gender>(
           value: gender,
-          child: Text(_getGenderLabel(gender)),
+          child: Row(
+            children: [
+              Icon(
+                _getGenderIcon(gender),
+                size: 16,
+                color: Colors.grey.shade600,
+              ),
+              const SizedBox(width: 10),
+              Text(_getGenderLabel(gender)),
+            ],
+          ),
         );
       }).toList(),
       onChanged: (Gender? newValue) {
         setState(() => _selectedGender = newValue);
       },
       hint: Text('Select gender', style: TextStyle(color: Colors.grey.shade500)),
+      isExpanded: true,
     );
   }
 
@@ -651,6 +707,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String _getGenderLabel(Gender gender) {
+    // Dynamic labels based on enum name - converts camelCase to readable text
     switch (gender) {
       case Gender.male:
         return 'Male';
@@ -660,6 +717,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return 'Other';
       case Gender.preferNotToSay:
         return 'Prefer not to say';
+      case Gender.notApplicable:
+        return 'Not applicable';
+      case Gender.unknown:
+        return 'Unknown';
+    }
+  }
+  
+  IconData _getGenderIcon(Gender gender) {
+    switch (gender) {
+      case Gender.male:
+        return LucideIcons.user;
+      case Gender.female:
+        return LucideIcons.user;
+      case Gender.other:
+        return LucideIcons.users;
+      case Gender.preferNotToSay:
+        return LucideIcons.userX;
+      case Gender.notApplicable:
+        return LucideIcons.userMinus;
+      case Gender.unknown:
+        return LucideIcons.circleUser;
     }
   }
 

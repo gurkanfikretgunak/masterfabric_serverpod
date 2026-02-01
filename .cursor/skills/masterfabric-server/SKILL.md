@@ -16,6 +16,11 @@ masterfabric_serverpod_server/
 │   │   ├── health/                     # Health check handler
 │   │   ├── integrations/               # Firebase, Sentry, Mixpanel, Email
 │   │   ├── logging/                    # Structured logging
+│   │   ├── middleware/                 # Middleware/Interceptor system
+│   │   │   ├── base/                   # Base classes (MasterfabricEndpoint)
+│   │   │   ├── interceptors/           # Logging, RateLimit, Auth, etc.
+│   │   │   ├── models/                 # Middleware models
+│   │   │   └── services/               # Registry, resolver
 │   │   ├── rate_limit/                 # Rate limiting service
 │   │   ├── scheduling/                 # Background jobs, cron
 │   │   ├── session/                    # Session management
@@ -107,15 +112,51 @@ mkdir -p lib/src/services/<service_name>/{endpoints,models,services,integrations
 touch lib/src/services/<service_name>/<service_name>.dart  # Barrel export
 ```
 
-### Endpoint Template
+### Endpoint Template (With Middleware - Recommended)
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 import '../../generated/protocol.dart';
-import '../../core/rate_limit/rate_limit_service.dart';
+import '../../core/middleware/base/masterfabric_endpoint.dart';
+import '../../core/middleware/base/middleware_config.dart';
+import '../../core/rate_limit/services/rate_limit_service.dart';
+
+class <ServiceName>Endpoint extends MasterfabricEndpoint {
+  // Configure middleware for this endpoint
+  @override
+  EndpointMiddlewareConfig? get middlewareConfig => EndpointMiddlewareConfig(
+    customRateLimit: RateLimitConfig(
+      maxRequests: 60,
+      windowDuration: Duration(minutes: 1),
+      keyPrefix: '<service_name>',
+    ),
+  );
+
+  @override
+  bool get requireLogin => false; // Set true for auth required
+
+  Future<<ServiceName>Response> get(Session session) async {
+    return executeWithMiddleware(
+      session: session,
+      methodName: 'get',
+      parameters: {},
+      handler: () async {
+        // Your clean business logic - no boilerplate!
+        return <ServiceName>Response(/* ... */);
+      },
+    );
+  }
+}
+```
+
+### Endpoint Template (Legacy - Manual Rate Limiting)
+
+```dart
+import 'package:serverpod/serverpod.dart';
+import '../../generated/protocol.dart';
+import '../../core/rate_limit/services/rate_limit_service.dart';
 
 class <ServiceName>Endpoint extends Endpoint {
-  // Rate limit: 60 requests/minute
   static const _rateLimitConfig = RateLimitConfig(
     maxRequests: 60,
     windowDuration: Duration(minutes: 1),
@@ -123,14 +164,12 @@ class <ServiceName>Endpoint extends Endpoint {
   );
 
   @override
-  bool get requireLogin => false; // Set true for auth required
+  bool get requireLogin => false;
 
   Future<<ServiceName>Response> get(Session session) async {
-    // Rate limit check
     final identifier = _getRateLimitIdentifier(session);
     await RateLimitService.checkLimit(session, _rateLimitConfig, identifier);
     
-    // Your logic here
     session.log('Processing <service_name>', level: LogLevel.info);
     
     return <ServiceName>Response(/* ... */);
@@ -161,6 +200,93 @@ fields:
 
 ```bash
 cd masterfabric_serverpod_server && serverpod generate
+```
+
+## Middleware System
+
+The project includes a comprehensive middleware/interceptor system for automatic request handling.
+
+### Using Middleware (Recommended)
+
+Extend `MasterfabricEndpoint` instead of `Endpoint` for automatic middleware:
+
+```dart
+import '../../core/middleware/base/masterfabric_endpoint.dart';
+import '../../core/middleware/base/middleware_config.dart';
+
+class MyEndpoint extends MasterfabricEndpoint {
+  // Optional: Configure middleware for this endpoint
+  @override
+  EndpointMiddlewareConfig? get middlewareConfig => EndpointMiddlewareConfig(
+    customRateLimit: RateLimitConfig(
+      maxRequests: 20,
+      windowDuration: Duration(minutes: 1),
+      keyPrefix: 'my_endpoint',
+    ),
+  );
+
+  Future<MyResponse> myMethod(Session session, String param) async {
+    return executeWithMiddleware(
+      session: session,
+      methodName: 'myMethod',
+      parameters: {'param': param},
+      handler: () async {
+        // Your clean business logic here - no boilerplate!
+        return MyResponse(success: true);
+      },
+    );
+  }
+}
+```
+
+### Middleware Features
+
+The middleware system automatically handles:
+
+| Middleware | Priority | Function |
+|------------|----------|----------|
+| **Logging** | 10 | Request/response logging with PII masking |
+| **Rate Limit** | 20 | Distributed rate limiting with Redis |
+| **Auth** | 30 | Authentication and RBAC checks |
+| **Validation** | 40 | Request parameter validation |
+| **Metrics** | 100 | Request metrics collection |
+| **Error** | 999 | Global error handling |
+
+### Per-Method Configuration
+
+Override middleware for specific methods:
+
+```dart
+Future<MyResponse> publicMethod(Session session) async {
+  return executeWithMiddleware(
+    session: session,
+    methodName: 'publicMethod',
+    parameters: {},
+    config: const EndpointMiddlewareConfig(
+      skipAuth: true,  // No auth required
+      skipRateLimit: true,  // No rate limiting
+    ),
+    handler: () async {
+      return MyResponse(success: true);
+    },
+  );
+}
+```
+
+### Available Configuration Options
+
+```dart
+EndpointMiddlewareConfig(
+  skipLogging: false,      // Skip request logging
+  skipRateLimit: false,    // Skip rate limiting
+  skipAuth: false,         // Skip authentication
+  skipValidation: false,   // Skip validation
+  skipMetrics: false,      // Skip metrics collection
+  customRateLimit: null,   // Custom rate limit config
+  requiredPermissions: [], // Required RBAC permissions
+  requiredRoles: [],       // Required user roles
+  validationRules: {},     // Custom validation rules
+);
 ```
 
 ## Core Utilities
@@ -315,7 +441,8 @@ throw PaymentError(code: 'INSUFFICIENT_FUNDS', message: 'Not enough balance');
 ## Checklist for New Services
 
 - [ ] Create directory in `lib/src/services/` (use snake_case)
-- [ ] Create `*_endpoint.dart` with rate limiting
+- [ ] Create `*_endpoint.dart` extending `MasterfabricEndpoint` (recommended)
+- [ ] Use `executeWithMiddleware()` for automatic rate limiting, logging, auth
 - [ ] Create `*_service.dart` for business logic
 - [ ] Create `*_response.spy.yaml` model
 - [ ] Run `serverpod generate`
