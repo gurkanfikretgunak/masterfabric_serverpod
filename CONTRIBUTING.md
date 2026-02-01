@@ -573,4 +573,31 @@ If you have questions about contributing:
 - Review the Serverpod documentation: https://docs.serverpod.dev
 - Open a question issue using the question template
 
+---
+
+## License
+
+By contributing to this project, you agree that your contributions will be licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+
+### Important Notes
+
+- All contributions must be compatible with the AGPL-3.0 license
+- By submitting code, you certify that you have the right to submit it under this license
+- Contributions become part of the MasterFabric codebase and are subject to all license terms
+- If you fork this repository, you must contact MASTERFABRIC within 10 days (see [LICENSE](LICENSE))
+
+### Copyright
+
+**Copyright (C) 2024 MASTERFABRIC Bilişim Teknolojileri A.Ş. (MASTERFABRIC Information Technologies Inc.)**
+
+- **Owner:** Gürkan Fikret Günak (@gurkanfikretgunak)
+- **Website:** https://masterfabric.co
+- **License Contact:** license@masterfabric.co
+
+For full license terms, see the [LICENSE](LICENSE) file.
+
+---
+
 Thank you for contributing! 🎉

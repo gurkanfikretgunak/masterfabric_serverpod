@@ -112,14 +112,23 @@ Please do not report the following as security vulnerabilities:
 
 ## ⚖️ Legal Information
 
-This security policy is governed by the terms outlined in our [LICENSE](LICENSE) file. 
+This security policy is governed by the terms outlined in our [LICENSE](LICENSE) file.
 
-**Important:** This project is licensed under GNU AGPL v3.0. Any security fixes or contributions are subject to the same license terms.
+### License
 
-**Company Information:**
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+
+Any security fixes or contributions are subject to the same license terms.
+
+### Company Information
+
 - **Owner:** MASTERFABRIC Bilişim Teknolojileri A.Ş. (MASTERFABRIC Information Technologies Inc.)
+- **Company Owner:** Gürkan Fikret Günak (@gurkanfikretgunak)
 - **Website:** https://masterfabric.co
 - **GitHub Organization:** https://github.com/masterfabric-mobile
+- **License Contact:** license@masterfabric.co
 
 ## 📞 Emergency Contact
 

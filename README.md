@@ -9,7 +9,7 @@
 ![Dart](https://img.shields.io/badge/Dart-3.8.0-blue.svg?logo=dart)
 ![Flutter](https://img.shields.io/badge/Flutter-3.32.0-blue.svg?logo=flutter)
 ![Serverpod](https://img.shields.io/badge/Serverpod-3.2.3-orange.svg)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+![License](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)
 
 [![GitHub stars](https://img.shields.io/github/stars/gurkanfikretgunak/masterfabric_serverpod?style=social)](https://github.com/gurkanfikretgunak/masterfabric_serverpod/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/gurkanfikretgunak/masterfabric_serverpod?style=social)](https://github.com/gurkanfikretgunak/masterfabric_serverpod/network/members)
@@ -1304,10 +1304,53 @@ See [Branch Guidelines](.github/BRANCH_GUIDELINES.md) for quick reference or [CO
 
 ## Author
 
-**Gurkan Fikret Gunak**
+**Gürkan Fikret Günak**
 
 - GitHub: [@gurkanfikretgunak](https://github.com/gurkanfikretgunak)
+- Email: gurkanfikretgunak@masterfabric.co
+
+## Company
+
+**MASTERFABRIC Bilişim Teknolojileri A.Ş.**
+(MASTERFABRIC Information Technologies Inc.)
+
+- Website: [https://masterfabric.co](https://masterfabric.co)
+- GitHub Organization: [https://github.com/masterfabric-mobile](https://github.com/masterfabric-mobile)
 
 ## License
 
-[Add your license here]
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+
+### Key Points
+
+- **Copyleft License**: Any modifications must be released under the same license
+- **Network Use**: Users interacting over a network must have access to the source code
+- **Source Code**: You must provide access to the complete source code
+- **Attribution**: You must give appropriate credit and indicate changes made
+
+### Additional Terms
+
+This license includes additional terms specific to MasterFabric:
+
+1. **Forking Requirements**: Users who fork this repository must contact MASTERFABRIC within 10 days at license@masterfabric.co
+2. **Mobile App Requirements**: Published mobile applications must include repository references
+3. **Non-Profit Exception**: Non-profit organizations may apply for a free license code
+
+For the complete license terms, see the [LICENSE](LICENSE) file.
+
+### Contact for Licensing
+
+- **Email:** license@masterfabric.co
+- **Secondary:** gurkanfikretgunak@masterfabric.co
+
+---
+
+<div align="center">
+
+**Copyright (C) 2024 MASTERFABRIC Bilişim Teknolojileri A.Ş.**
+
+*Built with ❤️ using [Serverpod](https://serverpod.dev) and [Flutter](https://flutter.dev)*
+
+</div>

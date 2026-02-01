@@ -246,3 +246,19 @@ Developer tools with tabs:
 
 - [Serverpod Documentation](https://docs.serverpod.dev)
 - [Main Project README](../README.md)
+
+---
+
+## License
+
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+
+**Copyright (C) 2024 MASTERFABRIC Bilişim Teknolojileri A.Ş. (MASTERFABRIC Information Technologies Inc.)**
+
+- **Owner:** Gürkan Fikret Günak (@gurkanfikretgunak)
+- **Website:** https://masterfabric.co
+- **License Contact:** license@masterfabric.co
+
+For full license terms, see the [LICENSE](../LICENSE) file.

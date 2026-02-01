@@ -147,3 +147,17 @@ at [https://www.contributor-covenant.org/translations][translations].
 [Mozilla CoC]: https://github.com/mozilla/inclusion/blob/master/code-of-conduct-enforcement/consequence-ladder.md
 [FAQ]: https://www.contributor-covenant.org/faq
 [translations]: https://www.contributor-covenant.org/translations
+
+---
+
+## License
+
+This Code of Conduct is part of the MasterFabric Serverpod project, which is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+**Copyright (C) 2024 MASTERFABRIC Bilişim Teknolojileri A.Ş. (MASTERFABRIC Information Technologies Inc.)**
+
+- **Owner:** Gürkan Fikret Günak (@gurkanfikretgunak)
+- **Website:** https://masterfabric.co
+- **License Contact:** license@masterfabric.co
+
+For full license terms, see the [LICENSE](LICENSE) file.
