@@ -2,6 +2,10 @@
 
 <div align="center">
 
+<img src=".github/images/repo-banner.png" alt="MasterFabric Serverpod Banner" width="100%"/>
+
+<br/>
+
 ![CI](https://github.com/gurkanfikretgunak/masterfabric_serverpod/workflows/Analyze/badge.svg)
 ![Tests](https://github.com/gurkanfikretgunak/masterfabric_serverpod/workflows/Tests/badge.svg)
 ![Format](https://github.com/gurkanfikretgunak/masterfabric_serverpod/workflows/Format/badge.svg)
