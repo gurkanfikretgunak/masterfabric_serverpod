@@ -1,0 +1,7 @@
+### Cached ID list wrapper model
+### Used to store lists of IDs in Serverpod cache (which requires SerializableModel)
+class: CachedIdList
+fields:
+  ids: String                         # Comma-separated list of IDs
+  createdAt: DateTime                 # When the list was created
+  updatedAt: DateTime                 # When the list was last updated

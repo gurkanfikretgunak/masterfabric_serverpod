@@ -1,0 +1,7 @@
+### Notification exception model
+### Serializable exception for notification errors
+exception: NotificationException
+fields:
+  code: String                        # Error code (e.g., CHANNEL_NOT_FOUND)
+  message: String                     # Human-readable error message
+  details: String?                    # Additional error details

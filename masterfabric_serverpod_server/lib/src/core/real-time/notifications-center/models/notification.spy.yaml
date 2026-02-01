@@ -1,0 +1,20 @@
+### Core notification model
+### Represents a single notification that can be sent to users
+class: Notification
+fields:
+  id: String                          # Unique notification ID (UUID)
+  type: NotificationType              # user, broadcast, or project
+  channelId: String                   # Channel this notification belongs to
+  title: String                       # Notification title
+  body: String                        # Notification body/message
+  payload: String?                    # Optional JSON payload for custom data
+  priority: NotificationPriority      # low, normal, high, urgent
+  targetUserId: String?               # Target user ID (for user-type notifications)
+  senderId: String?                   # ID of the sender (user or system)
+  senderName: String?                 # Display name of the sender
+  actionUrl: String?                  # Optional deep link or action URL
+  imageUrl: String?                   # Optional image URL for rich notifications
+  isRead: bool                        # Whether notification has been read
+  createdAt: DateTime                 # When notification was created
+  expiresAt: DateTime?                # Optional expiration time
+  metadata: String?                   # Additional metadata as JSON

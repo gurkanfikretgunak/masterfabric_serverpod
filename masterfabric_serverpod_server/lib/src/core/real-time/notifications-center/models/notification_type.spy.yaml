@@ -1,0 +1,7 @@
+### Notification type enum
+### Defines the type of notification delivery
+enum: NotificationType
+values:
+  - user       # Direct notification to a specific user
+  - broadcast  # Public broadcast to all subscribers
+  - project    # Notification to project members

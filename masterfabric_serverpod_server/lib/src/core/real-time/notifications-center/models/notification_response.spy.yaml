@@ -1,0 +1,9 @@
+### Notification API response model
+### Standard response for notification operations
+class: NotificationResponse
+fields:
+  success: bool                       # Whether operation succeeded
+  message: String                     # Status message
+  notificationId: String?             # ID of created/affected notification
+  notification: Notification?         # The notification object (if applicable)
+  timestamp: DateTime                 # Response timestamp

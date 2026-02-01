@@ -152,3 +152,37 @@ auth:
     useAlphanumeric: false  # true = alphanumeric codes (A3K7NP), false = numeric only (123456)
     maxAttempts: 5  # Max verification attempts before lockout
     lockoutMinutes: 15  # Lockout duration after max attempts
+
+# Real-time Notification Center configuration
+notifications:
+  enabled: true
+  
+  # Broadcast notification settings (for public channels with 50k+ users)
+  broadcast:
+    cacheTtlSeconds: 300          # How long to cache broadcasts (5 minutes)
+    maxCachedPerChannel: 100      # Max notifications cached per channel
+  
+  # Channel settings
+  channels:
+    defaultCacheTtl: 300          # Default TTL for channel caches (seconds)
+    maxSubscribersPerChannel: 0   # 0 = unlimited
+  
+  # Rate limiting for notification operations
+  rateLimit:
+    sendMaxPerMinute: 100         # Max notifications sent per minute (per user)
+    readMaxPerMinute: 300         # Max read operations per minute (per user)
+  
+  # Push notification integration (future)
+  push:
+    enabled: false                # Enable push notifications
+    fcm:
+      enabled: false
+      projectId: ""               # Firebase project ID
+      # serviceAccountPath: ""    # Path to service account JSON (store securely)
+    apns:
+      enabled: false
+      keyId: ""                   # APNs key ID
+      teamId: ""                  # APNs team ID
+      bundleId: ""                # App bundle ID
+      # keyPath: ""               # Path to .p8 key file (store securely)
+      isProduction: false         # Use production APNs (vs sandbox)

@@ -1,0 +1,9 @@
+### Channel API response model
+### Standard response for channel operations
+class: ChannelResponse
+fields:
+  success: bool                       # Whether operation succeeded
+  message: String                     # Status message
+  channel: NotificationChannel?       # The channel object (if applicable)
+  subscription: ChannelSubscription?  # User's subscription (if applicable)
+  timestamp: DateTime                 # Response timestamp

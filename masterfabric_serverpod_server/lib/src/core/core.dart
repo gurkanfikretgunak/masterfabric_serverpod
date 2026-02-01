@@ -33,3 +33,6 @@ export 'scheduling/scheduler_manager.dart';
 
 // Utils
 export 'utils/common_utils.dart';
+
+// Real-time (Notification Center)
+export 'real-time/real_time.dart';

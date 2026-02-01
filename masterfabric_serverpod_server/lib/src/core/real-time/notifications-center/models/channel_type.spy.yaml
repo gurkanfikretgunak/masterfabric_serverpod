@@ -1,0 +1,8 @@
+### Channel type enum
+### Defines the type of notification channel
+enum: ChannelType
+values:
+  - public   # Open to all users, broadcasts cached
+  - project  # Restricted to project members
+  - user     # Private user-specific channel
+  - system   # System-level notifications

@@ -1,0 +1,13 @@
+### Channel subscription model
+### Represents a user's subscription to a notification channel
+class: ChannelSubscription
+fields:
+  id: String                          # Unique subscription ID
+  userId: String                      # Subscribed user ID
+  channelId: String                   # Channel ID subscribed to
+  isActive: bool                      # Whether subscription is active
+  isMuted: bool                       # Whether notifications are muted
+  subscribedAt: DateTime              # When user subscribed
+  lastReadAt: DateTime?               # Last time user read notifications
+  unreadCount: int                    # Number of unread notifications
+  metadata: String?                   # Additional metadata as JSON

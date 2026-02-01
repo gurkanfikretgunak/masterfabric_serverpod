@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../services/health_service.dart';
+import '../services/notification_service.dart';
 import '../widgets/health_status_bar.dart';
+import '../widgets/notification_badge.dart';
 import 'service_test_screen.dart';
 import 'profile_screen.dart';
+import 'notifications/notification_center_screen.dart';
 
 /// Home screen after authentication
 class HomeScreen extends StatelessWidget {
@@ -20,6 +23,9 @@ class HomeScreen extends StatelessWidget {
         actions: [
           HealthStatusIndicator(
             onTap: () => HealthService.instance.checkHealth(),
+          ),
+          NotificationBadge(
+            onTap: () => _navigateToNotifications(context),
           ),
           IconButton(
             icon: const Icon(LucideIcons.circleUser),
@@ -61,6 +67,12 @@ class HomeScreen extends StatelessWidget {
 
               // Health Status
               const HealthStatusCard(),
+              const SizedBox(height: 24),
+
+              // Notifications Section
+              _buildSectionHeader('Notifications'),
+              const SizedBox(height: 12),
+              _buildNotificationCard(context),
               const SizedBox(height: 24),
 
               // Developer Tools Section
@@ -226,6 +238,141 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildNotificationCard(BuildContext context) {
+    return ListenableBuilder(
+      listenable: NotificationService.instance,
+      builder: (context, _) {
+        final service = NotificationService.instance;
+        final unreadCount = service.unreadCount;
+        final isConnected = service.isConnected;
+
+        return Card(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: isConnected ? Colors.green.withAlpha(50) : Colors.grey[200]!,
+            ),
+          ),
+          child: InkWell(
+            onTap: () => _navigateToNotifications(context),
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  // Icon with badge
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isConnected 
+                              ? Colors.green.withAlpha(25) 
+                              : Colors.grey.withAlpha(25),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          isConnected ? LucideIcons.bell : LucideIcons.bellOff,
+                          color: isConnected ? Colors.green : Colors.grey,
+                          size: 24,
+                        ),
+                      ),
+                      if (unreadCount > 0)
+                        Positioned(
+                          top: -4,
+                          right: -4,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              unreadCount > 99 ? '99+' : unreadCount.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  
+                  // Content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              'Notification Center',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isConnected 
+                                    ? Colors.green.withAlpha(25) 
+                                    : Colors.grey.withAlpha(25),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                isConnected ? 'Live' : 'Offline',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: isConnected ? Colors.green : Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          isConnected
+                              ? 'Real-time notifications active'
+                              : 'Tap to connect and receive notifications',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(LucideIcons.chevronRight, color: Colors.grey[400]),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _navigateToNotifications(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const NotificationCenterScreen()),
     );
   }
 

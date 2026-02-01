@@ -1,0 +1,8 @@
+### Channel list response model
+### Response for listing channels
+class: ChannelListResponse
+fields:
+  success: bool                       # Whether operation succeeded
+  channels: List<NotificationChannel> # List of channels
+  totalCount: int                     # Total number of channels
+  timestamp: DateTime                 # Response timestamp

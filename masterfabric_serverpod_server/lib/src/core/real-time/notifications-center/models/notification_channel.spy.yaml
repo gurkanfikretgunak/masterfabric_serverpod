@@ -1,0 +1,19 @@
+### Notification channel model
+### Represents a channel that users can subscribe to for notifications
+class: NotificationChannel
+fields:
+  id: String                          # Unique channel ID
+  name: String                        # Display name of the channel
+  description: String?                # Optional channel description
+  type: ChannelType                   # public, project, user, system
+  ownerId: String?                    # Owner user ID (for project channels)
+  projectId: String?                  # Associated project ID (for project channels)
+  isActive: bool                      # Whether channel is active
+  isPublic: bool                      # Whether anyone can join
+  maxSubscribers: int?                # Optional limit on subscribers
+  subscriberCount: int                # Current number of subscribers
+  cacheTtlSeconds: int                # How long to cache broadcasts (default 300)
+  maxCachedNotifications: int         # Max notifications to cache (default 100)
+  createdAt: DateTime                 # When channel was created
+  updatedAt: DateTime                 # Last update time
+  metadata: String?                   # Additional metadata as JSON

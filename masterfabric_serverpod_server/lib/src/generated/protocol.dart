@@ -32,37 +32,60 @@ import 'app_config/system/storage_configuration.dart' as _i17;
 import 'app_config/system/store_url.dart' as _i18;
 import 'core/exceptions/rate_limit_exception.dart' as _i19;
 import 'core/rate_limit/rate_limit_entry.dart' as _i20;
-import 'services/auth/core/auth_audit_log.dart' as _i21;
-import 'services/auth/password/password_strength_response.dart' as _i22;
-import 'services/auth/rbac/permission.dart' as _i23;
-import 'services/auth/rbac/role.dart' as _i24;
-import 'services/auth/rbac/user_role.dart' as _i25;
-import 'services/auth/session/session_info_response.dart' as _i26;
-import 'services/auth/two_factor/two_factor_secret.dart' as _i27;
-import 'services/auth/two_factor/two_factor_setup_response.dart' as _i28;
-import 'services/auth/user/account_status_response.dart' as _i29;
-import 'services/auth/user/current_user_response.dart' as _i30;
-import 'services/auth/user/gender.dart' as _i31;
-import 'services/auth/user/profile_update_request.dart' as _i32;
-import 'services/auth/user/user_info_response.dart' as _i33;
-import 'services/auth/user/user_list_response.dart' as _i34;
-import 'services/auth/user/user_profile_extended.dart' as _i35;
-import 'services/auth/verification/verification_code.dart' as _i36;
-import 'services/auth/verification/verification_response.dart' as _i37;
-import 'services/greetings/greeting.dart' as _i38;
-import 'services/greetings/greeting_response.dart' as _i39;
-import 'services/health/health_check_response.dart' as _i40;
-import 'services/health/service_health_info.dart' as _i41;
-import 'services/translations/translation_entry.dart' as _i42;
-import 'services/translations/translation_response.dart' as _i43;
+import 'core/real-time/notifications-center/models/cached_id_list.dart' as _i21;
+import 'core/real-time/notifications-center/models/channel_list_response.dart'
+    as _i22;
+import 'core/real-time/notifications-center/models/channel_response.dart'
+    as _i23;
+import 'core/real-time/notifications-center/models/channel_subscription.dart'
+    as _i24;
+import 'core/real-time/notifications-center/models/channel_type.dart' as _i25;
+import 'core/real-time/notifications-center/models/notification.dart' as _i26;
+import 'core/real-time/notifications-center/models/notification_channel.dart'
+    as _i27;
+import 'core/real-time/notifications-center/models/notification_exception.dart'
+    as _i28;
+import 'core/real-time/notifications-center/models/notification_list_response.dart'
+    as _i29;
+import 'core/real-time/notifications-center/models/notification_priority.dart'
+    as _i30;
+import 'core/real-time/notifications-center/models/notification_response.dart'
+    as _i31;
+import 'core/real-time/notifications-center/models/notification_type.dart'
+    as _i32;
+import 'core/real-time/notifications-center/models/send_notification_request.dart'
+    as _i33;
+import 'services/auth/core/auth_audit_log.dart' as _i34;
+import 'services/auth/password/password_strength_response.dart' as _i35;
+import 'services/auth/rbac/permission.dart' as _i36;
+import 'services/auth/rbac/role.dart' as _i37;
+import 'services/auth/rbac/user_role.dart' as _i38;
+import 'services/auth/session/session_info_response.dart' as _i39;
+import 'services/auth/two_factor/two_factor_secret.dart' as _i40;
+import 'services/auth/two_factor/two_factor_setup_response.dart' as _i41;
+import 'services/auth/user/account_status_response.dart' as _i42;
+import 'services/auth/user/current_user_response.dart' as _i43;
+import 'services/auth/user/gender.dart' as _i44;
+import 'services/auth/user/profile_update_request.dart' as _i45;
+import 'services/auth/user/user_info_response.dart' as _i46;
+import 'services/auth/user/user_list_response.dart' as _i47;
+import 'services/auth/user/user_profile_extended.dart' as _i48;
+import 'services/auth/verification/verification_code.dart' as _i49;
+import 'services/auth/verification/verification_response.dart' as _i50;
+import 'services/greetings/greeting.dart' as _i51;
+import 'services/greetings/greeting_response.dart' as _i52;
+import 'services/health/health_check_response.dart' as _i53;
+import 'services/health/service_health_info.dart' as _i54;
+import 'services/translations/translation_entry.dart' as _i55;
+import 'services/translations/translation_response.dart' as _i56;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/role.dart'
-    as _i44;
+    as _i57;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/permission.dart'
-    as _i45;
+    as _i58;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/session/session_info_response.dart'
-    as _i46;
+    as _i59;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
-    as _i47;
+    as _i60;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -79,6 +102,19 @@ export 'app_config/system/storage_configuration.dart';
 export 'app_config/system/store_url.dart';
 export 'core/exceptions/rate_limit_exception.dart';
 export 'core/rate_limit/rate_limit_entry.dart';
+export 'core/real-time/notifications-center/models/cached_id_list.dart';
+export 'core/real-time/notifications-center/models/channel_list_response.dart';
+export 'core/real-time/notifications-center/models/channel_response.dart';
+export 'core/real-time/notifications-center/models/channel_subscription.dart';
+export 'core/real-time/notifications-center/models/channel_type.dart';
+export 'core/real-time/notifications-center/models/notification.dart';
+export 'core/real-time/notifications-center/models/notification_channel.dart';
+export 'core/real-time/notifications-center/models/notification_exception.dart';
+export 'core/real-time/notifications-center/models/notification_list_response.dart';
+export 'core/real-time/notifications-center/models/notification_priority.dart';
+export 'core/real-time/notifications-center/models/notification_response.dart';
+export 'core/real-time/notifications-center/models/notification_type.dart';
+export 'core/real-time/notifications-center/models/send_notification_request.dart';
 export 'services/auth/core/auth_audit_log.dart';
 export 'services/auth/password/password_strength_response.dart';
 export 'services/auth/rbac/permission.dart';
@@ -816,74 +852,113 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i20.RateLimitEntry) {
       return _i20.RateLimitEntry.fromJson(data) as T;
     }
-    if (t == _i21.AuthAuditLog) {
-      return _i21.AuthAuditLog.fromJson(data) as T;
+    if (t == _i21.CachedIdList) {
+      return _i21.CachedIdList.fromJson(data) as T;
     }
-    if (t == _i22.PasswordStrengthResponse) {
-      return _i22.PasswordStrengthResponse.fromJson(data) as T;
+    if (t == _i22.ChannelListResponse) {
+      return _i22.ChannelListResponse.fromJson(data) as T;
     }
-    if (t == _i23.Permission) {
-      return _i23.Permission.fromJson(data) as T;
+    if (t == _i23.ChannelResponse) {
+      return _i23.ChannelResponse.fromJson(data) as T;
     }
-    if (t == _i24.Role) {
-      return _i24.Role.fromJson(data) as T;
+    if (t == _i24.ChannelSubscription) {
+      return _i24.ChannelSubscription.fromJson(data) as T;
     }
-    if (t == _i25.UserRole) {
-      return _i25.UserRole.fromJson(data) as T;
+    if (t == _i25.ChannelType) {
+      return _i25.ChannelType.fromJson(data) as T;
     }
-    if (t == _i26.SessionInfoResponse) {
-      return _i26.SessionInfoResponse.fromJson(data) as T;
+    if (t == _i26.Notification) {
+      return _i26.Notification.fromJson(data) as T;
     }
-    if (t == _i27.TwoFactorSecret) {
-      return _i27.TwoFactorSecret.fromJson(data) as T;
+    if (t == _i27.NotificationChannel) {
+      return _i27.NotificationChannel.fromJson(data) as T;
     }
-    if (t == _i28.TwoFactorSetupResponse) {
-      return _i28.TwoFactorSetupResponse.fromJson(data) as T;
+    if (t == _i28.NotificationException) {
+      return _i28.NotificationException.fromJson(data) as T;
     }
-    if (t == _i29.AccountStatusResponse) {
-      return _i29.AccountStatusResponse.fromJson(data) as T;
+    if (t == _i29.NotificationListResponse) {
+      return _i29.NotificationListResponse.fromJson(data) as T;
     }
-    if (t == _i30.CurrentUserResponse) {
-      return _i30.CurrentUserResponse.fromJson(data) as T;
+    if (t == _i30.NotificationPriority) {
+      return _i30.NotificationPriority.fromJson(data) as T;
     }
-    if (t == _i31.Gender) {
-      return _i31.Gender.fromJson(data) as T;
+    if (t == _i31.NotificationResponse) {
+      return _i31.NotificationResponse.fromJson(data) as T;
     }
-    if (t == _i32.ProfileUpdateRequest) {
-      return _i32.ProfileUpdateRequest.fromJson(data) as T;
+    if (t == _i32.NotificationType) {
+      return _i32.NotificationType.fromJson(data) as T;
     }
-    if (t == _i33.UserInfoResponse) {
-      return _i33.UserInfoResponse.fromJson(data) as T;
+    if (t == _i33.SendNotificationRequest) {
+      return _i33.SendNotificationRequest.fromJson(data) as T;
     }
-    if (t == _i34.UserListResponse) {
-      return _i34.UserListResponse.fromJson(data) as T;
+    if (t == _i34.AuthAuditLog) {
+      return _i34.AuthAuditLog.fromJson(data) as T;
     }
-    if (t == _i35.UserProfileExtended) {
-      return _i35.UserProfileExtended.fromJson(data) as T;
+    if (t == _i35.PasswordStrengthResponse) {
+      return _i35.PasswordStrengthResponse.fromJson(data) as T;
     }
-    if (t == _i36.VerificationCode) {
-      return _i36.VerificationCode.fromJson(data) as T;
+    if (t == _i36.Permission) {
+      return _i36.Permission.fromJson(data) as T;
     }
-    if (t == _i37.VerificationResponse) {
-      return _i37.VerificationResponse.fromJson(data) as T;
+    if (t == _i37.Role) {
+      return _i37.Role.fromJson(data) as T;
     }
-    if (t == _i38.Greeting) {
-      return _i38.Greeting.fromJson(data) as T;
+    if (t == _i38.UserRole) {
+      return _i38.UserRole.fromJson(data) as T;
     }
-    if (t == _i39.GreetingResponse) {
-      return _i39.GreetingResponse.fromJson(data) as T;
+    if (t == _i39.SessionInfoResponse) {
+      return _i39.SessionInfoResponse.fromJson(data) as T;
     }
-    if (t == _i40.HealthCheckResponse) {
-      return _i40.HealthCheckResponse.fromJson(data) as T;
+    if (t == _i40.TwoFactorSecret) {
+      return _i40.TwoFactorSecret.fromJson(data) as T;
     }
-    if (t == _i41.ServiceHealthInfo) {
-      return _i41.ServiceHealthInfo.fromJson(data) as T;
+    if (t == _i41.TwoFactorSetupResponse) {
+      return _i41.TwoFactorSetupResponse.fromJson(data) as T;
     }
-    if (t == _i42.TranslationEntry) {
-      return _i42.TranslationEntry.fromJson(data) as T;
+    if (t == _i42.AccountStatusResponse) {
+      return _i42.AccountStatusResponse.fromJson(data) as T;
     }
-    if (t == _i43.TranslationResponse) {
-      return _i43.TranslationResponse.fromJson(data) as T;
+    if (t == _i43.CurrentUserResponse) {
+      return _i43.CurrentUserResponse.fromJson(data) as T;
+    }
+    if (t == _i44.Gender) {
+      return _i44.Gender.fromJson(data) as T;
+    }
+    if (t == _i45.ProfileUpdateRequest) {
+      return _i45.ProfileUpdateRequest.fromJson(data) as T;
+    }
+    if (t == _i46.UserInfoResponse) {
+      return _i46.UserInfoResponse.fromJson(data) as T;
+    }
+    if (t == _i47.UserListResponse) {
+      return _i47.UserListResponse.fromJson(data) as T;
+    }
+    if (t == _i48.UserProfileExtended) {
+      return _i48.UserProfileExtended.fromJson(data) as T;
+    }
+    if (t == _i49.VerificationCode) {
+      return _i49.VerificationCode.fromJson(data) as T;
+    }
+    if (t == _i50.VerificationResponse) {
+      return _i50.VerificationResponse.fromJson(data) as T;
+    }
+    if (t == _i51.Greeting) {
+      return _i51.Greeting.fromJson(data) as T;
+    }
+    if (t == _i52.GreetingResponse) {
+      return _i52.GreetingResponse.fromJson(data) as T;
+    }
+    if (t == _i53.HealthCheckResponse) {
+      return _i53.HealthCheckResponse.fromJson(data) as T;
+    }
+    if (t == _i54.ServiceHealthInfo) {
+      return _i54.ServiceHealthInfo.fromJson(data) as T;
+    }
+    if (t == _i55.TranslationEntry) {
+      return _i55.TranslationEntry.fromJson(data) as T;
+    }
+    if (t == _i56.TranslationResponse) {
+      return _i56.TranslationResponse.fromJson(data) as T;
     }
     if (t == _i1.getType<_i5.AppConfig?>()) {
       return (data != null ? _i5.AppConfig.fromJson(data) : null) as T;
@@ -949,133 +1024,194 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i20.RateLimitEntry?>()) {
       return (data != null ? _i20.RateLimitEntry.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i21.AuthAuditLog?>()) {
-      return (data != null ? _i21.AuthAuditLog.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i21.CachedIdList?>()) {
+      return (data != null ? _i21.CachedIdList.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i22.PasswordStrengthResponse?>()) {
+    if (t == _i1.getType<_i22.ChannelListResponse?>()) {
+      return (data != null ? _i22.ChannelListResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i23.ChannelResponse?>()) {
+      return (data != null ? _i23.ChannelResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i24.ChannelSubscription?>()) {
+      return (data != null ? _i24.ChannelSubscription.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i25.ChannelType?>()) {
+      return (data != null ? _i25.ChannelType.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i26.Notification?>()) {
+      return (data != null ? _i26.Notification.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i27.NotificationChannel?>()) {
+      return (data != null ? _i27.NotificationChannel.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i28.NotificationException?>()) {
+      return (data != null ? _i28.NotificationException.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i29.NotificationListResponse?>()) {
       return (data != null
-              ? _i22.PasswordStrengthResponse.fromJson(data)
+              ? _i29.NotificationListResponse.fromJson(data)
               : null)
           as T;
     }
-    if (t == _i1.getType<_i23.Permission?>()) {
-      return (data != null ? _i23.Permission.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i24.Role?>()) {
-      return (data != null ? _i24.Role.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i25.UserRole?>()) {
-      return (data != null ? _i25.UserRole.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i26.SessionInfoResponse?>()) {
-      return (data != null ? _i26.SessionInfoResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i30.NotificationPriority?>()) {
+      return (data != null ? _i30.NotificationPriority.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i27.TwoFactorSecret?>()) {
-      return (data != null ? _i27.TwoFactorSecret.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i28.TwoFactorSetupResponse?>()) {
-      return (data != null ? _i28.TwoFactorSetupResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i31.NotificationResponse?>()) {
+      return (data != null ? _i31.NotificationResponse.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i29.AccountStatusResponse?>()) {
-      return (data != null ? _i29.AccountStatusResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i32.NotificationType?>()) {
+      return (data != null ? _i32.NotificationType.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i33.SendNotificationRequest?>()) {
+      return (data != null ? _i33.SendNotificationRequest.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i30.CurrentUserResponse?>()) {
-      return (data != null ? _i30.CurrentUserResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i34.AuthAuditLog?>()) {
+      return (data != null ? _i34.AuthAuditLog.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i35.PasswordStrengthResponse?>()) {
+      return (data != null
+              ? _i35.PasswordStrengthResponse.fromJson(data)
+              : null)
           as T;
     }
-    if (t == _i1.getType<_i31.Gender?>()) {
-      return (data != null ? _i31.Gender.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i36.Permission?>()) {
+      return (data != null ? _i36.Permission.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i32.ProfileUpdateRequest?>()) {
-      return (data != null ? _i32.ProfileUpdateRequest.fromJson(data) : null)
+    if (t == _i1.getType<_i37.Role?>()) {
+      return (data != null ? _i37.Role.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i38.UserRole?>()) {
+      return (data != null ? _i38.UserRole.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i39.SessionInfoResponse?>()) {
+      return (data != null ? _i39.SessionInfoResponse.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i33.UserInfoResponse?>()) {
-      return (data != null ? _i33.UserInfoResponse.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i40.TwoFactorSecret?>()) {
+      return (data != null ? _i40.TwoFactorSecret.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i34.UserListResponse?>()) {
-      return (data != null ? _i34.UserListResponse.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i35.UserProfileExtended?>()) {
-      return (data != null ? _i35.UserProfileExtended.fromJson(data) : null)
+    if (t == _i1.getType<_i41.TwoFactorSetupResponse?>()) {
+      return (data != null ? _i41.TwoFactorSetupResponse.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i36.VerificationCode?>()) {
-      return (data != null ? _i36.VerificationCode.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i37.VerificationResponse?>()) {
-      return (data != null ? _i37.VerificationResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i42.AccountStatusResponse?>()) {
+      return (data != null ? _i42.AccountStatusResponse.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i38.Greeting?>()) {
-      return (data != null ? _i38.Greeting.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i39.GreetingResponse?>()) {
-      return (data != null ? _i39.GreetingResponse.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i40.HealthCheckResponse?>()) {
-      return (data != null ? _i40.HealthCheckResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i43.CurrentUserResponse?>()) {
+      return (data != null ? _i43.CurrentUserResponse.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i41.ServiceHealthInfo?>()) {
-      return (data != null ? _i41.ServiceHealthInfo.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i44.Gender?>()) {
+      return (data != null ? _i44.Gender.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i42.TranslationEntry?>()) {
-      return (data != null ? _i42.TranslationEntry.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i45.ProfileUpdateRequest?>()) {
+      return (data != null ? _i45.ProfileUpdateRequest.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i43.TranslationResponse?>()) {
-      return (data != null ? _i43.TranslationResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i46.UserInfoResponse?>()) {
+      return (data != null ? _i46.UserInfoResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i47.UserListResponse?>()) {
+      return (data != null ? _i47.UserListResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i48.UserProfileExtended?>()) {
+      return (data != null ? _i48.UserProfileExtended.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i49.VerificationCode?>()) {
+      return (data != null ? _i49.VerificationCode.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i50.VerificationResponse?>()) {
+      return (data != null ? _i50.VerificationResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i51.Greeting?>()) {
+      return (data != null ? _i51.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i52.GreetingResponse?>()) {
+      return (data != null ? _i52.GreetingResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i53.HealthCheckResponse?>()) {
+      return (data != null ? _i53.HealthCheckResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i54.ServiceHealthInfo?>()) {
+      return (data != null ? _i54.ServiceHealthInfo.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i55.TranslationEntry?>()) {
+      return (data != null ? _i55.TranslationEntry.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i56.TranslationResponse?>()) {
+      return (data != null ? _i56.TranslationResponse.fromJson(data) : null)
           as T;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == List<_i33.UserInfoResponse>) {
+    if (t == List<_i27.NotificationChannel>) {
       return (data as List)
-              .map((e) => deserialize<_i33.UserInfoResponse>(e))
+              .map((e) => deserialize<_i27.NotificationChannel>(e))
               .toList()
           as T;
     }
-    if (t == List<_i41.ServiceHealthInfo>) {
+    if (t == List<_i26.Notification>) {
       return (data as List)
-              .map((e) => deserialize<_i41.ServiceHealthInfo>(e))
+              .map((e) => deserialize<_i26.Notification>(e))
               .toList()
           as T;
     }
-    if (t == List<_i44.Role>) {
-      return (data as List).map((e) => deserialize<_i44.Role>(e)).toList() as T;
-    }
-    if (t == List<_i45.Permission>) {
-      return (data as List).map((e) => deserialize<_i45.Permission>(e)).toList()
-          as T;
-    }
-    if (t == List<String>) {
-      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
-    }
-    if (t == Set<String>) {
-      return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
-    }
-    if (t == List<_i46.SessionInfoResponse>) {
+    if (t == List<_i46.UserInfoResponse>) {
       return (data as List)
-              .map((e) => deserialize<_i46.SessionInfoResponse>(e))
+              .map((e) => deserialize<_i46.UserInfoResponse>(e))
               .toList()
           as T;
     }
-    if (t == List<_i47.Gender>) {
-      return (data as List).map((e) => deserialize<_i47.Gender>(e)).toList()
+    if (t == List<_i54.ServiceHealthInfo>) {
+      return (data as List)
+              .map((e) => deserialize<_i54.ServiceHealthInfo>(e))
+              .toList()
           as T;
-    }
-    if (t == List<int>) {
-      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
     }
     if (t == Map<String, dynamic>) {
       return (data as Map).map(
             (k, v) => MapEntry(deserialize<String>(k), deserialize<dynamic>(v)),
           )
           as T;
+    }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == List<_i57.Role>) {
+      return (data as List).map((e) => deserialize<_i57.Role>(e)).toList() as T;
+    }
+    if (t == List<_i58.Permission>) {
+      return (data as List).map((e) => deserialize<_i58.Permission>(e)).toList()
+          as T;
+    }
+    if (t == Set<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
+    }
+    if (t == List<_i59.SessionInfoResponse>) {
+      return (data as List)
+              .map((e) => deserialize<_i59.SessionInfoResponse>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i60.Gender>) {
+      return (data as List).map((e) => deserialize<_i60.Gender>(e)).toList()
+          as T;
+    }
+    if (t == List<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
     }
     try {
       return _i3.Protocol().deserialize<T>(data, t);
@@ -1107,29 +1243,42 @@ class Protocol extends _i1.SerializationManagerServer {
       _i18.StoreUrl => 'StoreUrl',
       _i19.RateLimitException => 'RateLimitException',
       _i20.RateLimitEntry => 'RateLimitEntry',
-      _i21.AuthAuditLog => 'AuthAuditLog',
-      _i22.PasswordStrengthResponse => 'PasswordStrengthResponse',
-      _i23.Permission => 'Permission',
-      _i24.Role => 'Role',
-      _i25.UserRole => 'UserRole',
-      _i26.SessionInfoResponse => 'SessionInfoResponse',
-      _i27.TwoFactorSecret => 'TwoFactorSecret',
-      _i28.TwoFactorSetupResponse => 'TwoFactorSetupResponse',
-      _i29.AccountStatusResponse => 'AccountStatusResponse',
-      _i30.CurrentUserResponse => 'CurrentUserResponse',
-      _i31.Gender => 'Gender',
-      _i32.ProfileUpdateRequest => 'ProfileUpdateRequest',
-      _i33.UserInfoResponse => 'UserInfoResponse',
-      _i34.UserListResponse => 'UserListResponse',
-      _i35.UserProfileExtended => 'UserProfileExtended',
-      _i36.VerificationCode => 'VerificationCode',
-      _i37.VerificationResponse => 'VerificationResponse',
-      _i38.Greeting => 'Greeting',
-      _i39.GreetingResponse => 'GreetingResponse',
-      _i40.HealthCheckResponse => 'HealthCheckResponse',
-      _i41.ServiceHealthInfo => 'ServiceHealthInfo',
-      _i42.TranslationEntry => 'TranslationEntry',
-      _i43.TranslationResponse => 'TranslationResponse',
+      _i21.CachedIdList => 'CachedIdList',
+      _i22.ChannelListResponse => 'ChannelListResponse',
+      _i23.ChannelResponse => 'ChannelResponse',
+      _i24.ChannelSubscription => 'ChannelSubscription',
+      _i25.ChannelType => 'ChannelType',
+      _i26.Notification => 'Notification',
+      _i27.NotificationChannel => 'NotificationChannel',
+      _i28.NotificationException => 'NotificationException',
+      _i29.NotificationListResponse => 'NotificationListResponse',
+      _i30.NotificationPriority => 'NotificationPriority',
+      _i31.NotificationResponse => 'NotificationResponse',
+      _i32.NotificationType => 'NotificationType',
+      _i33.SendNotificationRequest => 'SendNotificationRequest',
+      _i34.AuthAuditLog => 'AuthAuditLog',
+      _i35.PasswordStrengthResponse => 'PasswordStrengthResponse',
+      _i36.Permission => 'Permission',
+      _i37.Role => 'Role',
+      _i38.UserRole => 'UserRole',
+      _i39.SessionInfoResponse => 'SessionInfoResponse',
+      _i40.TwoFactorSecret => 'TwoFactorSecret',
+      _i41.TwoFactorSetupResponse => 'TwoFactorSetupResponse',
+      _i42.AccountStatusResponse => 'AccountStatusResponse',
+      _i43.CurrentUserResponse => 'CurrentUserResponse',
+      _i44.Gender => 'Gender',
+      _i45.ProfileUpdateRequest => 'ProfileUpdateRequest',
+      _i46.UserInfoResponse => 'UserInfoResponse',
+      _i47.UserListResponse => 'UserListResponse',
+      _i48.UserProfileExtended => 'UserProfileExtended',
+      _i49.VerificationCode => 'VerificationCode',
+      _i50.VerificationResponse => 'VerificationResponse',
+      _i51.Greeting => 'Greeting',
+      _i52.GreetingResponse => 'GreetingResponse',
+      _i53.HealthCheckResponse => 'HealthCheckResponse',
+      _i54.ServiceHealthInfo => 'ServiceHealthInfo',
+      _i55.TranslationEntry => 'TranslationEntry',
+      _i56.TranslationResponse => 'TranslationResponse',
       _ => null,
     };
   }
@@ -1179,51 +1328,77 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'RateLimitException';
       case _i20.RateLimitEntry():
         return 'RateLimitEntry';
-      case _i21.AuthAuditLog():
+      case _i21.CachedIdList():
+        return 'CachedIdList';
+      case _i22.ChannelListResponse():
+        return 'ChannelListResponse';
+      case _i23.ChannelResponse():
+        return 'ChannelResponse';
+      case _i24.ChannelSubscription():
+        return 'ChannelSubscription';
+      case _i25.ChannelType():
+        return 'ChannelType';
+      case _i26.Notification():
+        return 'Notification';
+      case _i27.NotificationChannel():
+        return 'NotificationChannel';
+      case _i28.NotificationException():
+        return 'NotificationException';
+      case _i29.NotificationListResponse():
+        return 'NotificationListResponse';
+      case _i30.NotificationPriority():
+        return 'NotificationPriority';
+      case _i31.NotificationResponse():
+        return 'NotificationResponse';
+      case _i32.NotificationType():
+        return 'NotificationType';
+      case _i33.SendNotificationRequest():
+        return 'SendNotificationRequest';
+      case _i34.AuthAuditLog():
         return 'AuthAuditLog';
-      case _i22.PasswordStrengthResponse():
+      case _i35.PasswordStrengthResponse():
         return 'PasswordStrengthResponse';
-      case _i23.Permission():
+      case _i36.Permission():
         return 'Permission';
-      case _i24.Role():
+      case _i37.Role():
         return 'Role';
-      case _i25.UserRole():
+      case _i38.UserRole():
         return 'UserRole';
-      case _i26.SessionInfoResponse():
+      case _i39.SessionInfoResponse():
         return 'SessionInfoResponse';
-      case _i27.TwoFactorSecret():
+      case _i40.TwoFactorSecret():
         return 'TwoFactorSecret';
-      case _i28.TwoFactorSetupResponse():
+      case _i41.TwoFactorSetupResponse():
         return 'TwoFactorSetupResponse';
-      case _i29.AccountStatusResponse():
+      case _i42.AccountStatusResponse():
         return 'AccountStatusResponse';
-      case _i30.CurrentUserResponse():
+      case _i43.CurrentUserResponse():
         return 'CurrentUserResponse';
-      case _i31.Gender():
+      case _i44.Gender():
         return 'Gender';
-      case _i32.ProfileUpdateRequest():
+      case _i45.ProfileUpdateRequest():
         return 'ProfileUpdateRequest';
-      case _i33.UserInfoResponse():
+      case _i46.UserInfoResponse():
         return 'UserInfoResponse';
-      case _i34.UserListResponse():
+      case _i47.UserListResponse():
         return 'UserListResponse';
-      case _i35.UserProfileExtended():
+      case _i48.UserProfileExtended():
         return 'UserProfileExtended';
-      case _i36.VerificationCode():
+      case _i49.VerificationCode():
         return 'VerificationCode';
-      case _i37.VerificationResponse():
+      case _i50.VerificationResponse():
         return 'VerificationResponse';
-      case _i38.Greeting():
+      case _i51.Greeting():
         return 'Greeting';
-      case _i39.GreetingResponse():
+      case _i52.GreetingResponse():
         return 'GreetingResponse';
-      case _i40.HealthCheckResponse():
+      case _i53.HealthCheckResponse():
         return 'HealthCheckResponse';
-      case _i41.ServiceHealthInfo():
+      case _i54.ServiceHealthInfo():
         return 'ServiceHealthInfo';
-      case _i42.TranslationEntry():
+      case _i55.TranslationEntry():
         return 'TranslationEntry';
-      case _i43.TranslationResponse():
+      case _i56.TranslationResponse():
         return 'TranslationResponse';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -1295,74 +1470,113 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'RateLimitEntry') {
       return deserialize<_i20.RateLimitEntry>(data['data']);
     }
+    if (dataClassName == 'CachedIdList') {
+      return deserialize<_i21.CachedIdList>(data['data']);
+    }
+    if (dataClassName == 'ChannelListResponse') {
+      return deserialize<_i22.ChannelListResponse>(data['data']);
+    }
+    if (dataClassName == 'ChannelResponse') {
+      return deserialize<_i23.ChannelResponse>(data['data']);
+    }
+    if (dataClassName == 'ChannelSubscription') {
+      return deserialize<_i24.ChannelSubscription>(data['data']);
+    }
+    if (dataClassName == 'ChannelType') {
+      return deserialize<_i25.ChannelType>(data['data']);
+    }
+    if (dataClassName == 'Notification') {
+      return deserialize<_i26.Notification>(data['data']);
+    }
+    if (dataClassName == 'NotificationChannel') {
+      return deserialize<_i27.NotificationChannel>(data['data']);
+    }
+    if (dataClassName == 'NotificationException') {
+      return deserialize<_i28.NotificationException>(data['data']);
+    }
+    if (dataClassName == 'NotificationListResponse') {
+      return deserialize<_i29.NotificationListResponse>(data['data']);
+    }
+    if (dataClassName == 'NotificationPriority') {
+      return deserialize<_i30.NotificationPriority>(data['data']);
+    }
+    if (dataClassName == 'NotificationResponse') {
+      return deserialize<_i31.NotificationResponse>(data['data']);
+    }
+    if (dataClassName == 'NotificationType') {
+      return deserialize<_i32.NotificationType>(data['data']);
+    }
+    if (dataClassName == 'SendNotificationRequest') {
+      return deserialize<_i33.SendNotificationRequest>(data['data']);
+    }
     if (dataClassName == 'AuthAuditLog') {
-      return deserialize<_i21.AuthAuditLog>(data['data']);
+      return deserialize<_i34.AuthAuditLog>(data['data']);
     }
     if (dataClassName == 'PasswordStrengthResponse') {
-      return deserialize<_i22.PasswordStrengthResponse>(data['data']);
+      return deserialize<_i35.PasswordStrengthResponse>(data['data']);
     }
     if (dataClassName == 'Permission') {
-      return deserialize<_i23.Permission>(data['data']);
+      return deserialize<_i36.Permission>(data['data']);
     }
     if (dataClassName == 'Role') {
-      return deserialize<_i24.Role>(data['data']);
+      return deserialize<_i37.Role>(data['data']);
     }
     if (dataClassName == 'UserRole') {
-      return deserialize<_i25.UserRole>(data['data']);
+      return deserialize<_i38.UserRole>(data['data']);
     }
     if (dataClassName == 'SessionInfoResponse') {
-      return deserialize<_i26.SessionInfoResponse>(data['data']);
+      return deserialize<_i39.SessionInfoResponse>(data['data']);
     }
     if (dataClassName == 'TwoFactorSecret') {
-      return deserialize<_i27.TwoFactorSecret>(data['data']);
+      return deserialize<_i40.TwoFactorSecret>(data['data']);
     }
     if (dataClassName == 'TwoFactorSetupResponse') {
-      return deserialize<_i28.TwoFactorSetupResponse>(data['data']);
+      return deserialize<_i41.TwoFactorSetupResponse>(data['data']);
     }
     if (dataClassName == 'AccountStatusResponse') {
-      return deserialize<_i29.AccountStatusResponse>(data['data']);
+      return deserialize<_i42.AccountStatusResponse>(data['data']);
     }
     if (dataClassName == 'CurrentUserResponse') {
-      return deserialize<_i30.CurrentUserResponse>(data['data']);
+      return deserialize<_i43.CurrentUserResponse>(data['data']);
     }
     if (dataClassName == 'Gender') {
-      return deserialize<_i31.Gender>(data['data']);
+      return deserialize<_i44.Gender>(data['data']);
     }
     if (dataClassName == 'ProfileUpdateRequest') {
-      return deserialize<_i32.ProfileUpdateRequest>(data['data']);
+      return deserialize<_i45.ProfileUpdateRequest>(data['data']);
     }
     if (dataClassName == 'UserInfoResponse') {
-      return deserialize<_i33.UserInfoResponse>(data['data']);
+      return deserialize<_i46.UserInfoResponse>(data['data']);
     }
     if (dataClassName == 'UserListResponse') {
-      return deserialize<_i34.UserListResponse>(data['data']);
+      return deserialize<_i47.UserListResponse>(data['data']);
     }
     if (dataClassName == 'UserProfileExtended') {
-      return deserialize<_i35.UserProfileExtended>(data['data']);
+      return deserialize<_i48.UserProfileExtended>(data['data']);
     }
     if (dataClassName == 'VerificationCode') {
-      return deserialize<_i36.VerificationCode>(data['data']);
+      return deserialize<_i49.VerificationCode>(data['data']);
     }
     if (dataClassName == 'VerificationResponse') {
-      return deserialize<_i37.VerificationResponse>(data['data']);
+      return deserialize<_i50.VerificationResponse>(data['data']);
     }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i38.Greeting>(data['data']);
+      return deserialize<_i51.Greeting>(data['data']);
     }
     if (dataClassName == 'GreetingResponse') {
-      return deserialize<_i39.GreetingResponse>(data['data']);
+      return deserialize<_i52.GreetingResponse>(data['data']);
     }
     if (dataClassName == 'HealthCheckResponse') {
-      return deserialize<_i40.HealthCheckResponse>(data['data']);
+      return deserialize<_i53.HealthCheckResponse>(data['data']);
     }
     if (dataClassName == 'ServiceHealthInfo') {
-      return deserialize<_i41.ServiceHealthInfo>(data['data']);
+      return deserialize<_i54.ServiceHealthInfo>(data['data']);
     }
     if (dataClassName == 'TranslationEntry') {
-      return deserialize<_i42.TranslationEntry>(data['data']);
+      return deserialize<_i55.TranslationEntry>(data['data']);
     }
     if (dataClassName == 'TranslationResponse') {
-      return deserialize<_i43.TranslationResponse>(data['data']);
+      return deserialize<_i56.TranslationResponse>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -1402,22 +1616,22 @@ class Protocol extends _i1.SerializationManagerServer {
     switch (t) {
       case _i6.AppConfigEntry:
         return _i6.AppConfigEntry.t;
-      case _i21.AuthAuditLog:
-        return _i21.AuthAuditLog.t;
-      case _i23.Permission:
-        return _i23.Permission.t;
-      case _i24.Role:
-        return _i24.Role.t;
-      case _i25.UserRole:
-        return _i25.UserRole.t;
-      case _i27.TwoFactorSecret:
-        return _i27.TwoFactorSecret.t;
-      case _i35.UserProfileExtended:
-        return _i35.UserProfileExtended.t;
-      case _i36.VerificationCode:
-        return _i36.VerificationCode.t;
-      case _i42.TranslationEntry:
-        return _i42.TranslationEntry.t;
+      case _i34.AuthAuditLog:
+        return _i34.AuthAuditLog.t;
+      case _i36.Permission:
+        return _i36.Permission.t;
+      case _i37.Role:
+        return _i37.Role.t;
+      case _i38.UserRole:
+        return _i38.UserRole.t;
+      case _i40.TwoFactorSecret:
+        return _i40.TwoFactorSecret.t;
+      case _i48.UserProfileExtended:
+        return _i48.UserProfileExtended.t;
+      case _i49.VerificationCode:
+        return _i49.VerificationCode.t;
+      case _i55.TranslationEntry:
+        return _i55.TranslationEntry.t;
     }
     return null;
   }

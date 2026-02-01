@@ -1,0 +1,8 @@
+### Notification priority enum
+### Defines the urgency level of a notification
+enum: NotificationPriority
+values:
+  - low      # Background notifications, can be batched
+  - normal   # Standard priority, delivered normally
+  - high     # Important notifications, immediate delivery
+  - urgent   # Critical notifications, may trigger push

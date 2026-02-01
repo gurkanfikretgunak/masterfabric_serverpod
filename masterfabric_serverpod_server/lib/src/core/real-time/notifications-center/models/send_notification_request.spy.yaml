@@ -1,0 +1,15 @@
+### Send notification request model
+### Request payload for sending notifications
+class: SendNotificationRequest
+fields:
+  type: NotificationType              # user, broadcast, or project
+  channelId: String?                  # Channel ID (required for broadcast/project)
+  targetUserId: String?               # Target user (required for user type)
+  title: String                       # Notification title
+  body: String                        # Notification body
+  payload: String?                    # Optional JSON payload
+  priority: NotificationPriority?     # Priority level (defaults to normal)
+  actionUrl: String?                  # Optional deep link
+  imageUrl: String?                   # Optional image URL
+  expiresInSeconds: int?              # Optional TTL in seconds
+  metadata: String?                   # Additional metadata

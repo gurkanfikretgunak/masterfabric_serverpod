@@ -12,43 +12,389 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:masterfabric_serverpod_client/src/protocol/app_config/app_config.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/core/real-time/notifications-center/models/notification_response.dart'
     as _i3;
-import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/core/real-time/notifications-center/models/send_notification_request.dart'
     as _i4;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/core/real-time/notifications-center/models/notification_list_response.dart'
     as _i5;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/password/password_strength_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/core/real-time/notifications-center/models/channel_list_response.dart'
     as _i6;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/role.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/core/real-time/notifications-center/models/channel_response.dart'
     as _i7;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/permission.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/core/real-time/notifications-center/models/channel_type.dart'
     as _i8;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/session/session_info_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/core/real-time/notifications-center/models/notification.dart'
     as _i9;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/two_factor/two_factor_setup_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/app_config/app_config.dart'
     as _i10;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/account_status_response.dart'
+import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
     as _i11;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/user_list_response.dart'
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i12;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/user_info_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/password/password_strength_response.dart'
     as _i13;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/gender.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/role.dart'
     as _i14;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/verification/verification_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/permission.dart'
     as _i15;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/current_user_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/session/session_info_response.dart'
     as _i16;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/profile_update_request.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/two_factor/two_factor_setup_response.dart'
     as _i17;
-import 'package:masterfabric_serverpod_client/src/protocol/services/greetings/greeting_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/account_status_response.dart'
     as _i18;
-import 'package:masterfabric_serverpod_client/src/protocol/services/health/health_check_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/user_list_response.dart'
     as _i19;
-import 'package:masterfabric_serverpod_client/src/protocol/services/translations/translation_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/user_info_response.dart'
     as _i20;
-import 'protocol.dart' as _i21;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/gender.dart'
+    as _i21;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/verification/verification_response.dart'
+    as _i22;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/current_user_response.dart'
+    as _i23;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/profile_update_request.dart'
+    as _i24;
+import 'package:masterfabric_serverpod_client/src/protocol/services/greetings/greeting_response.dart'
+    as _i25;
+import 'package:masterfabric_serverpod_client/src/protocol/services/health/health_check_response.dart'
+    as _i26;
+import 'package:masterfabric_serverpod_client/src/protocol/services/translations/translation_response.dart'
+    as _i27;
+import 'protocol.dart' as _i28;
+
+/// REST API endpoint for notification operations
+///
+/// Provides HTTP endpoints for sending notifications, managing channels,
+/// and retrieving notification history. Includes rate limiting for
+/// protection against abuse.
+/// {@category Endpoint}
+class EndpointNotification extends _i1.EndpointRef {
+  EndpointNotification(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'notification';
+
+  /// Send a notification
+  ///
+  /// Creates and sends a notification based on the request type.
+  /// Rate limited to prevent abuse.
+  ///
+  /// [session] - Serverpod session
+  /// [request] - Send notification request
+  _i2.Future<_i3.NotificationResponse> send(
+    _i4.SendNotificationRequest request,
+  ) => caller.callServerEndpoint<_i3.NotificationResponse>(
+    'notification',
+    'send',
+    {'request': request},
+  );
+
+  /// Get notification history for a channel
+  ///
+  /// Retrieves recent notifications from cache.
+  ///
+  /// [session] - Serverpod session
+  /// [channelId] - Channel to get notifications for
+  /// [limit] - Maximum number of notifications (default 50)
+  _i2.Future<_i5.NotificationListResponse> getHistory(
+    String channelId, {
+    required int limit,
+  }) => caller.callServerEndpoint<_i5.NotificationListResponse>(
+    'notification',
+    'getHistory',
+    {
+      'channelId': channelId,
+      'limit': limit,
+    },
+  );
+
+  /// Get notifications for a user across all subscribed channels
+  ///
+  /// [session] - Serverpod session
+  /// [limit] - Maximum notifications per channel (default 20)
+  _i2.Future<_i5.NotificationListResponse> getUserNotifications({
+    required int limit,
+  }) => caller.callServerEndpoint<_i5.NotificationListResponse>(
+    'notification',
+    'getUserNotifications',
+    {'limit': limit},
+  );
+
+  /// Mark a notification as read
+  ///
+  /// [session] - Serverpod session
+  /// [channelId] - Channel the notification belongs to
+  /// [notificationId] - Notification ID to mark as read
+  _i2.Future<_i3.NotificationResponse> markAsRead(
+    String channelId,
+    String notificationId,
+  ) => caller.callServerEndpoint<_i3.NotificationResponse>(
+    'notification',
+    'markAsRead',
+    {
+      'channelId': channelId,
+      'notificationId': notificationId,
+    },
+  );
+
+  /// Mark all notifications as read for a channel
+  ///
+  /// [session] - Serverpod session
+  /// [channelId] - Channel to mark all as read
+  _i2.Future<_i3.NotificationResponse> markAllAsRead(String channelId) =>
+      caller.callServerEndpoint<_i3.NotificationResponse>(
+        'notification',
+        'markAllAsRead',
+        {'channelId': channelId},
+      );
+
+  /// Delete a notification
+  ///
+  /// [session] - Serverpod session
+  /// [channelId] - Channel the notification belongs to
+  /// [notificationId] - Notification ID to delete
+  _i2.Future<_i3.NotificationResponse> deleteNotification(
+    String channelId,
+    String notificationId,
+  ) => caller.callServerEndpoint<_i3.NotificationResponse>(
+    'notification',
+    'deleteNotification',
+    {
+      'channelId': channelId,
+      'notificationId': notificationId,
+    },
+  );
+
+  /// Get unread notification count for a user
+  ///
+  /// [session] - Serverpod session
+  _i2.Future<int> getUnreadCount() => caller.callServerEndpoint<int>(
+    'notification',
+    'getUnreadCount',
+    {},
+  );
+
+  /// Get notifications from public channels (no authentication required)
+  ///
+  /// [session] - Serverpod session
+  /// [limit] - Maximum number of notifications (default 50)
+  _i2.Future<_i5.NotificationListResponse> getPublicNotifications({
+    required int limit,
+  }) => caller.callServerEndpoint<_i5.NotificationListResponse>(
+    'notification',
+    'getPublicNotifications',
+    {'limit': limit},
+  );
+
+  /// List all public channels
+  ///
+  /// [session] - Serverpod session
+  _i2.Future<_i6.ChannelListResponse> listPublicChannels() =>
+      caller.callServerEndpoint<_i6.ChannelListResponse>(
+        'notification',
+        'listPublicChannels',
+        {},
+      );
+
+  /// Create a new notification channel
+  ///
+  /// [session] - Serverpod session
+  /// [name] - Channel name
+  /// [type] - Channel type
+  /// [description] - Optional description
+  /// [isPublic] - Whether channel is publicly joinable
+  /// [projectId] - Optional project ID (for project channels)
+  _i2.Future<_i7.ChannelResponse> createChannel({
+    required String name,
+    required _i8.ChannelType type,
+    String? description,
+    required bool isPublic,
+    String? projectId,
+    int? maxSubscribers,
+    required int cacheTtlSeconds,
+  }) => caller.callServerEndpoint<_i7.ChannelResponse>(
+    'notification',
+    'createChannel',
+    {
+      'name': name,
+      'type': type,
+      'description': description,
+      'isPublic': isPublic,
+      'projectId': projectId,
+      'maxSubscribers': maxSubscribers,
+      'cacheTtlSeconds': cacheTtlSeconds,
+    },
+  );
+
+  /// Get a channel by ID
+  ///
+  /// [session] - Serverpod session
+  /// [channelId] - Channel ID
+  _i2.Future<_i7.ChannelResponse> getChannel(String channelId) =>
+      caller.callServerEndpoint<_i7.ChannelResponse>(
+        'notification',
+        'getChannel',
+        {'channelId': channelId},
+      );
+
+  /// Subscribe to a channel
+  ///
+  /// [session] - Serverpod session
+  /// [channelId] - Channel to subscribe to
+  _i2.Future<_i7.ChannelResponse> joinChannel(String channelId) =>
+      caller.callServerEndpoint<_i7.ChannelResponse>(
+        'notification',
+        'joinChannel',
+        {'channelId': channelId},
+      );
+
+  /// Unsubscribe from a channel
+  ///
+  /// [session] - Serverpod session
+  /// [channelId] - Channel to unsubscribe from
+  _i2.Future<_i7.ChannelResponse> leaveChannel(String channelId) =>
+      caller.callServerEndpoint<_i7.ChannelResponse>(
+        'notification',
+        'leaveChannel',
+        {'channelId': channelId},
+      );
+
+  /// Update channel settings
+  ///
+  /// [session] - Serverpod session
+  /// [channelId] - Channel to update
+  /// [name] - Optional new name
+  /// [description] - Optional new description
+  /// [isActive] - Optional active status
+  _i2.Future<_i7.ChannelResponse> updateChannel(
+    String channelId, {
+    String? name,
+    String? description,
+    bool? isActive,
+    bool? isPublic,
+  }) => caller.callServerEndpoint<_i7.ChannelResponse>(
+    'notification',
+    'updateChannel',
+    {
+      'channelId': channelId,
+      'name': name,
+      'description': description,
+      'isActive': isActive,
+      'isPublic': isPublic,
+    },
+  );
+
+  /// Get cache statistics for a channel
+  ///
+  /// [session] - Serverpod session
+  /// [channelId] - Channel to get stats for
+  _i2.Future<Map<String, dynamic>> getCacheStats(String channelId) =>
+      caller.callServerEndpoint<Map<String, dynamic>>(
+        'notification',
+        'getCacheStats',
+        {'channelId': channelId},
+      );
+}
+
+/// Real-time notification streaming endpoint
+///
+/// Provides WebSocket-based streaming for real-time notifications.
+/// Uses Serverpod's streaming methods for automatic connection management.
+///
+/// Clients can subscribe to multiple channels and receive notifications
+/// in real-time as they are published.
+/// {@category Endpoint}
+class EndpointNotificationStream extends _i1.EndpointRef {
+  EndpointNotificationStream(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'notificationStream';
+
+  /// Subscribe to notification channels and receive real-time updates
+  ///
+  /// This is the main streaming method. Clients call this to establish
+  /// a WebSocket connection and receive notifications as they arrive.
+  ///
+  /// [session] - Serverpod session (automatically managed)
+  /// [channelIds] - List of channel IDs to subscribe to
+  ///
+  /// Returns a stream of notifications from all subscribed channels.
+  /// The stream first yields any cached notifications, then continues
+  /// with real-time updates.
+  _i2.Stream<_i9.Notification> subscribe(List<String> channelIds) =>
+      caller.callStreamingServerEndpoint<
+        _i2.Stream<_i9.Notification>,
+        _i9.Notification
+      >(
+        'notificationStream',
+        'subscribe',
+        {'channelIds': channelIds},
+        {},
+      );
+
+  /// Subscribe to a user's personal notification channel
+  ///
+  /// Convenience method for subscribing to the current user's notifications.
+  /// Requires authentication.
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Returns a stream of notifications for the authenticated user.
+  _i2.Stream<_i9.Notification> subscribeToUserNotifications() =>
+      caller.callStreamingServerEndpoint<
+        _i2.Stream<_i9.Notification>,
+        _i9.Notification
+      >(
+        'notificationStream',
+        'subscribeToUserNotifications',
+        {},
+        {},
+      );
+
+  /// Subscribe to a project's notification channel
+  ///
+  /// [session] - Serverpod session
+  /// [projectId] - Project ID to subscribe to
+  /// [projectChannelId] - The project's notification channel ID
+  ///
+  /// Returns a stream of notifications for the project.
+  _i2.Stream<_i9.Notification> subscribeToProject(
+    String projectId,
+    String projectChannelId,
+  ) =>
+      caller.callStreamingServerEndpoint<
+        _i2.Stream<_i9.Notification>,
+        _i9.Notification
+      >(
+        'notificationStream',
+        'subscribeToProject',
+        {
+          'projectId': projectId,
+          'projectChannelId': projectChannelId,
+        },
+        {},
+      );
+
+  /// Subscribe to public broadcast channels
+  ///
+  /// [session] - Serverpod session
+  /// [channelIds] - List of public channel IDs to subscribe to
+  ///
+  /// Returns a stream of broadcast notifications.
+  /// Only public channels can be subscribed without authentication.
+  _i2.Stream<_i9.Notification> subscribeToBroadcasts(List<String> channelIds) =>
+      caller.callStreamingServerEndpoint<
+        _i2.Stream<_i9.Notification>,
+        _i9.Notification
+      >(
+        'notificationStream',
+        'subscribeToBroadcasts',
+        {'channelIds': channelIds},
+        {},
+      );
+}
 
 /// Endpoint for providing app configuration to mobile clients
 ///
@@ -70,8 +416,8 @@ class EndpointAppConfig extends _i1.EndpointRef {
   /// Returns AppConfig with all configuration needed by the mobile client
   ///
   /// Throws AppException if configuration cannot be loaded
-  _i2.Future<_i3.AppConfig> getConfig({String? platform}) =>
-      caller.callServerEndpoint<_i3.AppConfig>(
+  _i2.Future<_i10.AppConfig> getConfig({String? platform}) =>
+      caller.callServerEndpoint<_i10.AppConfig>(
         'appConfig',
         'getConfig',
         {'platform': platform},
@@ -86,7 +432,7 @@ class EndpointAppConfig extends _i1.EndpointRef {
 ///
 /// This implementation adds email validation before allowing registration.
 /// {@category Endpoint}
-class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
+class EndpointEmailIdp extends _i11.EndpointEmailIdpBase {
   EndpointEmailIdp(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -110,10 +456,10 @@ class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
   ///
   /// Throws an [AuthUserBlockedException] if the auth user is blocked.
   @override
-  _i2.Future<_i5.AuthSuccess> login({
+  _i2.Future<_i12.AuthSuccess> login({
     required String email,
     required String password,
-  }) => caller.callServerEndpoint<_i5.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i12.AuthSuccess>(
     'emailIdp',
     'login',
     {
@@ -160,10 +506,10 @@ class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
   ///
   /// Returns a session for the newly created user.
   @override
-  _i2.Future<_i5.AuthSuccess> finishRegistration({
+  _i2.Future<_i12.AuthSuccess> finishRegistration({
     required String registrationToken,
     required String password,
-  }) => caller.callServerEndpoint<_i5.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i12.AuthSuccess>(
     'emailIdp',
     'finishRegistration',
     {
@@ -251,7 +597,7 @@ class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
 /// By extending [RefreshJwtTokensEndpoint], the JWT token refresh endpoint
 /// is made available on the server and enables automatic token refresh on the client.
 /// {@category Endpoint}
-class EndpointJwtRefresh extends _i5.EndpointRefreshJwtTokens {
+class EndpointJwtRefresh extends _i12.EndpointRefreshJwtTokens {
   EndpointJwtRefresh(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -276,9 +622,9 @@ class EndpointJwtRefresh extends _i5.EndpointRefreshJwtTokens {
   /// This endpoint is unauthenticated, meaning the client won't include any
   /// authentication information with the call.
   @override
-  _i2.Future<_i5.AuthSuccess> refreshAccessToken({
+  _i2.Future<_i12.AuthSuccess> refreshAccessToken({
     required String refreshToken,
-  }) => caller.callServerEndpoint<_i5.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i12.AuthSuccess>(
     'jwtRefresh',
     'refreshAccessToken',
     {'refreshToken': refreshToken},
@@ -294,7 +640,7 @@ class EndpointJwtRefresh extends _i5.EndpointRefreshJwtTokens {
 ///
 /// Apple Sign-In credentials must be configured in the server configuration.
 /// {@category Endpoint}
-class EndpointAppleAuth extends _i4.EndpointAppleIdpBase {
+class EndpointAppleAuth extends _i11.EndpointAppleIdpBase {
   EndpointAppleAuth(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -309,13 +655,13 @@ class EndpointAppleAuth extends _i4.EndpointAppleIdpBase {
   ///
   /// Returns a session for the user upon successful login.
   @override
-  _i2.Future<_i5.AuthSuccess> login({
+  _i2.Future<_i12.AuthSuccess> login({
     required String identityToken,
     required String authorizationCode,
     required bool isNativeApplePlatformSignIn,
     String? firstName,
     String? lastName,
-  }) => caller.callServerEndpoint<_i5.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i12.AuthSuccess>(
     'appleAuth',
     'login',
     {
@@ -336,7 +682,7 @@ class EndpointAppleAuth extends _i4.EndpointAppleIdpBase {
 ///
 /// Google OAuth credentials must be configured in the server configuration.
 /// {@category Endpoint}
-class EndpointGoogleAuth extends _i4.EndpointGoogleIdpBase {
+class EndpointGoogleAuth extends _i11.EndpointGoogleIdpBase {
   EndpointGoogleAuth(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -347,10 +693,10 @@ class EndpointGoogleAuth extends _i4.EndpointGoogleIdpBase {
   ///
   /// If a new user is created an associated [UserProfile] is also created.
   @override
-  _i2.Future<_i5.AuthSuccess> login({
+  _i2.Future<_i12.AuthSuccess> login({
     required String idToken,
     required String? accessToken,
-  }) => caller.callServerEndpoint<_i5.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i12.AuthSuccess>(
     'googleAuth',
     'login',
     {
@@ -396,9 +742,9 @@ class EndpointPasswordManagement extends _i1.EndpointRef {
   /// [password] - Password to validate
   ///
   /// Returns PasswordStrengthResponse with validation result
-  _i2.Future<_i6.PasswordStrengthResponse> validatePasswordStrength({
+  _i2.Future<_i13.PasswordStrengthResponse> validatePasswordStrength({
     required String password,
-  }) => caller.callServerEndpoint<_i6.PasswordStrengthResponse>(
+  }) => caller.callServerEndpoint<_i13.PasswordStrengthResponse>(
     'passwordManagement',
     'validatePasswordStrength',
     {'password': password},
@@ -420,8 +766,8 @@ class EndpointRbac extends _i1.EndpointRef {
   /// [session] - Serverpod session
   ///
   /// Returns list of all active roles
-  _i2.Future<List<_i7.Role>> getRoles() =>
-      caller.callServerEndpoint<List<_i7.Role>>(
+  _i2.Future<List<_i14.Role>> getRoles() =>
+      caller.callServerEndpoint<List<_i14.Role>>(
         'rbac',
         'getRoles',
         {},
@@ -432,8 +778,8 @@ class EndpointRbac extends _i1.EndpointRef {
   /// [session] - Serverpod session
   ///
   /// Returns list of all permissions
-  _i2.Future<List<_i8.Permission>> getPermissions() =>
-      caller.callServerEndpoint<List<_i8.Permission>>(
+  _i2.Future<List<_i15.Permission>> getPermissions() =>
+      caller.callServerEndpoint<List<_i15.Permission>>(
         'rbac',
         'getPermissions',
         {},
@@ -520,8 +866,8 @@ class EndpointSessionManagement extends _i1.EndpointRef {
   /// Get current session info from JWT token
   ///
   /// Returns the current authenticated session information
-  _i2.Future<_i9.SessionInfoResponse> getCurrentSession() =>
-      caller.callServerEndpoint<_i9.SessionInfoResponse>(
+  _i2.Future<_i16.SessionInfoResponse> getCurrentSession() =>
+      caller.callServerEndpoint<_i16.SessionInfoResponse>(
         'sessionManagement',
         'getCurrentSession',
         {},
@@ -531,8 +877,8 @@ class EndpointSessionManagement extends _i1.EndpointRef {
   ///
   /// Note: With JWT auth, this returns server-side sessions if any exist.
   /// If no server-side sessions, returns current JWT session info.
-  _i2.Future<List<_i9.SessionInfoResponse>> getActiveSessions() =>
-      caller.callServerEndpoint<List<_i9.SessionInfoResponse>>(
+  _i2.Future<List<_i16.SessionInfoResponse>> getActiveSessions() =>
+      caller.callServerEndpoint<List<_i16.SessionInfoResponse>>(
         'sessionManagement',
         'getActiveSessions',
         {},
@@ -547,8 +893,8 @@ class EndpointSessionManagement extends _i1.EndpointRef {
   ///
   /// Throws NotFoundError if session not found
   /// Throws AuthenticationError if not authenticated
-  _i2.Future<_i9.SessionInfoResponse> getSession(String sessionId) =>
-      caller.callServerEndpoint<_i9.SessionInfoResponse>(
+  _i2.Future<_i16.SessionInfoResponse> getSession(String sessionId) =>
+      caller.callServerEndpoint<_i16.SessionInfoResponse>(
         'sessionManagement',
         'getSession',
         {'sessionId': sessionId},
@@ -620,8 +966,8 @@ class EndpointTwoFactor extends _i1.EndpointRef {
   /// Returns TwoFactorSetupResponse with secret, QR code URI, and backup codes
   ///
   /// Throws AuthenticationError if not authenticated
-  _i2.Future<_i10.TwoFactorSetupResponse> startSetup(String email) =>
-      caller.callServerEndpoint<_i10.TwoFactorSetupResponse>(
+  _i2.Future<_i17.TwoFactorSetupResponse> startSetup(String email) =>
+      caller.callServerEndpoint<_i17.TwoFactorSetupResponse>(
         'twoFactor',
         'startSetup',
         {'email': email},
@@ -702,8 +1048,8 @@ class EndpointAccountManagement extends _i1.EndpointRef {
   /// Returns AccountStatusResponse
   ///
   /// Throws AuthenticationError if not authenticated
-  _i2.Future<_i11.AccountStatusResponse> getAccountStatus({String? userId}) =>
-      caller.callServerEndpoint<_i11.AccountStatusResponse>(
+  _i2.Future<_i18.AccountStatusResponse> getAccountStatus({String? userId}) =>
+      caller.callServerEndpoint<_i18.AccountStatusResponse>(
         'accountManagement',
         'getAccountStatus',
         {'userId': userId},
@@ -777,12 +1123,12 @@ class EndpointUserManagement extends _i1.EndpointRef {
   /// Returns UserListResponse with paginated users
   ///
   /// Throws AuthorizationError if user doesn't have admin permission
-  _i2.Future<_i12.UserListResponse> listUsers({
+  _i2.Future<_i19.UserListResponse> listUsers({
     required int page,
     required int pageSize,
     String? search,
     bool? blocked,
-  }) => caller.callServerEndpoint<_i12.UserListResponse>(
+  }) => caller.callServerEndpoint<_i19.UserListResponse>(
     'userManagement',
     'listUsers',
     {
@@ -802,8 +1148,8 @@ class EndpointUserManagement extends _i1.EndpointRef {
   ///
   /// Throws NotFoundError if user not found
   /// Throws AuthorizationError if user doesn't have admin permission
-  _i2.Future<_i13.UserInfoResponse> getUser(String userId) =>
-      caller.callServerEndpoint<_i13.UserInfoResponse>(
+  _i2.Future<_i20.UserInfoResponse> getUser(String userId) =>
+      caller.callServerEndpoint<_i20.UserInfoResponse>(
         'userManagement',
         'getUser',
         {'userId': userId},
@@ -876,8 +1222,8 @@ class EndpointUserProfile extends _i1.EndpointRef {
   /// Get available gender options
   ///
   /// Returns list of Gender enum values for UI dropdown
-  _i2.Future<List<_i14.Gender>> getGenderOptions() =>
-      caller.callServerEndpoint<List<_i14.Gender>>(
+  _i2.Future<List<_i21.Gender>> getGenderOptions() =>
+      caller.callServerEndpoint<List<_i21.Gender>>(
         'userProfile',
         'getGenderOptions',
         {},
@@ -890,8 +1236,8 @@ class EndpointUserProfile extends _i1.EndpointRef {
   /// Returns VerificationResponse with status and expiration
   ///
   /// The code will be sent to the user's email (logged in dev mode)
-  _i2.Future<_i15.VerificationResponse> requestProfileUpdateCode() =>
-      caller.callServerEndpoint<_i15.VerificationResponse>(
+  _i2.Future<_i22.VerificationResponse> requestProfileUpdateCode() =>
+      caller.callServerEndpoint<_i22.VerificationResponse>(
         'userProfile',
         'requestProfileUpdateCode',
         {},
@@ -905,9 +1251,9 @@ class EndpointUserProfile extends _i1.EndpointRef {
   /// Returns updated CurrentUserResponse
   ///
   /// Throws ValidationError if verification code is invalid
-  _i2.Future<_i16.CurrentUserResponse> updateProfileWithVerification(
-    _i17.ProfileUpdateRequest request,
-  ) => caller.callServerEndpoint<_i16.CurrentUserResponse>(
+  _i2.Future<_i23.CurrentUserResponse> updateProfileWithVerification(
+    _i24.ProfileUpdateRequest request,
+  ) => caller.callServerEndpoint<_i23.CurrentUserResponse>(
     'userProfile',
     'updateProfileWithVerification',
     {'request': request},
@@ -921,8 +1267,8 @@ class EndpointUserProfile extends _i1.EndpointRef {
   ///
   /// Throws AuthenticationError if not authenticated
   /// Throws NotFoundError if user not found
-  _i2.Future<_i16.CurrentUserResponse> getCurrentUser() =>
-      caller.callServerEndpoint<_i16.CurrentUserResponse>(
+  _i2.Future<_i23.CurrentUserResponse> getCurrentUser() =>
+      caller.callServerEndpoint<_i23.CurrentUserResponse>(
         'userProfile',
         'getCurrentUser',
         {},
@@ -936,8 +1282,8 @@ class EndpointUserProfile extends _i1.EndpointRef {
   ///
   /// Throws AuthenticationError if not authenticated
   /// Throws NotFoundError if profile not found
-  _i2.Future<_i5.UserProfileModel> getProfile() =>
-      caller.callServerEndpoint<_i5.UserProfileModel>(
+  _i2.Future<_i12.UserProfileModel> getProfile() =>
+      caller.callServerEndpoint<_i12.UserProfileModel>(
         'userProfile',
         'getProfile',
         {},
@@ -952,10 +1298,10 @@ class EndpointUserProfile extends _i1.EndpointRef {
   /// Returns updated CurrentUserResponse
   ///
   /// Throws AuthenticationError if not authenticated
-  _i2.Future<_i16.CurrentUserResponse> updateExtendedProfile({
+  _i2.Future<_i23.CurrentUserResponse> updateExtendedProfile({
     DateTime? birthDate,
-    _i14.Gender? gender,
-  }) => caller.callServerEndpoint<_i16.CurrentUserResponse>(
+    _i21.Gender? gender,
+  }) => caller.callServerEndpoint<_i23.CurrentUserResponse>(
     'userProfile',
     'updateExtendedProfile',
     {
@@ -974,10 +1320,10 @@ class EndpointUserProfile extends _i1.EndpointRef {
   ///
   /// Throws ValidationError if validation fails
   /// Throws AuthenticationError if not authenticated
-  _i2.Future<_i5.UserProfileModel> updateProfile({
+  _i2.Future<_i12.UserProfileModel> updateProfile({
     String? fullName,
     String? userName,
-  }) => caller.callServerEndpoint<_i5.UserProfileModel>(
+  }) => caller.callServerEndpoint<_i12.UserProfileModel>(
     'userProfile',
     'updateProfile',
     {
@@ -996,10 +1342,10 @@ class EndpointUserProfile extends _i1.EndpointRef {
   ///
   /// Throws ValidationError if image is invalid
   /// Throws AuthenticationError if not authenticated
-  _i2.Future<_i5.UserProfileModel> uploadProfileImage(
+  _i2.Future<_i12.UserProfileModel> uploadProfileImage(
     List<int> image,
     String fileName,
-  ) => caller.callServerEndpoint<_i5.UserProfileModel>(
+  ) => caller.callServerEndpoint<_i12.UserProfileModel>(
     'userProfile',
     'uploadProfileImage',
     {
@@ -1015,8 +1361,8 @@ class EndpointUserProfile extends _i1.EndpointRef {
   /// Returns updated UserProfileModel without image
   ///
   /// Throws AuthenticationError if not authenticated
-  _i2.Future<_i5.UserProfileModel> deleteProfileImage() =>
-      caller.callServerEndpoint<_i5.UserProfileModel>(
+  _i2.Future<_i12.UserProfileModel> deleteProfileImage() =>
+      caller.callServerEndpoint<_i12.UserProfileModel>(
         'userProfile',
         'deleteProfileImage',
         {},
@@ -1042,8 +1388,8 @@ class EndpointGreeting extends _i1.EndpointRef {
   /// Rate limited to 20 requests per minute.
   /// Returns rate limit info (remaining, limit, reset time) in response.
   /// Throws RateLimitException with details if limit is exceeded.
-  _i2.Future<_i18.GreetingResponse> hello(String name) =>
-      caller.callServerEndpoint<_i18.GreetingResponse>(
+  _i2.Future<_i25.GreetingResponse> hello(String name) =>
+      caller.callServerEndpoint<_i25.GreetingResponse>(
         'greeting',
         'hello',
         {'name': name},
@@ -1061,8 +1407,8 @@ class EndpointHealth extends _i1.EndpointRef {
   /// Check health of ALL services
   ///
   /// Returns health status for all infrastructure and application services
-  _i2.Future<_i19.HealthCheckResponse> check() =>
-      caller.callServerEndpoint<_i19.HealthCheckResponse>(
+  _i2.Future<_i26.HealthCheckResponse> check() =>
+      caller.callServerEndpoint<_i26.HealthCheckResponse>(
         'health',
         'check',
         {},
@@ -1097,10 +1443,10 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse containing translations in slang JSON format
   ///
   /// Throws InternalServerError if translations cannot be loaded
-  _i2.Future<_i20.TranslationResponse> getTranslations({
+  _i2.Future<_i27.TranslationResponse> getTranslations({
     String? locale,
     String? namespace,
-  }) => caller.callServerEndpoint<_i20.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i27.TranslationResponse>(
     'translation',
     'getTranslations',
     {
@@ -1120,12 +1466,12 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse with saved translations
   ///
   /// Note: This should be protected by authentication/authorization in production
-  _i2.Future<_i20.TranslationResponse> saveTranslations(
+  _i2.Future<_i27.TranslationResponse> saveTranslations(
     String locale,
     Map<String, dynamic> translations, {
     String? namespace,
     required bool isActive,
-  }) => caller.callServerEndpoint<_i20.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i27.TranslationResponse>(
     'translation',
     'saveTranslations',
     {
@@ -1166,13 +1512,13 @@ class EndpointTranslation extends _i1.EndpointRef {
 
 class Modules {
   Modules(Client client) {
-    serverpod_auth_idp = _i4.Caller(client);
-    serverpod_auth_core = _i5.Caller(client);
+    serverpod_auth_idp = _i11.Caller(client);
+    serverpod_auth_core = _i12.Caller(client);
   }
 
-  late final _i4.Caller serverpod_auth_idp;
+  late final _i11.Caller serverpod_auth_idp;
 
-  late final _i5.Caller serverpod_auth_core;
+  late final _i12.Caller serverpod_auth_core;
 }
 
 class Client extends _i1.ServerpodClientShared {
@@ -1195,7 +1541,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i21.Protocol(),
+         _i28.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -1204,6 +1550,8 @@ class Client extends _i1.ServerpodClientShared {
          disconnectStreamsOnLostInternetConnection:
              disconnectStreamsOnLostInternetConnection,
        ) {
+    notification = EndpointNotification(this);
+    notificationStream = EndpointNotificationStream(this);
     appConfig = EndpointAppConfig(this);
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
@@ -1221,6 +1569,10 @@ class Client extends _i1.ServerpodClientShared {
     translation = EndpointTranslation(this);
     modules = Modules(this);
   }
+
+  late final EndpointNotification notification;
+
+  late final EndpointNotificationStream notificationStream;
 
   late final EndpointAppConfig appConfig;
 
@@ -1256,6 +1608,8 @@ class Client extends _i1.ServerpodClientShared {
 
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
+    'notification': notification,
+    'notificationStream': notificationStream,
     'appConfig': appConfig,
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,

@@ -1,0 +1,11 @@
+### Notification list response model
+### Response for listing notifications with pagination
+class: NotificationListResponse
+fields:
+  success: bool                       # Whether operation succeeded
+  notifications: List<Notification>   # List of notifications
+  totalCount: int                     # Total number of notifications
+  unreadCount: int                    # Number of unread notifications
+  hasMore: bool                       # Whether there are more notifications
+  nextCursor: String?                 # Cursor for pagination
+  timestamp: DateTime                 # Response timestamp

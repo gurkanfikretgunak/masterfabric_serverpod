@@ -8,6 +8,7 @@ import 'screens/sign_in_screen.dart';
 import 'services/app_config_service.dart';
 import 'services/translation_service.dart';
 import 'services/health_service.dart';
+import 'services/notification_service.dart';
 
 /// Sets up a global client object that can be used to talk to the server from
 /// anywhere in our app. The client is generated from your server code
@@ -67,6 +68,9 @@ void main() async {
   // Initialize health service and start monitoring
   HealthService.instance.initialize(client);
   HealthService.instance.startAutoCheck(interval: const Duration(seconds: 60));
+
+  // Initialize notification service
+  NotificationService.instance.initialize(client);
 
   runApp(const MyApp());
 }

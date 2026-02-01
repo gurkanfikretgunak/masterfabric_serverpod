@@ -10,6 +10,9 @@ dependencies:
   serverpod: 3.2.3
   serverpod_auth_idp_server: 3.2.3
   serverpod_auth_core_server: 3.2.3
+  serverpod_client: 3.2.3  # For seed scripts
+  masterfabric_serverpod_client:  # For seed scripts
+    path: ../masterfabric_serverpod_client
   uuid: ^4.5.1
   crypto: ^3.0.3  # For secure hashing (SHA-256) of verification codes
   # firebase_admin: ^1.0.0  # For Firebase integration (uncomment if needed)
@@ -39,6 +42,11 @@ serverpod:
     seed-translations:
       windows: dart bin/seed_translations.dart
       posix: dart bin/seed_translations.dart
+
+    # Seed notification channels and demo data
+    seed-notifications:
+      windows: dart bin/seed_notifications.dart
+      posix: bash scripts/seed_notifications.sh
 
     # Build the Flutter web app and copy it to the server's web directory.
     # Windows uses xcopy since flutter's --output flag doesn't work there.
