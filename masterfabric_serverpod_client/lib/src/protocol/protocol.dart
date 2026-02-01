@@ -25,30 +25,30 @@ import 'app_config/system/localization_configuration.dart' as _i12;
 import 'app_config/system/permissions_configuration.dart' as _i13;
 import 'app_config/system/storage_configuration.dart' as _i14;
 import 'app_config/system/store_url.dart' as _i15;
-import 'core/exceptions/rate_limit_exception.dart' as _i16;
-import 'core/rate_limit/rate_limit_entry.dart' as _i17;
-import 'core/real-time/notifications-center/models/cached_id_list.dart' as _i18;
-import 'core/real-time/notifications-center/models/channel_list_response.dart'
+import 'core/exceptions/models/rate_limit_exception.dart' as _i16;
+import 'core/rate_limit/models/rate_limit_entry.dart' as _i17;
+import 'core/real_time/notifications_center/models/cached_id_list.dart' as _i18;
+import 'core/real_time/notifications_center/models/channel_list_response.dart'
     as _i19;
-import 'core/real-time/notifications-center/models/channel_response.dart'
+import 'core/real_time/notifications_center/models/channel_response.dart'
     as _i20;
-import 'core/real-time/notifications-center/models/channel_subscription.dart'
+import 'core/real_time/notifications_center/models/channel_subscription.dart'
     as _i21;
-import 'core/real-time/notifications-center/models/channel_type.dart' as _i22;
-import 'core/real-time/notifications-center/models/notification.dart' as _i23;
-import 'core/real-time/notifications-center/models/notification_channel.dart'
+import 'core/real_time/notifications_center/models/channel_type.dart' as _i22;
+import 'core/real_time/notifications_center/models/notification.dart' as _i23;
+import 'core/real_time/notifications_center/models/notification_channel.dart'
     as _i24;
-import 'core/real-time/notifications-center/models/notification_exception.dart'
+import 'core/real_time/notifications_center/models/notification_exception.dart'
     as _i25;
-import 'core/real-time/notifications-center/models/notification_list_response.dart'
+import 'core/real_time/notifications_center/models/notification_list_response.dart'
     as _i26;
-import 'core/real-time/notifications-center/models/notification_priority.dart'
+import 'core/real_time/notifications_center/models/notification_priority.dart'
     as _i27;
-import 'core/real-time/notifications-center/models/notification_response.dart'
+import 'core/real_time/notifications_center/models/notification_response.dart'
     as _i28;
-import 'core/real-time/notifications-center/models/notification_type.dart'
+import 'core/real_time/notifications_center/models/notification_type.dart'
     as _i29;
-import 'core/real-time/notifications-center/models/send_notification_request.dart'
+import 'core/real_time/notifications_center/models/send_notification_request.dart'
     as _i30;
 import 'services/auth/core/auth_audit_log.dart' as _i31;
 import 'services/auth/password/password_strength_response.dart' as _i32;
@@ -67,12 +67,12 @@ import 'services/auth/user/user_list_response.dart' as _i44;
 import 'services/auth/user/user_profile_extended.dart' as _i45;
 import 'services/auth/verification/verification_code.dart' as _i46;
 import 'services/auth/verification/verification_response.dart' as _i47;
-import 'services/greetings/greeting.dart' as _i48;
-import 'services/greetings/greeting_response.dart' as _i49;
-import 'services/health/health_check_response.dart' as _i50;
-import 'services/health/service_health_info.dart' as _i51;
-import 'services/translations/translation_entry.dart' as _i52;
-import 'services/translations/translation_response.dart' as _i53;
+import 'services/greetings/models/greeting.dart' as _i48;
+import 'services/greetings/models/greeting_response.dart' as _i49;
+import 'services/health/models/health_check_response.dart' as _i50;
+import 'services/health/models/service_health_info.dart' as _i51;
+import 'services/translations/models/translation_entry.dart' as _i52;
+import 'services/translations/models/translation_response.dart' as _i53;
 import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/role.dart'
     as _i54;
 import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/permission.dart'
@@ -99,21 +99,21 @@ export 'app_config/system/localization_configuration.dart';
 export 'app_config/system/permissions_configuration.dart';
 export 'app_config/system/storage_configuration.dart';
 export 'app_config/system/store_url.dart';
-export 'core/exceptions/rate_limit_exception.dart';
-export 'core/rate_limit/rate_limit_entry.dart';
-export 'core/real-time/notifications-center/models/cached_id_list.dart';
-export 'core/real-time/notifications-center/models/channel_list_response.dart';
-export 'core/real-time/notifications-center/models/channel_response.dart';
-export 'core/real-time/notifications-center/models/channel_subscription.dart';
-export 'core/real-time/notifications-center/models/channel_type.dart';
-export 'core/real-time/notifications-center/models/notification.dart';
-export 'core/real-time/notifications-center/models/notification_channel.dart';
-export 'core/real-time/notifications-center/models/notification_exception.dart';
-export 'core/real-time/notifications-center/models/notification_list_response.dart';
-export 'core/real-time/notifications-center/models/notification_priority.dart';
-export 'core/real-time/notifications-center/models/notification_response.dart';
-export 'core/real-time/notifications-center/models/notification_type.dart';
-export 'core/real-time/notifications-center/models/send_notification_request.dart';
+export 'core/exceptions/models/rate_limit_exception.dart';
+export 'core/rate_limit/models/rate_limit_entry.dart';
+export 'core/real_time/notifications_center/models/cached_id_list.dart';
+export 'core/real_time/notifications_center/models/channel_list_response.dart';
+export 'core/real_time/notifications_center/models/channel_response.dart';
+export 'core/real_time/notifications_center/models/channel_subscription.dart';
+export 'core/real_time/notifications_center/models/channel_type.dart';
+export 'core/real_time/notifications_center/models/notification.dart';
+export 'core/real_time/notifications_center/models/notification_channel.dart';
+export 'core/real_time/notifications_center/models/notification_exception.dart';
+export 'core/real_time/notifications_center/models/notification_list_response.dart';
+export 'core/real_time/notifications_center/models/notification_priority.dart';
+export 'core/real_time/notifications_center/models/notification_response.dart';
+export 'core/real_time/notifications_center/models/notification_type.dart';
+export 'core/real_time/notifications_center/models/send_notification_request.dart';
 export 'services/auth/core/auth_audit_log.dart';
 export 'services/auth/password/password_strength_response.dart';
 export 'services/auth/rbac/permission.dart';
@@ -131,12 +131,12 @@ export 'services/auth/user/user_list_response.dart';
 export 'services/auth/user/user_profile_extended.dart';
 export 'services/auth/verification/verification_code.dart';
 export 'services/auth/verification/verification_response.dart';
-export 'services/greetings/greeting.dart';
-export 'services/greetings/greeting_response.dart';
-export 'services/health/health_check_response.dart';
-export 'services/health/service_health_info.dart';
-export 'services/translations/translation_entry.dart';
-export 'services/translations/translation_response.dart';
+export 'services/greetings/models/greeting.dart';
+export 'services/greetings/models/greeting_response.dart';
+export 'services/health/models/health_check_response.dart';
+export 'services/health/models/service_health_info.dart';
+export 'services/translations/models/translation_entry.dart';
+export 'services/translations/models/translation_response.dart';
 export 'client.dart';
 
 class Protocol extends _i1.SerializationManager {

@@ -1,6 +1,6 @@
 # masterfabric_serverpod_flutter
 
-Flutter application with Serverpod integration, featuring rate limit UI, internationalization, and modern error handling.
+Flutter application with Serverpod integration, featuring real-time notifications, rate limit UI, internationalization, and modern error handling.
 
 ## Quick Start
 
@@ -10,6 +10,34 @@ flutter run
 ```
 
 ## Features
+
+### Real-Time Notifications
+
+WebSocket-based notification center with filtering and real-time updates:
+
+```dart
+// Initialize notification service
+final notificationService = NotificationService();
+await notificationService.initialize(client);
+
+// Subscribe to broadcast channels
+await notificationService.subscribeToBroadcasts(channelIds);
+
+// Listen for changes
+notificationService.addListener(() {
+  final notifications = notificationService.notifications;
+  final unreadCount = notificationService.unreadCount;
+  // Update UI
+});
+```
+
+**NotificationCenterScreen** features:
+- Real-time notification updates via WebSocket
+- Filter by type (all, unread, high priority)
+- Connection status indicator
+- Mark as read/unread
+- Pull to refresh
+- Loading history on scroll
 
 ### Rate Limit UI Components
 
@@ -61,18 +89,38 @@ try {
 
 ```
 lib/
-├── main.dart             # App entry with bootstrap
+├── main.dart                     # App entry with bootstrap
 ├── screens/
-│   ├── greetings_screen.dart  # Main screen
-│   └── sign_in_screen.dart    # Auth screen
+│   ├── home_screen.dart              # Dashboard with health status
+│   ├── greetings_screen.dart         # Greeting screen with rate limit UI
+│   ├── sign_in_screen.dart           # Email authentication screen
+│   ├── profile_screen.dart           # User profile screen
+│   ├── service_test_screen.dart      # Service testing UI
+│   └── notifications/                # Notification screens
+│       ├── notifications.dart            # Barrel export
+│       ├── notification_center_screen.dart   # Main notification UI
+│       └── notification_item_widget.dart     # Notification list item
 ├── services/
-│   ├── app_config_service.dart    # App config
-│   └── translation_service.dart   # i18n
+│   ├── app_config_service.dart       # App config client
+│   ├── health_service.dart           # Health monitoring
+│   ├── notification_service.dart     # Real-time notifications
+│   └── translation_service.dart      # i18n client
 └── widgets/
-    └── rate_limit_banner.dart     # Rate limit UI
+    ├── health_status_bar.dart        # Health indicator
+    ├── notification_badge.dart       # Notification count badge
+    └── rate_limit_banner.dart        # Rate limit UI
 ```
 
 ## Widgets
+
+### NotificationBadge
+
+```dart
+NotificationBadge(
+  count: unreadCount,
+  child: Icon(Icons.notifications),
+)
+```
 
 ### RateLimitBanner
 
@@ -103,12 +151,49 @@ GreetingResultCard(
 )
 ```
 
+## Services
+
+### NotificationService
+
+ChangeNotifier-based service for real-time notifications:
+
+```dart
+class NotificationService extends ChangeNotifier {
+  List<Notification> get notifications;
+  int get unreadCount;
+  bool get isConnected;
+  
+  Future<void> initialize(Client client);
+  Future<void> subscribeToBroadcasts(List<String> channelIds);
+  Future<void> subscribeToUserNotifications();
+  Future<void> loadHistory({int limit = 50});
+  Future<void> markAsRead(String notificationId);
+  void dispose();
+}
+```
+
+### HealthService
+
+ChangeNotifier-based service for health monitoring:
+
+```dart
+class HealthService extends ChangeNotifier {
+  HealthStatus get status;
+  int get latencyMs;
+  bool get isAutoCheckEnabled;
+  
+  Future<void> checkHealth();
+  void setAutoCheck(bool enabled, {Duration? interval});
+}
+```
+
 ## Bootstrap Flow
 
 1. Initialize Serverpod client
 2. Load app configuration
 3. Load translations (auto-detect device locale)
-4. Run app
+4. Initialize notification service
+5. Run app
 
 ```dart
 void main() async {
@@ -121,9 +206,41 @@ void main() async {
   await AppConfigService.loadConfig(client);
   await TranslationService.loadTranslations(client);
   
+  // Initialize notifications (optional, can be done after login)
+  final notificationService = NotificationService();
+  await notificationService.initialize(client);
+  
   runApp(const MyApp());
 }
 ```
+
+## Screens
+
+### NotificationCenterScreen
+
+Full-featured notification center:
+
+- **Connection indicator**: Shows WebSocket connection status
+- **Filter chips**: All, Unread, High Priority
+- **Notification list**: Grouped by date, with priority indicators
+- **Actions**: Mark as read, refresh, clear all
+- **Real-time updates**: New notifications appear instantly
+
+### HomeScreen
+
+Dashboard with:
+- Health status card with auto-refresh
+- Service status indicators
+- Navigation to service testing
+- Notification badge in app bar
+
+### ServiceTestScreen
+
+Developer tools with tabs:
+- **Health**: Health status, auto-check toggle
+- **API**: Test greeting, translation, config endpoints
+- **Auth**: Check auth status, sessions
+- **Rate Limit**: Bulk request testing, stats
 
 ## Documentation
 

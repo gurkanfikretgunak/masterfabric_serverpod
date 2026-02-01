@@ -11,11 +11,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../core/real-time/notifications-center/endpoints/notification_endpoint.dart'
+import '../core/real_time/notifications_center/endpoints/notification_endpoint.dart'
     as _i2;
-import '../core/real-time/notifications-center/endpoints/notification_stream_endpoint.dart'
+import '../core/real_time/notifications_center/endpoints/notification_stream_endpoint.dart'
     as _i3;
-import '../services/app_config/app_config_endpoint.dart' as _i4;
+import '../services/app_config/endpoints/app_config_endpoint.dart' as _i4;
 import '../services/auth/email/email_idp_endpoint.dart' as _i5;
 import '../services/auth/jwt/jwt_refresh_endpoint.dart' as _i6;
 import '../services/auth/oauth/apple_auth_endpoint.dart' as _i7;
@@ -27,12 +27,12 @@ import '../services/auth/two_factor/two_factor_endpoint.dart' as _i12;
 import '../services/auth/user/account_management_endpoint.dart' as _i13;
 import '../services/auth/user/user_management_endpoint.dart' as _i14;
 import '../services/auth/user/user_profile_endpoint.dart' as _i15;
-import '../services/greetings/greeting_endpoint.dart' as _i16;
-import '../services/health/health_endpoint.dart' as _i17;
-import '../services/translations/translation_endpoint.dart' as _i18;
-import 'package:masterfabric_serverpod_server/src/generated/core/real-time/notifications-center/models/send_notification_request.dart'
+import '../services/greetings/endpoints/greeting_endpoint.dart' as _i16;
+import '../services/health/endpoints/health_endpoint.dart' as _i17;
+import '../services/translations/endpoints/translation_endpoint.dart' as _i18;
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/send_notification_request.dart'
     as _i19;
-import 'package:masterfabric_serverpod_server/src/generated/core/real-time/notifications-center/models/channel_type.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
     as _i20;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
     as _i21;

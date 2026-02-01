@@ -14,19 +14,19 @@
 import 'package:serverpod_test/serverpod_test.dart' as _i1;
 import 'package:serverpod/serverpod.dart' as _i2;
 import 'dart:async' as _i3;
-import 'package:masterfabric_serverpod_server/src/generated/core/real-time/notifications-center/models/notification_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/notification_response.dart'
     as _i4;
-import 'package:masterfabric_serverpod_server/src/generated/core/real-time/notifications-center/models/send_notification_request.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/send_notification_request.dart'
     as _i5;
-import 'package:masterfabric_serverpod_server/src/generated/core/real-time/notifications-center/models/notification_list_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/notification_list_response.dart'
     as _i6;
-import 'package:masterfabric_serverpod_server/src/generated/core/real-time/notifications-center/models/channel_list_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_list_response.dart'
     as _i7;
-import 'package:masterfabric_serverpod_server/src/generated/core/real-time/notifications-center/models/channel_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_response.dart'
     as _i8;
-import 'package:masterfabric_serverpod_server/src/generated/core/real-time/notifications-center/models/channel_type.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
     as _i9;
-import 'package:masterfabric_serverpod_server/src/generated/core/real-time/notifications-center/models/notification.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/notification.dart'
     as _i10;
 import 'package:masterfabric_serverpod_server/src/generated/app_config/app_config.dart'
     as _i11;
@@ -56,11 +56,11 @@ import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/c
     as _i23;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
     as _i24;
-import 'package:masterfabric_serverpod_server/src/generated/services/greetings/greeting_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/greetings/models/greeting_response.dart'
     as _i25;
-import 'package:masterfabric_serverpod_server/src/generated/services/health/health_check_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/health/models/health_check_response.dart'
     as _i26;
-import 'package:masterfabric_serverpod_server/src/generated/services/translations/translation_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/translations/models/translation_response.dart'
     as _i27;
 import 'package:masterfabric_serverpod_server/src/generated/protocol.dart';
 import 'package:masterfabric_serverpod_server/src/generated/endpoints.dart';

@@ -5,64 +5,112 @@ Create a new Serverpod service with endpoint, service class, and models.
 ## Usage
 
 ```
-/create-server-service <service_name> [options]
+/create-server-service <service_name> [--complex]
 ```
 
 ## Arguments
 
-- `service_name` - Name of the service (e.g., `payment`, `notification`, `analytics`)
+- `service_name` - Name of the service in snake_case (e.g., `payment`, `notification`, `analytics`)
+- `--complex` - Use the module pattern with subdirectories (optional)
 
-## What This Command Creates
+## Simple Service (Default)
+
+Creates a flat structure for simple services:
 
 ```
 masterfabric_serverpod_server/lib/src/services/<service_name>/
-├── <service_name>_endpoint.dart    # API endpoint (public)
-├── <service_name>_service.dart     # Business logic (internal)
+├── <service_name>_endpoint.dart    # API endpoint
+├── <service_name>_service.dart     # Business logic
 └── <service_name>_response.spy.yaml # Response model
+```
+
+## Complex Service (--complex flag)
+
+Creates an organized module structure for complex services:
+
+```
+masterfabric_serverpod_server/lib/src/services/<service_name>/
+├── <service_name>.dart             # Barrel export file
+├── endpoints/
+│   └── <service_name>_endpoint.dart
+├── models/
+│   ├── <service_name>_response.spy.yaml
+│   └── <service_name>_request.spy.yaml
+├── services/
+│   └── <service_name>_service.dart
+└── integrations/                   # (if external APIs needed)
+    └── external_provider.dart
 ```
 
 ## Instructions
 
-When the user runs this command, create a new service following this structure:
-
 ### 1. Create the Service Directory
 
-Create folder at: `masterfabric_serverpod_server/lib/src/services/<service_name>/`
+**Simple:**
+```bash
+mkdir -p lib/src/services/<service_name>/
+```
 
-### 2. Create the Endpoint (`<service_name>_endpoint.dart`)
+**Complex:**
+```bash
+mkdir -p lib/src/services/<service_name>/{endpoints,models,services,integrations}
+touch lib/src/services/<service_name>/<service_name>.dart
+```
+
+### 2. Create the Endpoint
+
+**File:** `<service_name>_endpoint.dart` (or `endpoints/<service_name>_endpoint.dart` for complex)
 
 ```dart
 import 'package:serverpod/serverpod.dart';
 import '../../generated/protocol.dart';
-import '<service_name>_service.dart';
+import '../../core/rate_limit/rate_limit_service.dart';
 
 /// <ServiceName> endpoint - handles <description>
 class <ServiceName>Endpoint extends Endpoint {
-  final _service = <ServiceName>Service();
+  // Rate limit: 60 requests/minute
+  static const _rateLimitConfig = RateLimitConfig(
+    maxRequests: 60,
+    windowDuration: Duration(minutes: 1),
+    keyPrefix: '<service_name>',
+  );
 
-  /// Set to true if authentication is required
   @override
-  bool get requireLogin => false;
+  bool get requireLogin => false; // Set true if auth required
 
   /// Main endpoint method
-  /// 
-  /// [session] - Serverpod session
-  /// Returns: <ServiceName>Response
   Future<<ServiceName>Response> get<ServiceName>(Session session) async {
+    // Rate limit check
+    final identifier = _getRateLimitIdentifier(session);
+    await RateLimitService.checkLimit(session, _rateLimitConfig, identifier);
+    
     session.log('Processing <service_name> request', level: LogLevel.info);
     
     try {
-      final result = await _service.process(session);
-      return result;
+      // TODO: Implement business logic
+      return <ServiceName>Response(
+        success: true,
+        message: '<ServiceName> processed successfully',
+        timestamp: DateTime.now(),
+      );
     } catch (e) {
       session.log('Error in <service_name>: $e', level: LogLevel.error);
       rethrow;
     }
   }
+
+  String _getRateLimitIdentifier(Session session) {
+    final auth = session.authenticated;
+    return auth != null 
+        ? 'user:${auth.userIdentifier}' 
+        : 'anonymous:<service_name>';
+  }
 }
 ```
 
-### 3. Create the Service (`<service_name>_service.dart`)
+### 3. Create the Service
+
+**File:** `<service_name>_service.dart` (or `services/<service_name>_service.dart` for complex)
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -71,7 +119,7 @@ import '../../generated/protocol.dart';
 /// Internal service for <service_name> business logic
 class <ServiceName>Service {
   /// Process <service_name> request
-  Future<<ServiceName>Response> process(Session session) async {
+  static Future<<ServiceName>Response> process(Session session) async {
     // TODO: Implement business logic
     
     return <ServiceName>Response(
@@ -83,7 +131,9 @@ class <ServiceName>Service {
 }
 ```
 
-### 4. Create the Response Model (`<service_name>_response.spy.yaml`)
+### 4. Create the Response Model
+
+**File:** `<service_name>_response.spy.yaml` (or `models/<service_name>_response.spy.yaml` for complex)
 
 ```yaml
 ### <ServiceName> response model
@@ -95,9 +145,23 @@ fields:
   data: String?
 ```
 
-### 5. Generate Serverpod Code
+### 5. Create Barrel Export (Complex Only)
 
-After creating the files, run:
+**File:** `<service_name>.dart`
+
+```dart
+/// <ServiceName> Module
+/// 
+/// <Description of the service>
+
+// Services
+export 'services/<service_name>_service.dart';
+
+// Endpoints
+export 'endpoints/<service_name>_endpoint.dart';
+```
+
+### 6. Generate Serverpod Code
 
 ```bash
 cd masterfabric_serverpod_server && serverpod generate
@@ -108,49 +172,62 @@ cd masterfabric_serverpod_server && serverpod generate
 ### Basic Service
 
 ```
-/create-server-service notification
+/create-server-service payment
 ```
 
 Creates:
-- `notification_endpoint.dart`
-- `notification_service.dart`
-- `notification_response.spy.yaml`
+- `payment_endpoint.dart`
+- `payment_service.dart`
+- `payment_response.spy.yaml`
 
-### Service with Authentication
+### Complex Service
 
-Add `@override bool get requireLogin => true;` to the endpoint.
-
-### Service with Rate Limiting
-
-Add rate limiting using the existing pattern:
-
-```dart
-import '../../core/rate_limit/rate_limit_service.dart';
-
-class MyEndpoint extends Endpoint {
-  Future<MyResponse> myMethod(Session session) async {
-    await RateLimitService.checkRateLimit(
-      session,
-      endpoint: 'my_endpoint',
-      maxRequests: 100,
-      windowSeconds: 60,
-    );
-    // ... rest of logic
-  }
-}
+```
+/create-server-service payment --complex
 ```
 
-### Service with Caching
+Creates:
+```
+payment/
+├── payment.dart
+├── endpoints/
+│   └── payment_endpoint.dart
+├── models/
+│   └── payment_response.spy.yaml
+└── services/
+    └── payment_service.dart
+```
 
-Use Serverpod's built-in caching:
+## Adding Features
+
+### With Authentication
+
+Set `requireLogin => true` in the endpoint.
+
+### With Rate Limiting
+
+Already included in template. Adjust `maxRequests` and `windowDuration`.
+
+### With Caching
 
 ```dart
 // Local cache (in-memory)
 await session.caches.local.put(key, value, lifetime: Duration(minutes: 5));
 final cached = await session.caches.local.get<MyType>(key);
 
-// Global cache (Redis)
+// Global cache (Redis - shared across instances)
 await session.caches.global.put(key, value, lifetime: Duration(hours: 1));
+```
+
+### With Streaming (WebSocket)
+
+Add a streaming endpoint:
+
+```dart
+/// Subscribe to real-time updates
+Stream<MyEvent> subscribe(Session session, List<String> channelIds) async* {
+  // Implementation
+}
 ```
 
 ## Naming Conventions
@@ -163,6 +240,8 @@ await session.caches.global.put(key, value, lifetime: Duration(hours: 1));
 | Response model | PascalCase + Response | `PaymentGatewayResponse` |
 | File names | snake_case | `payment_gateway_endpoint.dart` |
 
+**Important:** Always use underscores (`_`) in folder names, never hyphens (`-`).
+
 ## Post-Creation Checklist
 
 - [ ] Run `serverpod generate`
@@ -171,3 +250,4 @@ await session.caches.global.put(key, value, lifetime: Duration(hours: 1));
 - [ ] Update README if public API
 - [ ] Add rate limiting if needed
 - [ ] Add caching strategy if needed
+- [ ] Update health endpoint if critical service

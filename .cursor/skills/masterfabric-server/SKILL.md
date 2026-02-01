@@ -1,6 +1,6 @@
 ---
 name: masterfabric-server
-description: Create Serverpod services, endpoints, and models for MasterFabric server. Use when creating new API endpoints, services, database models, or modifying server-side code. Includes rate limiting, caching, authentication, and i18n patterns.
+description: Create Serverpod services, endpoints, and models for MasterFabric server. Use when creating new API endpoints, services, database models, or modifying server-side code. Includes rate limiting, caching, authentication, real-time notifications, and i18n patterns.
 ---
 
 # MasterFabric Serverpod Server
@@ -10,33 +10,104 @@ description: Create Serverpod services, endpoints, and models for MasterFabric s
 ```
 masterfabric_serverpod_server/
 ├── lib/src/
-│   ├── core/                    # Shared utilities
-│   │   ├── rate_limit/          # Rate limiting service
-│   │   ├── exceptions/          # Custom exceptions
-│   │   ├── integrations/        # Firebase, Sentry, Mixpanel
-│   │   ├── logging/             # Structured logging
-│   │   └── session/             # Session management
-│   ├── services/                # Business logic (ADD NEW SERVICES HERE)
-│   │   ├── auth/                # Authentication endpoints
-│   │   ├── greetings/           # Example with rate limit
-│   │   ├── health/              # Health check endpoint
-│   │   ├── translations/        # i18n service
-│   │   └── app_config/          # Remote config
-│   └── generated/               # Auto-generated (DO NOT EDIT)
-└── assets/i18n/                 # Translation files (en, tr, de, es)
+│   ├── core/                           # Shared utilities & real-time features
+│   │   ├── errors/                     # Error handling
+│   │   ├── exceptions/                 # Custom exceptions (.spy.yaml)
+│   │   ├── health/                     # Health check handler
+│   │   ├── integrations/               # Firebase, Sentry, Mixpanel, Email
+│   │   ├── logging/                    # Structured logging
+│   │   ├── rate_limit/                 # Rate limiting service
+│   │   ├── scheduling/                 # Background jobs, cron
+│   │   ├── session/                    # Session management
+│   │   ├── utils/                      # Common utilities
+│   │   └── real_time/                  # Real-time features
+│   │       └── notifications_center/   # Notification system (pattern example)
+│   │           ├── endpoints/          # API & streaming endpoints
+│   │           ├── integrations/       # Push notification providers
+│   │           ├── models/             # Data models (.spy.yaml)
+│   │           └── services/           # Business logic
+│   ├── services/                       # Business logic (ADD NEW SERVICES HERE)
+│   │   ├── auth/                       # Authentication (organized subdirs)
+│   │   │   ├── config/                 # Auth configuration
+│   │   │   ├── core/                   # Audit logs, helpers
+│   │   │   ├── email/                  # Email authentication
+│   │   │   ├── jwt/                    # JWT refresh
+│   │   │   ├── oauth/                  # Apple, Google OAuth
+│   │   │   ├── password/               # Password management
+│   │   │   ├── rbac/                   # Role-based access control
+│   │   │   ├── session/                # Session management
+│   │   │   ├── two_factor/             # 2FA
+│   │   │   ├── user/                   # User profiles, management
+│   │   │   └── verification/           # Email/phone verification
+│   │   ├── app_config/                 # Remote config
+│   │   ├── greetings/                  # Example with rate limit
+│   │   ├── health/                     # Health check endpoint
+│   │   └── translations/               # i18n service
+│   ├── app_config/                     # App configuration models
+│   ├── routes/                         # HTTP routes
+│   └── generated/                      # Auto-generated (DO NOT EDIT)
+├── config/                             # Environment configs
+└── assets/i18n/                        # Translation files (en, tr, de, es)
+```
+
+## Naming Conventions
+
+| Item | Convention | Example |
+|------|------------|---------|
+| Directory | snake_case | `payment_gateway/` |
+| Endpoint | PascalCase + Endpoint | `PaymentGatewayEndpoint` |
+| Service | PascalCase + Service | `PaymentGatewayService` |
+| Model file | snake_case.spy.yaml | `payment_response.spy.yaml` |
+| Model class | PascalCase | `PaymentResponse` |
+| Barrel export | snake_case.dart | `payment_gateway.dart` |
+
+**Important:** Always use underscores (`_`) in folder names, never hyphens (`-`).
+
+## Module Organization Pattern
+
+For complex modules (like `notifications_center`), use this structure:
+
+```
+my_module/
+├── my_module.dart              # Barrel export file
+├── endpoints/                  # API endpoints (public interface)
+│   ├── my_endpoint.dart
+│   └── my_stream_endpoint.dart # For real-time streaming
+├── models/                     # Data models (.spy.yaml files)
+│   ├── my_model.spy.yaml
+│   └── my_response.spy.yaml
+├── services/                   # Business logic (internal)
+│   ├── my_service.dart
+│   └── my_cache_service.dart
+└── integrations/               # External service integrations
+    └── external_provider.dart
 ```
 
 ## Creating a New Service
 
-### Step 1: Create Directory
+### Simple Service (Single File Pattern)
+
+For simple services, use the flat structure in `lib/src/services/`:
 
 ```bash
 mkdir -p lib/src/services/<service_name>/
 ```
 
-### Step 2: Create Endpoint
+Create files:
+- `<service_name>_endpoint.dart` - API endpoint
+- `<service_name>_service.dart` - Business logic
+- `<service_name>_response.spy.yaml` - Response model
 
-**File:** `<service_name>_endpoint.dart`
+### Complex Service (Module Pattern)
+
+For complex services with multiple endpoints, models, and integrations:
+
+```bash
+mkdir -p lib/src/services/<service_name>/{endpoints,models,services,integrations}
+touch lib/src/services/<service_name>/<service_name>.dart  # Barrel export
+```
+
+### Endpoint Template
 
 ```dart
 import 'package:serverpod/serverpod.dart';
@@ -74,25 +145,7 @@ class <ServiceName>Endpoint extends Endpoint {
 }
 ```
 
-### Step 3: Create Service (Business Logic)
-
-**File:** `<service_name>_service.dart`
-
-```dart
-import 'package:serverpod/serverpod.dart';
-import '../../generated/protocol.dart';
-
-class <ServiceName>Service {
-  Future<<ServiceName>Response> process(Session session) async {
-    // Business logic here
-    return <ServiceName>Response(/* ... */);
-  }
-}
-```
-
-### Step 4: Create Models
-
-**File:** `<service_name>_response.spy.yaml`
+### Model Template (.spy.yaml)
 
 ```yaml
 ### Response model
@@ -104,7 +157,7 @@ fields:
   timestamp: DateTime
 ```
 
-### Step 5: Generate Code
+### Generate Code
 
 ```bash
 cd masterfabric_serverpod_server && serverpod generate
@@ -142,6 +195,28 @@ final cached = await session.caches.local.get<MyType>('key');
 await session.caches.global.put('key', myObject, lifetime: Duration(hours: 1));
 ```
 
+### Real-Time Notifications
+
+```dart
+import '../../core/real_time/notifications_center/services/notification_service.dart';
+
+// Send to specific user
+await NotificationService.sendToUser(
+  session,
+  userId: 'user-123',
+  title: 'Hello',
+  body: 'You have a new message',
+);
+
+// Broadcast to channel (cached for high volume)
+await NotificationService.broadcast(
+  session,
+  channelId: 'announcements',
+  title: 'New Feature',
+  body: 'Check out our latest update!',
+);
+```
+
 ### Logging
 
 ```dart
@@ -163,6 +238,31 @@ if (auth == null) throw AuthenticationError('Not authenticated');
 final userId = auth.userIdentifier;
 ```
 
+## Streaming Endpoints (Real-Time)
+
+For WebSocket streaming endpoints:
+
+```dart
+class MyStreamEndpoint extends Endpoint {
+  /// Subscribe to real-time updates
+  Stream<MyEvent> subscribe(Session session, String channelId) async* {
+    // Validate access
+    final userId = session.authenticated?.userIdentifier.toString();
+    
+    // Get stream controller for channel
+    final controller = MyChannelService.getStream(channelId);
+    
+    try {
+      await for (final event in controller.stream) {
+        yield event;
+      }
+    } finally {
+      // Cleanup on disconnect
+    }
+  }
+}
+```
+
 ## Model Definitions (.spy.yaml)
 
 ```yaml
@@ -173,6 +273,13 @@ fields:
   name: String
   createdAt: DateTime
   metadata: String?      # Nullable field
+
+### Enum
+enum: MyStatus
+values:
+  - pending
+  - active
+  - completed
 
 ### With relations
 class: Order
@@ -189,36 +296,29 @@ fields:
   bio: String?
 ```
 
-## Naming Conventions
-
-| Item | Convention | Example |
-|------|------------|---------|
-| Directory | snake_case | `payment_gateway/` |
-| Endpoint | PascalCase + Endpoint | `PaymentGatewayEndpoint` |
-| Service | PascalCase + Service | `PaymentGatewayService` |
-| Model file | snake_case.spy.yaml | `payment_response.spy.yaml` |
-| Model class | PascalCase | `PaymentResponse` |
-
 ## Error Handling
 
-```dart
-// Custom exception (create .spy.yaml)
+```yaml
+# Custom exception (create .spy.yaml)
 class: PaymentError
 serverOnly: true
 fields:
   code: String
   message: String
+```
 
+```dart
 // Throw in endpoint
 throw PaymentError(code: 'INSUFFICIENT_FUNDS', message: 'Not enough balance');
 ```
 
 ## Checklist for New Services
 
-- [ ] Create directory in `lib/src/services/`
+- [ ] Create directory in `lib/src/services/` (use snake_case)
 - [ ] Create `*_endpoint.dart` with rate limiting
 - [ ] Create `*_service.dart` for business logic
 - [ ] Create `*_response.spy.yaml` model
 - [ ] Run `serverpod generate`
 - [ ] Add tests if needed
 - [ ] Update health endpoint if critical service
+- [ ] For complex modules, use the organized pattern (endpoints/, models/, services/, integrations/)

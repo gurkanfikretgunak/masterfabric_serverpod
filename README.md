@@ -24,10 +24,11 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 | **Rate Limiting** | Distributed rate limiting with Redis, configurable per endpoint |
 | **Multi-Level Caching** | Local, LocalPrio, and Global (Redis) caching strategies |
 | **Internationalization** | Auto-seeding translations (EN, TR, DE, ES) with runtime locale switching |
+| **Real-Time Notifications** | WebSocket streaming for broadcasts, user-based, and project-based notifications |
 | **Modern Error Handling** | SerializableExceptions with detailed error responses |
 | **Health Monitoring** | Real-time service health checks with auto-refresh |
 | **Service Testing** | Built-in test UI for API, Auth, and Rate Limit testing |
-| **Beautiful Flutter UI** | Rate limit banners, health indicators, countdown timers |
+| **Beautiful Flutter UI** | Rate limit banners, health indicators, notification center |
 | **Authentication** | Email/password auth with JWT tokens and session management |
 | **Integrations** | Firebase, Sentry, Mixpanel (configurable) |
 
@@ -450,19 +451,64 @@ flutter run
 ```
 lib/src/
 ├── core/
-│   ├── errors/           # Custom error types (ValidationError, etc.)
-│   ├── exceptions/       # SerializableExceptions (RateLimitException)
-│   ├── integrations/     # Firebase, Sentry, Mixpanel
-│   ├── logging/          # Structured logging
-│   ├── rate_limit/       # Rate limiting service
-│   ├── session/          # Session management
-│   └── utils/            # Common utilities
+│   ├── errors/              # Custom error types (ValidationError, etc.)
+│   ├── exceptions/          # SerializableExceptions (RateLimitException)
+│   │   └── models/          # Exception model definitions (.spy.yaml)
+│   ├── health/              # Health check handlers and metrics
+│   ├── integrations/        # Firebase, Sentry, Mixpanel
+│   ├── logging/             # Structured logging
+│   ├── rate_limit/          # Rate limiting service
+│   │   ├── models/          # Rate limit entry models
+│   │   └── services/        # Rate limit service implementation
+│   ├── real_time/           # Real-time features
+│   │   └── notifications_center/
+│   │       ├── endpoints/   # Notification & stream endpoints
+│   │       ├── models/      # Notification models (.spy.yaml)
+│   │       ├── services/    # Notification, channel, cache services
+│   │       └── integrations/# Push notification integrations
+│   ├── scheduling/          # Cron-based job scheduling
+│   ├── session/             # Session management
+│   └── utils/               # Common utilities
 ├── services/
-│   ├── app_config/       # App configuration service
-│   ├── auth/             # Authentication services
-│   ├── greetings/        # Example greeting endpoint
-│   └── translations/     # i18n translation service
-└── generated/            # Serverpod generated code
+│   ├── app_config/          # App configuration service
+│   │   ├── endpoints/       # Config endpoints
+│   │   └── services/        # Config service implementation
+│   ├── auth/                # Authentication services
+│   │   ├── config/          # Auth configuration
+│   │   ├── core/            # Auth audit and helpers
+│   │   ├── email/           # Email authentication
+│   │   ├── jwt/             # JWT refresh
+│   │   ├── oauth/           # Google, Apple OAuth
+│   │   ├── password/        # Password management
+│   │   ├── rbac/            # Role-based access control
+│   │   ├── session/         # Session management
+│   │   ├── two_factor/      # 2FA authentication
+│   │   ├── user/            # User management
+│   │   └── verification/    # Verification codes
+│   ├── greetings/           # Example greeting endpoint
+│   │   ├── endpoints/       # Greeting endpoint
+│   │   └── models/          # Greeting models
+│   ├── health/              # Health check endpoints
+│   │   ├── endpoints/       # Health endpoint
+│   │   └── models/          # Health response models
+│   └── translations/        # i18n translation service
+│       ├── endpoints/       # Translation endpoint
+│       ├── models/          # Translation models
+│       └── services/        # Translation service implementation
+└── generated/               # Serverpod generated code
+```
+
+**Module Organization Pattern:**
+
+Each module follows a consistent structure with barrel exports:
+
+```
+module_name/
+├── module_name.dart         # Barrel export file
+├── endpoints/               # API endpoints
+├── models/                  # Data models (.spy.yaml)
+├── services/                # Business logic
+└── integrations/            # External integrations (optional)
 ```
 
 - **Core Services**:
@@ -497,25 +543,34 @@ Generated client code that provides:
 
 ```
 lib/
-├── main.dart                 # App entry point with bootstrap
+├── main.dart                     # App entry point with bootstrap
 ├── screens/
-│   ├── home_screen.dart          # Dashboard with health status
-│   ├── service_test_screen.dart  # Service testing (API, Auth, Rate Limit)
-│   ├── greetings_screen.dart     # Greeting screen with rate limit UI
-│   └── sign_in_screen.dart       # Email authentication screen
+│   ├── home_screen.dart              # Dashboard with health status
+│   ├── service_test_screen.dart      # Service testing (API, Auth, Rate Limit)
+│   ├── greetings_screen.dart         # Greeting screen with rate limit UI
+│   ├── sign_in_screen.dart           # Email authentication screen
+│   ├── profile_screen.dart           # User profile screen
+│   └── notifications/                # Real-time notifications
+│       ├── notifications.dart            # Barrel export
+│       ├── notification_center_screen.dart   # Notification center UI
+│       └── notification_item_widget.dart     # Notification list item
 ├── services/
-│   ├── app_config_service.dart    # App config client
-│   ├── health_service.dart        # Health monitoring service
-│   └── translation_service.dart   # i18n client with locale switching
+│   ├── app_config_service.dart       # App config client
+│   ├── health_service.dart           # Health monitoring service
+│   ├── notification_service.dart     # Real-time notification service
+│   └── translation_service.dart      # i18n client with locale switching
 └── widgets/
-    ├── health_status_bar.dart     # Health indicator & status card
-    └── rate_limit_banner.dart     # Rate limit UI components
+    ├── health_status_bar.dart        # Health indicator & status card
+    ├── notification_badge.dart       # Notification count badge
+    └── rate_limit_banner.dart        # Rate limit UI components
 ```
 
 **Features**:
 - **Email Sign-in** with verification
 - **Health Monitoring** with auto-check (configurable interval)
+- **Real-Time Notifications** with WebSocket streaming
 - **Service Testing** screen (API, Auth, Rate Limit tabs)
+- Notification center with filtering and real-time updates
 - Rate limit banner with countdown timer
 - Rate limit indicator showing remaining requests
 - Modern greeting result cards
@@ -745,6 +800,78 @@ graph LR
 - **Mixpanel**: Analytics and event tracking
 
 Integrations can be enabled/disabled via configuration files.
+
+### Real-Time Notifications
+
+```mermaid
+graph TB
+    subgraph "Notification Types"
+        Broadcast[Public Broadcasts<br/>All users]
+        UserBased[User-Based<br/>Specific user]
+        ProjectBased[Project-Based<br/>Project members]
+    end
+    
+    subgraph "Server"
+        NotificationEndpoint[Notification Endpoint<br/>Create, Send, Manage]
+        StreamEndpoint[Stream Endpoint<br/>WebSocket Subscriptions]
+        CacheService[Cache Service<br/>Redis for 50k+ users]
+    end
+    
+    subgraph "Flutter Client"
+        NotificationService[Notification Service<br/>ChangeNotifier]
+        NotificationCenter[Notification Center<br/>Real-time UI]
+    end
+    
+    Broadcast --> NotificationEndpoint
+    UserBased --> NotificationEndpoint
+    ProjectBased --> NotificationEndpoint
+    NotificationEndpoint --> CacheService
+    StreamEndpoint --> NotificationService
+    NotificationService --> NotificationCenter
+```
+
+**Server-side notification management:**
+
+```dart
+// Create a notification channel
+final channel = await client.notification.createChannel(
+  name: 'announcements',
+  type: ChannelType.broadcast,
+  isPublic: true,
+);
+
+// Send notification to channel
+await client.notification.send(
+  channelId: channel.id,
+  title: 'New Feature!',
+  message: 'Check out the new dashboard',
+  priority: NotificationPriority.high,
+);
+```
+
+**Flutter real-time subscription:**
+
+```dart
+// Subscribe to broadcasts
+await notificationService.subscribeToBroadcasts(channelIds);
+
+// Listen for new notifications
+notificationService.addListener(() {
+  final notifications = notificationService.notifications;
+  // Update UI
+});
+```
+
+**Features:**
+- WebSocket streaming for real-time updates
+- Public broadcasts with Redis caching (supports 50k+ concurrent users)
+- User-specific notifications
+- Project-based notifications
+- Priority levels (low, medium, high, urgent)
+- Read/unread status tracking
+- Notification filtering and search
+
+---
 
 ### Authentication
 

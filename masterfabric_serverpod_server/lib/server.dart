@@ -16,7 +16,7 @@ import 'src/core/session/session_manager.dart';
 import 'src/services/auth/email/email_validation_service.dart';
 import 'src/services/auth/email/email_service.dart';
 import 'src/services/auth/email/email_idp_endpoint.dart';
-import 'src/services/translations/translation_service.dart';
+import 'src/services/translations/services/translation_service.dart';
 
 /// Global instances for core components
 IntegrationManager? _integrationManager;

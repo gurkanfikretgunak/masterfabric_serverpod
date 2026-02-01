@@ -1,6 +1,6 @@
 # masterfabric_serverpod_server
 
-Serverpod backend server with rate limiting, multi-level caching, internationalization, and authentication.
+Serverpod backend server with rate limiting, multi-level caching, internationalization, real-time notifications, and authentication.
 
 ## Quick Start
 
@@ -63,8 +63,37 @@ Auto-seeds translations from `assets/i18n/*.json` on startup:
 assets/i18n/
 ├── en.i18n.json
 ├── tr.i18n.json
-└── de.i18n.json
+├── de.i18n.json
+└── es.i18n.json
 ```
+
+### Real-Time Notifications
+
+WebSocket streaming for real-time notifications with Redis caching:
+
+```dart
+// Create a notification channel
+final response = await NotificationChannelService.createChannel(
+  session,
+  name: 'announcements',
+  type: ChannelType.broadcast,
+  isPublic: true,
+);
+
+// Send notification
+await NotificationService.sendNotification(
+  session,
+  channelId: channelId,
+  title: 'New Feature',
+  message: 'Check out the updates!',
+  priority: NotificationPriority.high,
+);
+```
+
+**Notification Types:**
+- **Broadcast**: Public notifications for all users (cached for 50k+ concurrent users)
+- **User-Based**: Notifications for specific users
+- **Project-Based**: Notifications for project members
 
 ### SerializableExceptions
 
@@ -93,17 +122,94 @@ throw RateLimitException(
 ```
 lib/src/
 ├── core/
-│   ├── errors/           # Custom error types
-│   ├── exceptions/       # SerializableExceptions (.spy.yaml)
-│   ├── integrations/     # Firebase, Sentry, Mixpanel
-│   ├── rate_limit/       # Rate limiting service
-│   └── session/          # Session management
+│   ├── core.dart              # Barrel export for core
+│   ├── errors/                # Custom error types
+│   │   ├── errors.dart        # Barrel export
+│   │   ├── base_error_handler.dart
+│   │   └── error_types.dart
+│   ├── exceptions/            # SerializableExceptions
+│   │   ├── exceptions.dart    # Barrel export
+│   │   └── models/            # Exception .spy.yaml files
+│   ├── health/                # Health checks
+│   │   ├── health.dart        # Barrel export
+│   │   ├── health_check_handler.dart
+│   │   └── health_metrics.dart
+│   ├── integrations/          # Firebase, Sentry, Mixpanel
+│   │   └── integrations.dart  # Barrel export
+│   ├── logging/               # Structured logging
+│   │   └── logging.dart       # Barrel export
+│   ├── rate_limit/            # Rate limiting
+│   │   ├── rate_limit.dart    # Barrel export
+│   │   ├── models/            # Rate limit models
+│   │   └── services/          # Rate limit service
+│   ├── real_time/             # Real-time features
+│   │   ├── real_time.dart     # Barrel export
+│   │   └── notifications_center/
+│   │       ├── notifications_center.dart  # Barrel export
+│   │       ├── endpoints/     # Notification endpoints
+│   │       ├── models/        # Notification models
+│   │       ├── services/      # Notification services
+│   │       └── integrations/  # Push notification integrations
+│   ├── scheduling/            # Cron scheduling
+│   │   └── scheduling.dart    # Barrel export
+│   ├── session/               # Session management
+│   │   └── session.dart       # Barrel export
+│   └── utils/                 # Utilities
+│       └── utils.dart         # Barrel export
 ├── services/
-│   ├── app_config/       # App configuration
-│   ├── auth/             # Authentication
-│   ├── greetings/        # Example endpoint
-│   └── translations/     # i18n service
-└── generated/            # Serverpod generated code
+│   ├── app_config/            # App configuration
+│   │   ├── app_config.dart    # Barrel export
+│   │   ├── endpoints/         # Config endpoints
+│   │   └── services/          # Config services
+│   ├── auth/                  # Authentication
+│   │   ├── auth.dart          # Barrel export
+│   │   ├── config/            # Auth configuration
+│   │   ├── core/              # Auth core services
+│   │   ├── email/             # Email auth
+│   │   ├── jwt/               # JWT handling
+│   │   ├── oauth/             # OAuth providers
+│   │   ├── password/          # Password management
+│   │   ├── rbac/              # Role-based access
+│   │   ├── session/           # Session management
+│   │   ├── two_factor/        # 2FA
+│   │   ├── user/              # User management
+│   │   └── verification/      # Verification codes
+│   ├── greetings/             # Example service
+│   │   ├── greetings.dart     # Barrel export
+│   │   ├── endpoints/         # Greeting endpoints
+│   │   └── models/            # Greeting models
+│   ├── health/                # Health endpoints
+│   │   ├── health.dart        # Barrel export
+│   │   ├── endpoints/         # Health endpoints
+│   │   └── models/            # Health models
+│   └── translations/          # i18n service
+│       ├── translations.dart  # Barrel export
+│       ├── endpoints/         # Translation endpoints
+│       ├── models/            # Translation models
+│       └── services/          # Translation services
+└── generated/                 # Serverpod generated code
+```
+
+### Naming Conventions
+
+| Type | Convention | Example |
+|------|------------|---------|
+| Folders | `snake_case` | `notifications_center/` |
+| Files | `snake_case` | `notification_service.dart` |
+| Classes | `PascalCase` | `NotificationService` |
+| Models | `snake_case.spy.yaml` | `notification.spy.yaml` |
+
+### Module Organization Pattern
+
+Each module follows this structure:
+
+```
+module_name/
+├── module_name.dart     # Barrel export (re-exports all public APIs)
+├── endpoints/           # API endpoints
+├── models/              # Data models (.spy.yaml files)
+├── services/            # Business logic services
+└── integrations/        # External integrations (optional)
 ```
 
 ## Configuration
@@ -111,7 +217,7 @@ lib/src/
 Server configuration in `config/development.yaml`:
 
 ```yaml
-# Enable Redis (required for rate limiting & global cache)
+# Enable Redis (required for rate limiting, caching & notifications)
 redis:
   enabled: true
   host: localhost
@@ -124,6 +230,15 @@ emailValidation:
     maxAttemptsPerEmail: 5
     maxAttemptsPerIp: 10
     windowMinutes: 60
+```
+
+## Seeding Data
+
+```bash
+# Seed notifications for testing
+dart run bin/seed_notifications.dart
+
+# Translations auto-seed from assets/i18n/ on server startup
 ```
 
 ## Stopping Services
