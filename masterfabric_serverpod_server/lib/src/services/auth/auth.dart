@@ -53,3 +53,5 @@ export 'user/user_profile_service.dart';
 
 // Verification
 export 'verification/verification_service.dart';
+export 'verification/verification_channel_router.dart';
+export 'verification/verification_preferences_endpoint.dart';

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:masterfabric_serverpod_client/masterfabric_serverpod_client.dart';
 import '../main.dart';
+import 'verification_settings_screen.dart';
 
 /// User profile screen for viewing and editing user information
 class ProfileScreen extends StatefulWidget {
@@ -620,9 +621,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: LucideIcons.smartphone,
             label: 'Active Sessions',
             onTap: () => _showComingSoon('Sessions'),
+          ),
+          Divider(height: 1, color: Colors.grey.shade200),
+          _buildActionItem(
+            icon: LucideIcons.shieldCheck,
+            label: 'Verification Settings',
+            onTap: () => _navigateToVerificationSettings(),
             isLast: true,
           ),
         ],
+      ),
+    );
+  }
+
+  void _navigateToVerificationSettings() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const VerificationSettingsScreen(),
       ),
     );
   }

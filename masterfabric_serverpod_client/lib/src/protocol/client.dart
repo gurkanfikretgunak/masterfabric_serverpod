@@ -56,13 +56,17 @@ import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/cu
     as _i23;
 import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/profile_update_request.dart'
     as _i24;
-import 'package:masterfabric_serverpod_client/src/protocol/services/greetings/models/greeting_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/verification/verification_channel.dart'
     as _i25;
-import 'package:masterfabric_serverpod_client/src/protocol/services/health/models/health_check_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/verification/user_verification_preferences.dart'
     as _i26;
-import 'package:masterfabric_serverpod_client/src/protocol/services/translations/models/translation_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/greetings/models/greeting_response.dart'
     as _i27;
-import 'protocol.dart' as _i28;
+import 'package:masterfabric_serverpod_client/src/protocol/services/health/models/health_check_response.dart'
+    as _i28;
+import 'package:masterfabric_serverpod_client/src/protocol/services/translations/models/translation_response.dart'
+    as _i29;
+import 'protocol.dart' as _i30;
 
 /// Base class for MasterFabric endpoints with built-in middleware support
 ///
@@ -1401,6 +1405,136 @@ class EndpointUserProfile extends _i1.EndpointRef {
       );
 }
 
+/// Endpoint for managing verification channel preferences
+///
+/// Provides API for:
+/// - Getting available verification channels
+/// - Getting user's current preferences
+/// - Updating verification preferences
+/// - Linking Telegram account
+/// - Verifying phone number for WhatsApp
+/// {@category Endpoint}
+class EndpointVerificationPreferences extends EndpointMasterfabric {
+  EndpointVerificationPreferences(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'verificationPreferences';
+
+  /// Get available verification channels
+  ///
+  /// Returns a list of channels that are currently enabled
+  _i2.Future<List<_i25.VerificationChannel>> getAvailableChannels() =>
+      caller.callServerEndpoint<List<_i25.VerificationChannel>>(
+        'verificationPreferences',
+        'getAvailableChannels',
+        {},
+      );
+
+  /// Get current user's verification preferences
+  ///
+  /// Returns the user's current preferences or null if not set
+  _i2.Future<_i26.UserVerificationPreferences?> getPreferences() =>
+      caller.callServerEndpoint<_i26.UserVerificationPreferences?>(
+        'verificationPreferences',
+        'getPreferences',
+        {},
+      );
+
+  /// Update verification preferences
+  ///
+  /// [preferredChannel] - Preferred channel for verification codes
+  /// [backupChannel] - Optional backup channel
+  /// [phoneNumber] - Phone number for Telegram/WhatsApp (E.164 format)
+  ///
+  /// Returns the updated preferences
+  _i2.Future<_i26.UserVerificationPreferences> updatePreferences({
+    required _i25.VerificationChannel preferredChannel,
+    _i25.VerificationChannel? backupChannel,
+    String? phoneNumber,
+  }) => caller.callServerEndpoint<_i26.UserVerificationPreferences>(
+    'verificationPreferences',
+    'updatePreferences',
+    {
+      'preferredChannel': preferredChannel,
+      'backupChannel': backupChannel,
+      'phoneNumber': phoneNumber,
+    },
+  );
+
+  /// Generate Telegram linking code
+  ///
+  /// Returns a one-time code that user sends to the bot to link their account
+  _i2.Future<_i22.VerificationResponse> generateTelegramLinkCode() =>
+      caller.callServerEndpoint<_i22.VerificationResponse>(
+        'verificationPreferences',
+        'generateTelegramLinkCode',
+        {},
+      );
+
+  /// Link Telegram account using chat ID
+  ///
+  /// Called when user sends /start command with linking code to bot
+  /// This would typically be called from a webhook handler
+  ///
+  /// [code] - The linking code user sent to the bot
+  /// [chatId] - Telegram chat ID from the message
+  _i2.Future<bool> linkTelegramAccount(
+    String code,
+    String chatId,
+  ) => caller.callServerEndpoint<bool>(
+    'verificationPreferences',
+    'linkTelegramAccount',
+    {
+      'code': code,
+      'chatId': chatId,
+    },
+  );
+
+  /// Unlink Telegram account
+  _i2.Future<bool> unlinkTelegramAccount() => caller.callServerEndpoint<bool>(
+    'verificationPreferences',
+    'unlinkTelegramAccount',
+    {},
+  );
+
+  /// Send verification code to phone number for WhatsApp
+  ///
+  /// [phoneNumber] - Phone number in E.164 format
+  _i2.Future<_i22.VerificationResponse> sendPhoneVerificationCode(
+    String phoneNumber,
+  ) => caller.callServerEndpoint<_i22.VerificationResponse>(
+    'verificationPreferences',
+    'sendPhoneVerificationCode',
+    {'phoneNumber': phoneNumber},
+  );
+
+  /// Verify phone number with code
+  ///
+  /// [phoneNumber] - Phone number that was verified
+  /// [code] - Verification code received via WhatsApp
+  _i2.Future<bool> verifyPhoneNumber(
+    String phoneNumber,
+    String code,
+  ) => caller.callServerEndpoint<bool>(
+    'verificationPreferences',
+    'verifyPhoneNumber',
+    {
+      'phoneNumber': phoneNumber,
+      'code': code,
+    },
+  );
+
+  /// Get Telegram bot info for user to link account
+  ///
+  /// Returns the bot username and URL for user to start conversation
+  _i2.Future<Map<String, String?>> getTelegramBotInfo() =>
+      caller.callServerEndpoint<Map<String, String?>>(
+        'verificationPreferences',
+        'getTelegramBotInfo',
+        {},
+      );
+}
+
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 ///
@@ -1420,8 +1554,8 @@ class EndpointGreeting extends _i1.EndpointRef {
   /// Rate limited to 20 requests per minute.
   /// Returns rate limit info (remaining, limit, reset time) in response.
   /// Throws RateLimitException with details if limit is exceeded.
-  _i2.Future<_i25.GreetingResponse> hello(String name) =>
-      caller.callServerEndpoint<_i25.GreetingResponse>(
+  _i2.Future<_i27.GreetingResponse> hello(String name) =>
+      caller.callServerEndpoint<_i27.GreetingResponse>(
         'greeting',
         'hello',
         {'name': name},
@@ -1457,8 +1591,8 @@ class EndpointGreetingV2 extends EndpointMasterfabric {
   /// - Request/response logging
   /// - Metrics collection
   /// - Error handling
-  _i2.Future<_i25.GreetingResponse> hello(String name) =>
-      caller.callServerEndpoint<_i25.GreetingResponse>(
+  _i2.Future<_i27.GreetingResponse> hello(String name) =>
+      caller.callServerEndpoint<_i27.GreetingResponse>(
         'greetingV2',
         'hello',
         {'name': name},
@@ -1467,8 +1601,8 @@ class EndpointGreetingV2 extends EndpointMasterfabric {
   /// Example of a public method (no authentication required).
   ///
   /// Uses per-method configuration to skip auth middleware.
-  _i2.Future<_i25.GreetingResponse> helloPublic(String name) =>
-      caller.callServerEndpoint<_i25.GreetingResponse>(
+  _i2.Future<_i27.GreetingResponse> helloPublic(String name) =>
+      caller.callServerEndpoint<_i27.GreetingResponse>(
         'greetingV2',
         'helloPublic',
         {'name': name},
@@ -1477,8 +1611,8 @@ class EndpointGreetingV2 extends EndpointMasterfabric {
   /// Example of a method with strict rate limiting.
   ///
   /// Uses per-method configuration for stricter limits.
-  _i2.Future<_i25.GreetingResponse> helloStrict(String name) =>
-      caller.callServerEndpoint<_i25.GreetingResponse>(
+  _i2.Future<_i27.GreetingResponse> helloStrict(String name) =>
+      caller.callServerEndpoint<_i27.GreetingResponse>(
         'greetingV2',
         'helloStrict',
         {'name': name},
@@ -1496,8 +1630,8 @@ class EndpointHealth extends _i1.EndpointRef {
   /// Check health of ALL services
   ///
   /// Returns health status for all infrastructure and application services
-  _i2.Future<_i26.HealthCheckResponse> check() =>
-      caller.callServerEndpoint<_i26.HealthCheckResponse>(
+  _i2.Future<_i28.HealthCheckResponse> check() =>
+      caller.callServerEndpoint<_i28.HealthCheckResponse>(
         'health',
         'check',
         {},
@@ -1532,10 +1666,10 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse containing translations in slang JSON format
   ///
   /// Throws InternalServerError if translations cannot be loaded
-  _i2.Future<_i27.TranslationResponse> getTranslations({
+  _i2.Future<_i29.TranslationResponse> getTranslations({
     String? locale,
     String? namespace,
-  }) => caller.callServerEndpoint<_i27.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i29.TranslationResponse>(
     'translation',
     'getTranslations',
     {
@@ -1555,12 +1689,12 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse with saved translations
   ///
   /// Note: This should be protected by authentication/authorization in production
-  _i2.Future<_i27.TranslationResponse> saveTranslations(
+  _i2.Future<_i29.TranslationResponse> saveTranslations(
     String locale,
     Map<String, dynamic> translations, {
     String? namespace,
     required bool isActive,
-  }) => caller.callServerEndpoint<_i27.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i29.TranslationResponse>(
     'translation',
     'saveTranslations',
     {
@@ -1630,7 +1764,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i28.Protocol(),
+         _i30.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -1653,6 +1787,7 @@ class Client extends _i1.ServerpodClientShared {
     accountManagement = EndpointAccountManagement(this);
     userManagement = EndpointUserManagement(this);
     userProfile = EndpointUserProfile(this);
+    verificationPreferences = EndpointVerificationPreferences(this);
     greeting = EndpointGreeting(this);
     greetingV2 = EndpointGreetingV2(this);
     health = EndpointHealth(this);
@@ -1688,6 +1823,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointUserProfile userProfile;
 
+  late final EndpointVerificationPreferences verificationPreferences;
+
   late final EndpointGreeting greeting;
 
   late final EndpointGreetingV2 greetingV2;
@@ -1714,6 +1851,7 @@ class Client extends _i1.ServerpodClientShared {
     'accountManagement': accountManagement,
     'userManagement': userManagement,
     'userProfile': userProfile,
+    'verificationPreferences': verificationPreferences,
     'greeting': greeting,
     'greetingV2': greetingV2,
     'health': health,

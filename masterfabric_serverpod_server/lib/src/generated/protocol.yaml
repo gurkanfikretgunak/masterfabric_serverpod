@@ -80,6 +80,16 @@ userProfile:
   - updateProfile:
   - uploadProfileImage:
   - deleteProfileImage:
+verificationPreferences:
+  - getAvailableChannels:
+  - getPreferences:
+  - updatePreferences:
+  - generateTelegramLinkCode:
+  - linkTelegramAccount:
+  - unlinkTelegramAccount:
+  - sendPhoneVerificationCode:
+  - verifyPhoneNumber:
+  - getTelegramBotInfo:
 greeting:
   - hello:
 greetingV2:

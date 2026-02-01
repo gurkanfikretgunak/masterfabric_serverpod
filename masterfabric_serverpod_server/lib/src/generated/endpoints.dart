@@ -27,22 +27,26 @@ import '../services/auth/two_factor/two_factor_endpoint.dart' as _i12;
 import '../services/auth/user/account_management_endpoint.dart' as _i13;
 import '../services/auth/user/user_management_endpoint.dart' as _i14;
 import '../services/auth/user/user_profile_endpoint.dart' as _i15;
-import '../services/greetings/endpoints/greeting_endpoint.dart' as _i16;
-import '../services/greetings/endpoints/greeting_endpoint_v2.dart' as _i17;
-import '../services/health/endpoints/health_endpoint.dart' as _i18;
-import '../services/translations/endpoints/translation_endpoint.dart' as _i19;
+import '../services/auth/verification/verification_preferences_endpoint.dart'
+    as _i16;
+import '../services/greetings/endpoints/greeting_endpoint.dart' as _i17;
+import '../services/greetings/endpoints/greeting_endpoint_v2.dart' as _i18;
+import '../services/health/endpoints/health_endpoint.dart' as _i19;
+import '../services/translations/endpoints/translation_endpoint.dart' as _i20;
 import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/send_notification_request.dart'
-    as _i20;
-import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
     as _i21;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
     as _i22;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
     as _i23;
-import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
     as _i24;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
     as _i25;
+import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+    as _i26;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i27;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -132,25 +136,31 @@ class Endpoints extends _i1.EndpointDispatch {
           'userProfile',
           null,
         ),
-      'greeting': _i16.GreetingEndpoint()
+      'verificationPreferences': _i16.VerificationPreferencesEndpoint()
+        ..initialize(
+          server,
+          'verificationPreferences',
+          null,
+        ),
+      'greeting': _i17.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
           null,
         ),
-      'greetingV2': _i17.GreetingV2Endpoint()
+      'greetingV2': _i18.GreetingV2Endpoint()
         ..initialize(
           server,
           'greetingV2',
           null,
         ),
-      'health': _i18.HealthEndpoint()
+      'health': _i19.HealthEndpoint()
         ..initialize(
           server,
           'health',
           null,
         ),
-      'translation': _i19.TranslationEndpoint()
+      'translation': _i20.TranslationEndpoint()
         ..initialize(
           server,
           'translation',
@@ -166,7 +176,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i20.SendNotificationRequest>(),
+              type: _i1.getType<_i21.SendNotificationRequest>(),
               nullable: false,
             ),
           },
@@ -342,7 +352,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'type': _i1.ParameterDescription(
               name: 'type',
-              type: _i1.getType<_i21.ChannelType>(),
+              type: _i1.getType<_i22.ChannelType>(),
               nullable: false,
             ),
             'description': _i1.ParameterDescription(
@@ -1524,7 +1534,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i22.ProfileUpdateRequest>(),
+              type: _i1.getType<_i23.ProfileUpdateRequest>(),
               nullable: false,
             ),
           },
@@ -1568,7 +1578,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'gender': _i1.ParameterDescription(
               name: 'gender',
-              type: _i1.getType<_i23.Gender?>(),
+              type: _i1.getType<_i24.Gender?>(),
               nullable: true,
             ),
           },
@@ -1645,6 +1655,180 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['verificationPreferences'] = _i1.EndpointConnector(
+      name: 'verificationPreferences',
+      endpoint: endpoints['verificationPreferences']!,
+      methodConnectors: {
+        'getAvailableChannels': _i1.MethodConnector(
+          name: 'getAvailableChannels',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['verificationPreferences']
+                          as _i16.VerificationPreferencesEndpoint)
+                      .getAvailableChannels(session),
+        ),
+        'getPreferences': _i1.MethodConnector(
+          name: 'getPreferences',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['verificationPreferences']
+                          as _i16.VerificationPreferencesEndpoint)
+                      .getPreferences(session),
+        ),
+        'updatePreferences': _i1.MethodConnector(
+          name: 'updatePreferences',
+          params: {
+            'preferredChannel': _i1.ParameterDescription(
+              name: 'preferredChannel',
+              type: _i1.getType<_i25.VerificationChannel>(),
+              nullable: false,
+            ),
+            'backupChannel': _i1.ParameterDescription(
+              name: 'backupChannel',
+              type: _i1.getType<_i25.VerificationChannel?>(),
+              nullable: true,
+            ),
+            'phoneNumber': _i1.ParameterDescription(
+              name: 'phoneNumber',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['verificationPreferences']
+                          as _i16.VerificationPreferencesEndpoint)
+                      .updatePreferences(
+                        session,
+                        preferredChannel: params['preferredChannel'],
+                        backupChannel: params['backupChannel'],
+                        phoneNumber: params['phoneNumber'],
+                      ),
+        ),
+        'generateTelegramLinkCode': _i1.MethodConnector(
+          name: 'generateTelegramLinkCode',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['verificationPreferences']
+                          as _i16.VerificationPreferencesEndpoint)
+                      .generateTelegramLinkCode(session),
+        ),
+        'linkTelegramAccount': _i1.MethodConnector(
+          name: 'linkTelegramAccount',
+          params: {
+            'code': _i1.ParameterDescription(
+              name: 'code',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'chatId': _i1.ParameterDescription(
+              name: 'chatId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['verificationPreferences']
+                          as _i16.VerificationPreferencesEndpoint)
+                      .linkTelegramAccount(
+                        session,
+                        params['code'],
+                        params['chatId'],
+                      ),
+        ),
+        'unlinkTelegramAccount': _i1.MethodConnector(
+          name: 'unlinkTelegramAccount',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['verificationPreferences']
+                          as _i16.VerificationPreferencesEndpoint)
+                      .unlinkTelegramAccount(session),
+        ),
+        'sendPhoneVerificationCode': _i1.MethodConnector(
+          name: 'sendPhoneVerificationCode',
+          params: {
+            'phoneNumber': _i1.ParameterDescription(
+              name: 'phoneNumber',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['verificationPreferences']
+                          as _i16.VerificationPreferencesEndpoint)
+                      .sendPhoneVerificationCode(
+                        session,
+                        params['phoneNumber'],
+                      ),
+        ),
+        'verifyPhoneNumber': _i1.MethodConnector(
+          name: 'verifyPhoneNumber',
+          params: {
+            'phoneNumber': _i1.ParameterDescription(
+              name: 'phoneNumber',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'code': _i1.ParameterDescription(
+              name: 'code',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['verificationPreferences']
+                          as _i16.VerificationPreferencesEndpoint)
+                      .verifyPhoneNumber(
+                        session,
+                        params['phoneNumber'],
+                        params['code'],
+                      ),
+        ),
+        'getTelegramBotInfo': _i1.MethodConnector(
+          name: 'getTelegramBotInfo',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['verificationPreferences']
+                          as _i16.VerificationPreferencesEndpoint)
+                      .getTelegramBotInfo(session),
+        ),
+      },
+    );
     connectors['greeting'] = _i1.EndpointConnector(
       name: 'greeting',
       endpoint: endpoints['greeting']!,
@@ -1662,7 +1846,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i16.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i17.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),
@@ -1687,7 +1871,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['greetingV2'] as _i17.GreetingV2Endpoint).hello(
+                  (endpoints['greetingV2'] as _i18.GreetingV2Endpoint).hello(
                     session,
                     params['name'],
                   ),
@@ -1705,7 +1889,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greetingV2'] as _i17.GreetingV2Endpoint)
+              ) async => (endpoints['greetingV2'] as _i18.GreetingV2Endpoint)
                   .helloPublic(
                     session,
                     params['name'],
@@ -1724,7 +1908,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greetingV2'] as _i17.GreetingV2Endpoint)
+              ) async => (endpoints['greetingV2'] as _i18.GreetingV2Endpoint)
                   .helloStrict(
                     session,
                     params['name'],
@@ -1744,7 +1928,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['health'] as _i18.HealthEndpoint).check(session),
+                  (endpoints['health'] as _i19.HealthEndpoint).check(session),
         ),
         'ping': _i1.MethodConnector(
           name: 'ping',
@@ -1754,7 +1938,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['health'] as _i18.HealthEndpoint).ping(session),
+                  (endpoints['health'] as _i19.HealthEndpoint).ping(session),
         ),
       },
     );
@@ -1780,7 +1964,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i19.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i20.TranslationEndpoint)
                   .getTranslations(
                     session,
                     locale: params['locale'],
@@ -1815,7 +1999,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i19.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i20.TranslationEndpoint)
                   .saveTranslations(
                     session,
                     params['locale'],
@@ -1831,7 +2015,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i19.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i20.TranslationEndpoint)
                   .getAvailableLocales(session),
         ),
         'reseedFromAssets': _i1.MethodConnector(
@@ -1847,7 +2031,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i19.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i20.TranslationEndpoint)
                   .reseedFromAssets(
                     session,
                     forceReseed: params['forceReseed'],
@@ -1855,9 +2039,9 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i24.Endpoints()
+    modules['serverpod_auth_idp'] = _i26.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i25.Endpoints()
+    modules['serverpod_auth_core'] = _i27.Endpoints()
       ..initializeEndpoints(server);
   }
 }

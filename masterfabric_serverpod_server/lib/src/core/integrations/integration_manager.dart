@@ -3,6 +3,8 @@ import 'email_integration.dart';
 import 'firebase_integration.dart';
 import 'sentry_integration.dart';
 import 'mixpanel_integration.dart';
+import 'telegram_integration.dart';
+import 'whatsapp_integration.dart';
 
 /// Manager for all external service integrations
 /// 
@@ -90,6 +92,44 @@ class IntegrationManager {
         _integrations.add(email);
       }
     }
+
+    // Initialize Telegram
+    if (integrationsConfig.containsKey('telegram')) {
+      final telegramConfig = integrationsConfig['telegram'] as Map<String, dynamic>;
+      
+      final telegram = TelegramIntegration(
+        enabled: telegramConfig['enabled'] as bool? ?? false,
+        botToken: telegramConfig['botToken'] as String?,
+        botUsername: telegramConfig['botUsername'] as String?,
+        additionalConfig: telegramConfig,
+      );
+      
+      if (telegram.enabled) {
+        await telegram.initialize();
+        _integrations.add(telegram);
+      }
+    }
+
+    // Initialize WhatsApp
+    if (integrationsConfig.containsKey('whatsapp')) {
+      final whatsappConfig = integrationsConfig['whatsapp'] as Map<String, dynamic>;
+      
+      final whatsapp = WhatsAppIntegration(
+        enabled: whatsappConfig['enabled'] as bool? ?? false,
+        phoneNumberId: whatsappConfig['phoneNumberId'] as String?,
+        accessToken: whatsappConfig['accessToken'] as String?,
+        businessAccountId: whatsappConfig['businessAccountId'] as String?,
+        otpTemplateName: whatsappConfig['otpTemplateName'] as String?,
+        otpTemplateLanguage: whatsappConfig['otpTemplateLanguage'] as String?,
+        apiVersion: whatsappConfig['apiVersion'] as String?,
+        additionalConfig: whatsappConfig,
+      );
+      
+      if (whatsapp.enabled) {
+        await whatsapp.initialize();
+        _integrations.add(whatsapp);
+      }
+    }
   }
 
   /// Get an integration by name
@@ -118,6 +158,12 @@ class IntegrationManager {
 
   /// Get Email integration
   EmailIntegration? get email => getIntegration<EmailIntegration>('email');
+
+  /// Get Telegram integration
+  TelegramIntegration? get telegram => getIntegration<TelegramIntegration>('telegram');
+
+  /// Get WhatsApp integration
+  WhatsAppIntegration? get whatsapp => getIntegration<WhatsAppIntegration>('whatsapp');
 
   /// Get all integrations
   List<BaseIntegration> getAllIntegrations() {

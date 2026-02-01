@@ -1,0 +1,33 @@
+### User verification preferences for multi-channel code delivery
+class: UserVerificationPreferences
+table: user_verification_preferences
+fields:
+  ### User identifier (matches auth user id)
+  userId: String
+  ### Preferred verification channel
+  preferredChannel: VerificationChannel
+  ### Phone number for Telegram/WhatsApp verification (E.164 format)
+  phoneNumber: String?
+  ### Telegram chat ID (set when user starts conversation with bot)
+  telegramChatId: String?
+  ### Whether WhatsApp number has been verified
+  whatsappVerified: bool
+  ### Whether Telegram has been linked
+  telegramLinked: bool
+  ### Backup channel if primary fails
+  backupChannel: VerificationChannel?
+  ### Created timestamp
+  createdAt: DateTime
+  ### Last updated timestamp
+  updatedAt: DateTime
+indexes:
+  ### Unique index on userId for fast lookups
+  user_verification_prefs_user_idx:
+    fields: userId
+    unique: true
+  ### Index on phone number for lookups
+  user_verification_prefs_phone_idx:
+    fields: phoneNumber
+  ### Index on telegram chat ID for webhook processing
+  user_verification_prefs_telegram_idx:
+    fields: telegramChatId

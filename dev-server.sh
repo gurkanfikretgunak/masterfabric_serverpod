@@ -56,7 +56,8 @@ echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━
 echo ""
 
 # Run with filtered logs
-exec dart run bin/main.dart 2>&1 | while IFS= read -r line; do
+# Pass any command line arguments (e.g., --apply-migrations) to the server
+exec dart run bin/main.dart "$@" 2>&1 | while IFS= read -r line; do
     [[ "$line" == *"<asynchronous suspension>"* ]] && continue
     [[ "$line" =~ ^#[0-9] ]] && continue
     [[ "$line" == *"ERROR"* ]] && echo -e "\033[31m$line\033[0m" && continue

@@ -1,0 +1,11 @@
+### Verification channel enum for delivery method selection
+enum: VerificationChannel
+values:
+  ### Email delivery (default)
+  - email
+  ### Telegram Bot API delivery
+  - telegram
+  ### WhatsApp Business Cloud API delivery
+  - whatsapp
+  ### SMS delivery (future implementation)
+  - sms

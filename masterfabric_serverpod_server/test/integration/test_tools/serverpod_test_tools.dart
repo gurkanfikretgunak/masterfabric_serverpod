@@ -56,12 +56,16 @@ import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/c
     as _i23;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
     as _i24;
-import 'package:masterfabric_serverpod_server/src/generated/services/greetings/models/greeting_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
     as _i25;
-import 'package:masterfabric_serverpod_server/src/generated/services/health/models/health_check_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/user_verification_preferences.dart'
     as _i26;
-import 'package:masterfabric_serverpod_server/src/generated/services/translations/models/translation_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/greetings/models/greeting_response.dart'
     as _i27;
+import 'package:masterfabric_serverpod_server/src/generated/services/health/models/health_check_response.dart'
+    as _i28;
+import 'package:masterfabric_serverpod_server/src/generated/services/translations/models/translation_response.dart'
+    as _i29;
 import 'package:masterfabric_serverpod_server/src/generated/protocol.dart';
 import 'package:masterfabric_serverpod_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -197,6 +201,8 @@ class TestEndpoints {
 
   late final _UserProfileEndpoint userProfile;
 
+  late final _VerificationPreferencesEndpoint verificationPreferences;
+
   late final _GreetingEndpoint greeting;
 
   late final _GreetingV2Endpoint greetingV2;
@@ -266,6 +272,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     userProfile = _UserProfileEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    verificationPreferences = _VerificationPreferencesEndpoint(
       endpoints,
       serializationManager,
     );
@@ -2655,6 +2665,305 @@ class _UserProfileEndpoint {
   }
 }
 
+class _VerificationPreferencesEndpoint {
+  _VerificationPreferencesEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<List<_i25.VerificationChannel>> getAvailableChannels(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'verificationPreferences',
+            method: 'getAvailableChannels',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'verificationPreferences',
+          methodName: 'getAvailableChannels',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<List<_i25.VerificationChannel>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i26.UserVerificationPreferences?> getPreferences(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'verificationPreferences',
+            method: 'getPreferences',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'verificationPreferences',
+          methodName: 'getPreferences',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i26.UserVerificationPreferences?>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i26.UserVerificationPreferences> updatePreferences(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i25.VerificationChannel preferredChannel,
+    _i25.VerificationChannel? backupChannel,
+    String? phoneNumber,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'verificationPreferences',
+            method: 'updatePreferences',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'verificationPreferences',
+          methodName: 'updatePreferences',
+          parameters: _i1.testObjectToJson({
+            'preferredChannel': preferredChannel,
+            'backupChannel': backupChannel,
+            'phoneNumber': phoneNumber,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i26.UserVerificationPreferences>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i22.VerificationResponse> generateTelegramLinkCode(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'verificationPreferences',
+            method: 'generateTelegramLinkCode',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'verificationPreferences',
+          methodName: 'generateTelegramLinkCode',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i22.VerificationResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> linkTelegramAccount(
+    _i1.TestSessionBuilder sessionBuilder,
+    String code,
+    String chatId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'verificationPreferences',
+            method: 'linkTelegramAccount',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'verificationPreferences',
+          methodName: 'linkTelegramAccount',
+          parameters: _i1.testObjectToJson({
+            'code': code,
+            'chatId': chatId,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> unlinkTelegramAccount(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'verificationPreferences',
+            method: 'unlinkTelegramAccount',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'verificationPreferences',
+          methodName: 'unlinkTelegramAccount',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i22.VerificationResponse> sendPhoneVerificationCode(
+    _i1.TestSessionBuilder sessionBuilder,
+    String phoneNumber,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'verificationPreferences',
+            method: 'sendPhoneVerificationCode',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'verificationPreferences',
+          methodName: 'sendPhoneVerificationCode',
+          parameters: _i1.testObjectToJson({'phoneNumber': phoneNumber}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i22.VerificationResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> verifyPhoneNumber(
+    _i1.TestSessionBuilder sessionBuilder,
+    String phoneNumber,
+    String code,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'verificationPreferences',
+            method: 'verifyPhoneNumber',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'verificationPreferences',
+          methodName: 'verifyPhoneNumber',
+          parameters: _i1.testObjectToJson({
+            'phoneNumber': phoneNumber,
+            'code': code,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<Map<String, String?>> getTelegramBotInfo(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'verificationPreferences',
+            method: 'getTelegramBotInfo',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'verificationPreferences',
+          methodName: 'getTelegramBotInfo',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<Map<String, String?>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _GreetingEndpoint {
   _GreetingEndpoint(
     this._endpointDispatch,
@@ -2665,7 +2974,7 @@ class _GreetingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i25.GreetingResponse> hello(
+  _i3.Future<_i27.GreetingResponse> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -2688,7 +2997,7 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i25.GreetingResponse>);
+                as _i3.Future<_i27.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2707,7 +3016,7 @@ class _GreetingV2Endpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i25.GreetingResponse> hello(
+  _i3.Future<_i27.GreetingResponse> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -2730,7 +3039,7 @@ class _GreetingV2Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i25.GreetingResponse>);
+                as _i3.Future<_i27.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2738,7 +3047,7 @@ class _GreetingV2Endpoint {
     });
   }
 
-  _i3.Future<_i25.GreetingResponse> helloPublic(
+  _i3.Future<_i27.GreetingResponse> helloPublic(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -2761,7 +3070,7 @@ class _GreetingV2Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i25.GreetingResponse>);
+                as _i3.Future<_i27.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2769,7 +3078,7 @@ class _GreetingV2Endpoint {
     });
   }
 
-  _i3.Future<_i25.GreetingResponse> helloStrict(
+  _i3.Future<_i27.GreetingResponse> helloStrict(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -2792,7 +3101,7 @@ class _GreetingV2Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i25.GreetingResponse>);
+                as _i3.Future<_i27.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2811,7 +3120,7 @@ class _HealthEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i26.HealthCheckResponse> check(
+  _i3.Future<_i28.HealthCheckResponse> check(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -2833,7 +3142,7 @@ class _HealthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i26.HealthCheckResponse>);
+                as _i3.Future<_i28.HealthCheckResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2880,7 +3189,7 @@ class _TranslationEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i27.TranslationResponse> getTranslations(
+  _i3.Future<_i29.TranslationResponse> getTranslations(
     _i1.TestSessionBuilder sessionBuilder, {
     String? locale,
     String? namespace,
@@ -2907,7 +3216,7 @@ class _TranslationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.TranslationResponse>);
+                as _i3.Future<_i29.TranslationResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2915,7 +3224,7 @@ class _TranslationEndpoint {
     });
   }
 
-  _i3.Future<_i27.TranslationResponse> saveTranslations(
+  _i3.Future<_i29.TranslationResponse> saveTranslations(
     _i1.TestSessionBuilder sessionBuilder,
     String locale,
     Map<String, dynamic> translations, {
@@ -2946,7 +3255,7 @@ class _TranslationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.TranslationResponse>);
+                as _i3.Future<_i29.TranslationResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

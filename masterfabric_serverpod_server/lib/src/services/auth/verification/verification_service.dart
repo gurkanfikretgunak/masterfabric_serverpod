@@ -4,20 +4,41 @@ import 'package:crypto/crypto.dart';
 import 'package:serverpod/serverpod.dart';
 import '../../../generated/protocol.dart';
 import '../../../core/errors/error_types.dart';
+import '../../../core/integrations/integration_manager.dart';
 import '../config/auth_config_service.dart';
+import '../email/email_service.dart';
+import 'verification_channel_router.dart';
 
 /// Service for handling verification codes (OTP)
 /// 
 /// Uses secure hashing to store codes so they cannot be guessed from the database.
 /// The code is hashed with SHA-256 using a secret salt, user ID, and purpose
 /// for additional security.
+/// 
+/// Supports multi-channel delivery:
+/// - Email (default)
+/// - Telegram Bot API
+/// - WhatsApp Business Cloud API
+/// - SMS (future)
 class VerificationService {
   final VerificationCodeConfig _config;
   final Random _random = Random.secure();
+  final VerificationChannelRouter? _channelRouter;
 
   /// Create a new VerificationService with the given configuration
-  VerificationService({VerificationCodeConfig? config})
-      : _config = config ?? VerificationCodeConfig();
+  /// 
+  /// [config] - Verification code configuration
+  /// [integrationManager] - Integration manager for multi-channel delivery
+  /// [emailService] - Email service for sending verification emails
+  VerificationService({
+    VerificationCodeConfig? config,
+    IntegrationManager? integrationManager,
+    EmailService? emailService,
+  })  : _config = config ?? VerificationCodeConfig(),
+        _channelRouter = VerificationChannelRouter(
+          integrationManager: integrationManager,
+          emailService: emailService,
+        );
 
   /// Configuration getters for external access
   int get codeLength => _config.codeLength;
@@ -83,13 +104,21 @@ class VerificationService {
   /// [session] - Serverpod session
   /// [userId] - User ID
   /// [purpose] - Purpose of verification (e.g., 'profile_update')
+  /// [channel] - Delivery channel (optional, defaults to user's preferred or email)
+  /// [email] - Email address (required for email channel)
+  /// [phoneNumber] - Phone number (required for WhatsApp/SMS)
+  /// [telegramChatId] - Telegram chat ID (required for Telegram)
   /// 
   /// Returns the generated code (in production, this would be sent via email/SMS)
   Future<VerificationResponse> requestVerificationCode(
     Session session,
     String userId,
-    String purpose,
-  ) async {
+    String purpose, {
+    VerificationChannel? channel,
+    String? email,
+    String? phoneNumber,
+    String? telegramChatId,
+  }) async {
     // Check for cooldown - find the most recent code
     final recentCodes = await VerificationCode.db.find(
       session,
@@ -111,6 +140,21 @@ class VerificationService {
           expiresInSeconds: null,
           resendCooldownSeconds: remainingCooldown,
         );
+      }
+    }
+
+    // Determine the delivery channel
+    VerificationChannel deliveryChannel = channel ?? VerificationChannel.email;
+    
+    // If no channel specified, try to get user's preferred channel
+    if (channel == null && _channelRouter != null) {
+      deliveryChannel = await _channelRouter!.getBestChannelForUser(session, userId);
+      
+      // Get user preferences to populate delivery details
+      final prefs = await _channelRouter!.getUserPreferences(session, userId);
+      if (prefs != null) {
+        phoneNumber ??= prefs.phoneNumber;
+        telegramChatId ??= prefs.telegramChatId;
       }
     }
 
@@ -141,23 +185,98 @@ class VerificationService {
     await VerificationCode.db.insertRow(session, verificationCode);
 
     session.log(
-      'Verification code generated - userId: $userId, purpose: $purpose, codeLength: ${_config.codeLength}',
+      'Verification code generated - userId: $userId, purpose: $purpose, codeLength: ${_config.codeLength}, channel: ${deliveryChannel.name}',
       level: LogLevel.info,
     );
 
-    // In production, send this code via email/SMS
-    // For now, we'll log it (REMOVE IN PRODUCTION!)
-    session.log(
-      'VERIFICATION CODE (DEV ONLY): $code',
-      level: LogLevel.warning,
-    );
+    // Send code via the selected channel
+    String deliveryMessage = 'Verification code sent.';
+    
+    if (_channelRouter != null) {
+      try {
+        final sent = await _channelRouter!.sendCode(
+          session: session,
+          channel: deliveryChannel,
+          code: code,
+          userId: userId,
+          purpose: purpose,
+          email: email,
+          phoneNumber: phoneNumber,
+          telegramChatId: telegramChatId,
+          expiresInMinutes: _config.expirationMinutes,
+        );
+        
+        if (sent) {
+          deliveryMessage = _getDeliveryMessage(deliveryChannel);
+        } else {
+          deliveryMessage = 'Verification code sent (delivery status unknown).';
+        }
+      } catch (e) {
+        session.log(
+          'Failed to send verification code via ${deliveryChannel.name}: $e',
+          level: LogLevel.error,
+        );
+        // Fall back to logging the code for development
+        session.log(
+          'VERIFICATION CODE (DEV ONLY): $code',
+          level: LogLevel.warning,
+        );
+        deliveryMessage = 'Verification code generated. Check your logs for development.';
+      }
+    } else {
+      // No channel router - log for development
+      session.log(
+        'VERIFICATION CODE (DEV ONLY): $code',
+        level: LogLevel.warning,
+      );
+    }
 
     return VerificationResponse(
       success: true,
-      message: 'Verification code sent. Check your email.',
+      message: deliveryMessage,
       expiresInSeconds: _config.expirationMinutes * 60,
       resendCooldownSeconds: _config.resendCooldownSeconds,
     );
+  }
+
+  /// Get delivery message based on channel
+  String _getDeliveryMessage(VerificationChannel channel) {
+    switch (channel) {
+      case VerificationChannel.email:
+        return 'Verification code sent to your email.';
+      case VerificationChannel.telegram:
+        return 'Verification code sent via Telegram.';
+      case VerificationChannel.whatsapp:
+        return 'Verification code sent via WhatsApp.';
+      case VerificationChannel.sms:
+        return 'Verification code sent via SMS.';
+    }
+  }
+
+  /// Get available verification channels
+  List<VerificationChannel> getAvailableChannels() {
+    return _channelRouter?.getAvailableChannels() ?? [VerificationChannel.email];
+  }
+
+  /// Check if a channel is available
+  bool isChannelAvailable(VerificationChannel channel) {
+    return _channelRouter?.isChannelAvailable(channel) ?? (channel == VerificationChannel.email);
+  }
+
+  /// Get user's verification preferences
+  Future<UserVerificationPreferences?> getUserPreferences(
+    Session session,
+    String userId,
+  ) async {
+    return _channelRouter?.getUserPreferences(session, userId);
+  }
+
+  /// Save user's verification preferences
+  Future<UserVerificationPreferences?> saveUserPreferences(
+    Session session,
+    UserVerificationPreferences preferences,
+  ) async {
+    return _channelRouter?.saveUserPreferences(session, preferences);
   }
 
   /// Verify a code

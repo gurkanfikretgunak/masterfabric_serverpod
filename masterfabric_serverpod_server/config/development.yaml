@@ -91,6 +91,24 @@ integrations:
       encryption: "tls"  # tls, ssl, or none
       fromAddress: ""  # Sender email address
       fromName: "MasterFabric"  # Sender name
+  
+  # Telegram Bot API integration for verification codes
+  telegram:
+    enabled: false  # Set to true when Telegram bot is configured
+    botToken: ""  # Bot token from @BotFather (store in passwords.yaml for production)
+    botUsername: ""  # Bot username without @ (e.g., "MyVerificationBot")
+    # webhookUrl: ""  # Optional: Webhook URL for receiving messages (e.g., "https://yourdomain.com/api/telegram/webhook")
+    # webhookSecret: ""  # Optional: Secret for verifying webhook requests (store in passwords.yaml)
+  
+  # WhatsApp Business Cloud API integration for verification codes
+  whatsapp:
+    enabled: false  # Set to true when WhatsApp Business API is configured
+    phoneNumberId: ""  # Phone Number ID from Meta Business Suite
+    accessToken: ""  # Access token from Meta Business Suite (store in passwords.yaml for production)
+    businessAccountId: ""  # WhatsApp Business Account ID
+    otpTemplateName: "verification_code"  # Pre-approved OTP template name
+    otpTemplateLanguage: "en"  # Template language code
+    apiVersion: "v18.0"  # Meta Graph API version
 
 # Email validation configuration
 emailValidation:

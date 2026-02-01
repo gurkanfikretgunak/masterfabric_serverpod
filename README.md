@@ -31,7 +31,9 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 | **Service Testing** | Built-in test UI for API, Auth, and Rate Limit testing |
 | **Beautiful Flutter UI** | Rate limit banners, health indicators, notification center |
 | **Authentication** | Email/password auth with JWT tokens and session management |
-| **Integrations** | Firebase, Sentry, Mixpanel (configurable) |
+| **Multi-Channel Verification** | Email, Telegram Bot API, WhatsApp Business API for OTP delivery |
+| **Middleware System** | Automatic logging, rate limiting, auth, validation, metrics per endpoint |
+| **Integrations** | Firebase, Sentry, Mixpanel, Telegram, WhatsApp (configurable) |
 
 ## Screenshots
 
@@ -485,7 +487,7 @@ lib/src/
 │   │   ├── session/         # Session management
 │   │   ├── two_factor/      # 2FA authentication
 │   │   ├── user/            # User management
-│   │   └── verification/    # Verification codes
+│   │   └── verification/    # Multi-channel verification (Email, Telegram, WhatsApp)
 │   ├── greetings/           # Example greeting endpoint
 │   │   ├── endpoints/       # Greeting endpoint
 │   │   └── models/          # Greeting models
@@ -516,8 +518,9 @@ module_name/
   - `RateLimitService`: Distributed rate limiting with Redis
   - `TranslationService`: i18n with auto-seeding from JSON files
   - `SessionManager`: Manages user sessions with configurable TTL
-  - `IntegrationManager`: Manages integrations (Firebase, Sentry, Mixpanel)
+  - `IntegrationManager`: Manages integrations (Firebase, Sentry, Mixpanel, Telegram, WhatsApp)
   - `SchedulerManager`: Handles cron-based scheduled tasks
+  - `VerificationChannelRouter`: Routes verification codes to preferred channel
 
 - **Features**:
   - **Rate Limiting**: Per-endpoint configurable limits with Redis
@@ -525,7 +528,8 @@ module_name/
   - **Translations**: Auto-seed from `assets/i18n/*.json`
   - **App Configuration**: Centralized settings, feature flags
   - **Authentication**: Email/password with JWT tokens, 2FA
-  - **Integrations**: Firebase, Sentry, Mixpanel (configurable)
+  - **Multi-Channel Verification**: Email, Telegram Bot API, WhatsApp Business API
+  - **Integrations**: Firebase, Sentry, Mixpanel, Telegram, WhatsApp (configurable)
 
 - **Endpoints**:
   - `GreetingEndpoint`: Example with rate limiting & caching
@@ -551,6 +555,7 @@ lib/
 │   ├── greetings_screen.dart         # Greeting screen with rate limit UI
 │   ├── sign_in_screen.dart           # Email authentication screen
 │   ├── profile_screen.dart           # User profile screen
+│   ├── verification_settings_screen.dart  # Multi-channel verification preferences
 │   └── notifications/                # Real-time notifications
 │       ├── notifications.dart            # Barrel export
 │       ├── notification_center_screen.dart   # Notification center UI
@@ -571,6 +576,7 @@ lib/
 - **Health Monitoring** with auto-check (configurable interval)
 - **Real-Time Notifications** with WebSocket streaming
 - **Service Testing** screen (API, Auth, Rate Limit tabs)
+- **Verification Settings** for Email, Telegram, WhatsApp preferences
 - Notification center with filtering and real-time updates
 - Rate limit banner with countdown timer
 - Rate limit indicator showing remaining requests
@@ -792,15 +798,21 @@ graph LR
     IntMgr[Integration Manager] --> Firebase[Firebase<br/>Admin SDK]
     IntMgr --> Sentry[Sentry<br/>Error Tracking]
     IntMgr --> Mixpanel[Mixpanel<br/>Analytics]
+    IntMgr --> Telegram[Telegram<br/>Bot API]
+    IntMgr --> WhatsApp[WhatsApp<br/>Business API]
     
     Config[Config Files] -.->|Enable/Disable| IntMgr
 ```
 
-- **Firebase**: Firebase Admin SDK integration
-- **Sentry**: Error tracking and monitoring
-- **Mixpanel**: Analytics and event tracking
+| Integration | Purpose | API |
+|-------------|---------|-----|
+| **Firebase** | Admin SDK, Push Notifications | Firebase Admin |
+| **Sentry** | Error tracking and monitoring | Sentry SDK |
+| **Mixpanel** | Analytics and event tracking | Mixpanel API |
+| **Telegram** | Verification codes via bot | Telegram Bot API |
+| **WhatsApp** | Verification codes via templates | WhatsApp Business Cloud API |
 
-Integrations can be enabled/disabled via configuration files.
+Integrations can be enabled/disabled via configuration files (`config/development.yaml`, `config/production.yaml`).
 
 ### Real-Time Notifications
 
@@ -900,6 +912,117 @@ sequenceDiagram
 - JWT token-based authentication
 - Registration verification codes
 - Password reset functionality
+
+### Multi-Channel Verification
+
+```mermaid
+graph TB
+    subgraph "Verification Channels"
+        Email[📧 Email<br/>Default]
+        Telegram[📱 Telegram<br/>Bot API]
+        WhatsApp[💬 WhatsApp<br/>Business Cloud API]
+        SMS[📲 SMS<br/>Future]
+    end
+    
+    subgraph "Server"
+        ChannelRouter[Channel Router<br/>Route to preferred channel]
+        VerificationService[Verification Service<br/>Generate & validate codes]
+        IntegrationManager[Integration Manager<br/>Manage API clients]
+    end
+    
+    subgraph "User Preferences"
+        PreferredChannel[Preferred Channel]
+        BackupChannel[Backup Channel]
+        PhoneNumber[Phone Number]
+        TelegramChatId[Telegram Chat ID]
+    end
+    
+    User[User Request] --> ChannelRouter
+    ChannelRouter --> PreferredChannel
+    PreferredChannel --> Email
+    PreferredChannel --> Telegram
+    PreferredChannel --> WhatsApp
+    ChannelRouter --> VerificationService
+    VerificationService --> IntegrationManager
+```
+
+**Multi-channel verification code delivery:**
+
+| Channel | API | Features |
+|---------|-----|----------|
+| **Email** | SMTP | Default channel, always available |
+| **Telegram** | Bot API | Link account via bot, instant delivery |
+| **WhatsApp** | Business Cloud API | Pre-approved OTP templates, verified phone |
+
+**Server Configuration (config/development.yaml):**
+
+```yaml
+integrations:
+  telegram:
+    enabled: true
+    botToken: ""  # From @BotFather (store in passwords.yaml)
+    botUsername: "MyVerificationBot"
+    
+  whatsapp:
+    enabled: true
+    phoneNumberId: ""  # From Meta Business Suite
+    accessToken: ""    # Store in passwords.yaml
+    businessAccountId: ""
+    otpTemplateName: "verification_code"
+    otpTemplateLanguage: "en"
+```
+
+**Flutter usage:**
+
+```dart
+// Get available channels
+final channels = await client.verificationPreferences.getAvailableChannels();
+
+// Update preferred channel
+await client.verificationPreferences.updatePreferences(
+  preferredChannel: VerificationChannel.telegram,
+  backupChannel: VerificationChannel.email,
+);
+
+// Link Telegram account
+await client.verificationPreferences.generateTelegramLinkCode();
+// User sends code to bot via Telegram
+
+// Verify WhatsApp phone number
+await client.verificationPreferences.sendPhoneVerificationCode('+14155551234');
+await client.verificationPreferences.verifyPhoneNumber('+14155551234', code);
+```
+
+**Verification Settings Screen:**
+
+```
+┌─────────────────────────────────────────────────┐
+│  Verification Settings                     ↻    │
+├─────────────────────────────────────────────────┤
+│  ℹ️ Choose how you want to receive              │
+│     verification codes for secure actions.      │
+├─────────────────────────────────────────────────┤
+│  🛡️ Preferred Channel                           │
+│  ┌─────────────────────────────────────────┐    │
+│  │ ✓ 📧 Email                              │    │
+│  │     Receive codes via email             │    │
+│  │   📱 Telegram              (Link below) │    │
+│  │   💬 WhatsApp              (Verify below)│    │
+│  └─────────────────────────────────────────┘    │
+├─────────────────────────────────────────────────┤
+│  📱 Telegram                        ✓ Linked    │
+│  [    Unlink Telegram Account    ]              │
+├─────────────────────────────────────────────────┤
+│  💬 WhatsApp                       ✓ Verified   │
+│  Phone: +1 415 555 1234                         │
+│  [    Verify New Number    ]                    │
+├─────────────────────────────────────────────────┤
+│  🛟 Backup Channel                              │
+│  [  Email  ▾ ]                                  │
+├─────────────────────────────────────────────────┤
+│  [       Save Preferences       ]               │
+└─────────────────────────────────────────────────┘
+```
 
 ### Scheduling
 

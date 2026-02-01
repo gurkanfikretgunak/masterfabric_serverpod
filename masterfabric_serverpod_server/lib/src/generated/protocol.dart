@@ -75,22 +75,26 @@ import 'services/auth/user/profile_update_request.dart' as _i50;
 import 'services/auth/user/user_info_response.dart' as _i51;
 import 'services/auth/user/user_list_response.dart' as _i52;
 import 'services/auth/user/user_profile_extended.dart' as _i53;
-import 'services/auth/verification/verification_code.dart' as _i54;
-import 'services/auth/verification/verification_response.dart' as _i55;
-import 'services/greetings/models/greeting.dart' as _i56;
-import 'services/greetings/models/greeting_response.dart' as _i57;
-import 'services/health/models/health_check_response.dart' as _i58;
-import 'services/health/models/service_health_info.dart' as _i59;
-import 'services/translations/models/translation_entry.dart' as _i60;
-import 'services/translations/models/translation_response.dart' as _i61;
+import 'services/auth/verification/user_verification_preferences.dart' as _i54;
+import 'services/auth/verification/verification_channel.dart' as _i55;
+import 'services/auth/verification/verification_code.dart' as _i56;
+import 'services/auth/verification/verification_response.dart' as _i57;
+import 'services/greetings/models/greeting.dart' as _i58;
+import 'services/greetings/models/greeting_response.dart' as _i59;
+import 'services/health/models/health_check_response.dart' as _i60;
+import 'services/health/models/service_health_info.dart' as _i61;
+import 'services/translations/models/translation_entry.dart' as _i62;
+import 'services/translations/models/translation_response.dart' as _i63;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/role.dart'
-    as _i62;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/permission.dart'
-    as _i63;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/session/session_info_response.dart'
     as _i64;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/permission.dart'
     as _i65;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/session/session_info_response.dart'
+    as _i66;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
+    as _i67;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
+    as _i68;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -140,6 +144,8 @@ export 'services/auth/user/profile_update_request.dart';
 export 'services/auth/user/user_info_response.dart';
 export 'services/auth/user/user_list_response.dart';
 export 'services/auth/user/user_profile_extended.dart';
+export 'services/auth/verification/user_verification_preferences.dart';
+export 'services/auth/verification/verification_channel.dart';
 export 'services/auth/verification/verification_code.dart';
 export 'services/auth/verification/verification_response.dart';
 export 'services/greetings/models/greeting.dart';
@@ -685,6 +691,132 @@ class Protocol extends _i1.SerializationManagerServer {
       managed: true,
     ),
     _i2.TableDefinition(
+      name: 'user_verification_preferences',
+      dartName: 'UserVerificationPreferences',
+      schema: 'public',
+      module: 'masterfabric_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault:
+              'nextval(\'user_verification_preferences_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'preferredChannel',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'protocol:VerificationChannel',
+        ),
+        _i2.ColumnDefinition(
+          name: 'phoneNumber',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'telegramChatId',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'whatsappVerified',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'telegramLinked',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'backupChannel',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'protocol:VerificationChannel?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'updatedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'user_verification_preferences_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'user_verification_prefs_user_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'userId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'user_verification_prefs_phone_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'phoneNumber',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'user_verification_prefs_telegram_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'telegramChatId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
       name: 'verification_codes',
       dartName: 'VerificationCode',
       schema: 'public',
@@ -961,29 +1093,35 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i53.UserProfileExtended) {
       return _i53.UserProfileExtended.fromJson(data) as T;
     }
-    if (t == _i54.VerificationCode) {
-      return _i54.VerificationCode.fromJson(data) as T;
+    if (t == _i54.UserVerificationPreferences) {
+      return _i54.UserVerificationPreferences.fromJson(data) as T;
     }
-    if (t == _i55.VerificationResponse) {
-      return _i55.VerificationResponse.fromJson(data) as T;
+    if (t == _i55.VerificationChannel) {
+      return _i55.VerificationChannel.fromJson(data) as T;
     }
-    if (t == _i56.Greeting) {
-      return _i56.Greeting.fromJson(data) as T;
+    if (t == _i56.VerificationCode) {
+      return _i56.VerificationCode.fromJson(data) as T;
     }
-    if (t == _i57.GreetingResponse) {
-      return _i57.GreetingResponse.fromJson(data) as T;
+    if (t == _i57.VerificationResponse) {
+      return _i57.VerificationResponse.fromJson(data) as T;
     }
-    if (t == _i58.HealthCheckResponse) {
-      return _i58.HealthCheckResponse.fromJson(data) as T;
+    if (t == _i58.Greeting) {
+      return _i58.Greeting.fromJson(data) as T;
     }
-    if (t == _i59.ServiceHealthInfo) {
-      return _i59.ServiceHealthInfo.fromJson(data) as T;
+    if (t == _i59.GreetingResponse) {
+      return _i59.GreetingResponse.fromJson(data) as T;
     }
-    if (t == _i60.TranslationEntry) {
-      return _i60.TranslationEntry.fromJson(data) as T;
+    if (t == _i60.HealthCheckResponse) {
+      return _i60.HealthCheckResponse.fromJson(data) as T;
     }
-    if (t == _i61.TranslationResponse) {
-      return _i61.TranslationResponse.fromJson(data) as T;
+    if (t == _i61.ServiceHealthInfo) {
+      return _i61.ServiceHealthInfo.fromJson(data) as T;
+    }
+    if (t == _i62.TranslationEntry) {
+      return _i62.TranslationEntry.fromJson(data) as T;
+    }
+    if (t == _i63.TranslationResponse) {
+      return _i63.TranslationResponse.fromJson(data) as T;
     }
     if (t == _i1.getType<_i5.AppConfig?>()) {
       return (data != null ? _i5.AppConfig.fromJson(data) : null) as T;
@@ -1170,31 +1308,41 @@ class Protocol extends _i1.SerializationManagerServer {
       return (data != null ? _i53.UserProfileExtended.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i54.VerificationCode?>()) {
-      return (data != null ? _i54.VerificationCode.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i55.VerificationResponse?>()) {
-      return (data != null ? _i55.VerificationResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i54.UserVerificationPreferences?>()) {
+      return (data != null
+              ? _i54.UserVerificationPreferences.fromJson(data)
+              : null)
           as T;
     }
-    if (t == _i1.getType<_i56.Greeting?>()) {
-      return (data != null ? _i56.Greeting.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i57.GreetingResponse?>()) {
-      return (data != null ? _i57.GreetingResponse.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i58.HealthCheckResponse?>()) {
-      return (data != null ? _i58.HealthCheckResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i55.VerificationChannel?>()) {
+      return (data != null ? _i55.VerificationChannel.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i59.ServiceHealthInfo?>()) {
-      return (data != null ? _i59.ServiceHealthInfo.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i56.VerificationCode?>()) {
+      return (data != null ? _i56.VerificationCode.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i60.TranslationEntry?>()) {
-      return (data != null ? _i60.TranslationEntry.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i57.VerificationResponse?>()) {
+      return (data != null ? _i57.VerificationResponse.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i61.TranslationResponse?>()) {
-      return (data != null ? _i61.TranslationResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i58.Greeting?>()) {
+      return (data != null ? _i58.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i59.GreetingResponse?>()) {
+      return (data != null ? _i59.GreetingResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i60.HealthCheckResponse?>()) {
+      return (data != null ? _i60.HealthCheckResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i61.ServiceHealthInfo?>()) {
+      return (data != null ? _i61.ServiceHealthInfo.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i62.TranslationEntry?>()) {
+      return (data != null ? _i62.TranslationEntry.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i63.TranslationResponse?>()) {
+      return (data != null ? _i63.TranslationResponse.fromJson(data) : null)
           as T;
     }
     if (t == List<String>) {
@@ -1224,9 +1372,9 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           as T;
     }
-    if (t == List<_i59.ServiceHealthInfo>) {
+    if (t == List<_i61.ServiceHealthInfo>) {
       return (data as List)
-              .map((e) => deserialize<_i59.ServiceHealthInfo>(e))
+              .map((e) => deserialize<_i61.ServiceHealthInfo>(e))
               .toList()
           as T;
     }
@@ -1239,28 +1387,40 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == List<_i62.Role>) {
-      return (data as List).map((e) => deserialize<_i62.Role>(e)).toList() as T;
+    if (t == List<_i64.Role>) {
+      return (data as List).map((e) => deserialize<_i64.Role>(e)).toList() as T;
     }
-    if (t == List<_i63.Permission>) {
-      return (data as List).map((e) => deserialize<_i63.Permission>(e)).toList()
+    if (t == List<_i65.Permission>) {
+      return (data as List).map((e) => deserialize<_i65.Permission>(e)).toList()
           as T;
     }
     if (t == Set<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
     }
-    if (t == List<_i64.SessionInfoResponse>) {
+    if (t == List<_i66.SessionInfoResponse>) {
       return (data as List)
-              .map((e) => deserialize<_i64.SessionInfoResponse>(e))
+              .map((e) => deserialize<_i66.SessionInfoResponse>(e))
               .toList()
           as T;
     }
-    if (t == List<_i65.Gender>) {
-      return (data as List).map((e) => deserialize<_i65.Gender>(e)).toList()
+    if (t == List<_i67.Gender>) {
+      return (data as List).map((e) => deserialize<_i67.Gender>(e)).toList()
           as T;
     }
     if (t == List<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toList() as T;
+    }
+    if (t == List<_i68.VerificationChannel>) {
+      return (data as List)
+              .map((e) => deserialize<_i68.VerificationChannel>(e))
+              .toList()
+          as T;
+    }
+    if (t == Map<String, String?>) {
+      return (data as Map).map(
+            (k, v) => MapEntry(deserialize<String>(k), deserialize<String?>(v)),
+          )
+          as T;
     }
     try {
       return _i3.Protocol().deserialize<T>(data, t);
@@ -1325,14 +1485,16 @@ class Protocol extends _i1.SerializationManagerServer {
       _i51.UserInfoResponse => 'UserInfoResponse',
       _i52.UserListResponse => 'UserListResponse',
       _i53.UserProfileExtended => 'UserProfileExtended',
-      _i54.VerificationCode => 'VerificationCode',
-      _i55.VerificationResponse => 'VerificationResponse',
-      _i56.Greeting => 'Greeting',
-      _i57.GreetingResponse => 'GreetingResponse',
-      _i58.HealthCheckResponse => 'HealthCheckResponse',
-      _i59.ServiceHealthInfo => 'ServiceHealthInfo',
-      _i60.TranslationEntry => 'TranslationEntry',
-      _i61.TranslationResponse => 'TranslationResponse',
+      _i54.UserVerificationPreferences => 'UserVerificationPreferences',
+      _i55.VerificationChannel => 'VerificationChannel',
+      _i56.VerificationCode => 'VerificationCode',
+      _i57.VerificationResponse => 'VerificationResponse',
+      _i58.Greeting => 'Greeting',
+      _i59.GreetingResponse => 'GreetingResponse',
+      _i60.HealthCheckResponse => 'HealthCheckResponse',
+      _i61.ServiceHealthInfo => 'ServiceHealthInfo',
+      _i62.TranslationEntry => 'TranslationEntry',
+      _i63.TranslationResponse => 'TranslationResponse',
       _ => null,
     };
   }
@@ -1448,21 +1610,25 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'UserListResponse';
       case _i53.UserProfileExtended():
         return 'UserProfileExtended';
-      case _i54.VerificationCode():
+      case _i54.UserVerificationPreferences():
+        return 'UserVerificationPreferences';
+      case _i55.VerificationChannel():
+        return 'VerificationChannel';
+      case _i56.VerificationCode():
         return 'VerificationCode';
-      case _i55.VerificationResponse():
+      case _i57.VerificationResponse():
         return 'VerificationResponse';
-      case _i56.Greeting():
+      case _i58.Greeting():
         return 'Greeting';
-      case _i57.GreetingResponse():
+      case _i59.GreetingResponse():
         return 'GreetingResponse';
-      case _i58.HealthCheckResponse():
+      case _i60.HealthCheckResponse():
         return 'HealthCheckResponse';
-      case _i59.ServiceHealthInfo():
+      case _i61.ServiceHealthInfo():
         return 'ServiceHealthInfo';
-      case _i60.TranslationEntry():
+      case _i62.TranslationEntry():
         return 'TranslationEntry';
-      case _i61.TranslationResponse():
+      case _i63.TranslationResponse():
         return 'TranslationResponse';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -1633,29 +1799,35 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'UserProfileExtended') {
       return deserialize<_i53.UserProfileExtended>(data['data']);
     }
+    if (dataClassName == 'UserVerificationPreferences') {
+      return deserialize<_i54.UserVerificationPreferences>(data['data']);
+    }
+    if (dataClassName == 'VerificationChannel') {
+      return deserialize<_i55.VerificationChannel>(data['data']);
+    }
     if (dataClassName == 'VerificationCode') {
-      return deserialize<_i54.VerificationCode>(data['data']);
+      return deserialize<_i56.VerificationCode>(data['data']);
     }
     if (dataClassName == 'VerificationResponse') {
-      return deserialize<_i55.VerificationResponse>(data['data']);
+      return deserialize<_i57.VerificationResponse>(data['data']);
     }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i56.Greeting>(data['data']);
+      return deserialize<_i58.Greeting>(data['data']);
     }
     if (dataClassName == 'GreetingResponse') {
-      return deserialize<_i57.GreetingResponse>(data['data']);
+      return deserialize<_i59.GreetingResponse>(data['data']);
     }
     if (dataClassName == 'HealthCheckResponse') {
-      return deserialize<_i58.HealthCheckResponse>(data['data']);
+      return deserialize<_i60.HealthCheckResponse>(data['data']);
     }
     if (dataClassName == 'ServiceHealthInfo') {
-      return deserialize<_i59.ServiceHealthInfo>(data['data']);
+      return deserialize<_i61.ServiceHealthInfo>(data['data']);
     }
     if (dataClassName == 'TranslationEntry') {
-      return deserialize<_i60.TranslationEntry>(data['data']);
+      return deserialize<_i62.TranslationEntry>(data['data']);
     }
     if (dataClassName == 'TranslationResponse') {
-      return deserialize<_i61.TranslationResponse>(data['data']);
+      return deserialize<_i63.TranslationResponse>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -1707,10 +1879,12 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i45.TwoFactorSecret.t;
       case _i53.UserProfileExtended:
         return _i53.UserProfileExtended.t;
-      case _i54.VerificationCode:
-        return _i54.VerificationCode.t;
-      case _i60.TranslationEntry:
-        return _i60.TranslationEntry.t;
+      case _i54.UserVerificationPreferences:
+        return _i54.UserVerificationPreferences.t;
+      case _i56.VerificationCode:
+        return _i56.VerificationCode.t;
+      case _i62.TranslationEntry:
+        return _i62.TranslationEntry.t;
     }
     return null;
   }
