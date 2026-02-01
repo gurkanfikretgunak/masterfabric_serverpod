@@ -1349,7 +1349,7 @@ For the complete license terms, see the [LICENSE](LICENSE) file.
 
 <div align="center">
 
-**Copyright (C) 2024 MASTERFABRIC Bilişim Teknolojileri A.Ş.**
+**Copyright (C) 2026 MASTERFABRIC Bilişim Teknolojileri A.Ş.**
 
 *Built with ❤️ using [Serverpod](https://serverpod.dev) and [Flutter](https://flutter.dev)*
 

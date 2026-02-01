@@ -590,7 +590,7 @@ By contributing to this project, you agree that your contributions will be licen
 
 ### Copyright
 
-**Copyright (C) 2024 MASTERFABRIC Bilişim Teknolojileri A.Ş. (MASTERFABRIC Information Technologies Inc.)**
+**Copyright (C) 2026 MASTERFABRIC Bilişim Teknolojileri A.Ş. (MASTERFABRIC Information Technologies Inc.)**
 
 - **Owner:** Gürkan Fikret Günak (@gurkanfikretgunak)
 - **Website:** https://masterfabric.co

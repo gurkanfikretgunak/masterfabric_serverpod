@@ -154,7 +154,7 @@ at [https://www.contributor-covenant.org/translations][translations].
 
 This Code of Conduct is part of the MasterFabric Serverpod project, which is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
 
-**Copyright (C) 2024 MASTERFABRIC Bilişim Teknolojileri A.Ş. (MASTERFABRIC Information Technologies Inc.)**
+**Copyright (C) 2026 MASTERFABRIC Bilişim Teknolojileri A.Ş. (MASTERFABRIC Information Technologies Inc.)**
 
 - **Owner:** Gürkan Fikret Günak (@gurkanfikretgunak)
 - **Website:** https://masterfabric.co
