@@ -36,48 +36,95 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: SafeArea(
-        child: ResponsiveLayout(
-          maxWidth: 700,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Language Section
-                _buildSectionHeader(tr('settings.language.title')),
-                const SizedBox(height: 8),
-                _buildLanguageCard(),
-                const SizedBox(height: 24),
+      body: Stack(
+        children: [
+          // Main content
+          SafeArea(
+            child: ResponsiveLayout(
+              maxWidth: 700,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Language Section
+                    _buildSectionHeader(tr('settings.language.title')),
+                    const SizedBox(height: 8),
+                    _buildLanguageCard(),
+                    const SizedBox(height: 24),
 
-                // Notifications Section
-                _buildSectionHeader(tr('settings.notifications.title')),
-                const SizedBox(height: 8),
-                _buildNotificationsCard(),
-                const SizedBox(height: 24),
+                    // Notifications Section
+                    _buildSectionHeader(tr('settings.notifications.title')),
+                    const SizedBox(height: 8),
+                    _buildNotificationsCard(),
+                    const SizedBox(height: 24),
 
-                // Privacy Section
-                _buildSectionHeader(tr('settings.privacy.title')),
-                const SizedBox(height: 8),
-                _buildPrivacyCard(),
-                const SizedBox(height: 24),
+                    // Privacy Section
+                    _buildSectionHeader(tr('settings.privacy.title')),
+                    const SizedBox(height: 8),
+                    _buildPrivacyCard(),
+                    const SizedBox(height: 24),
 
-                // About Section (App Info Card)
-                _buildSectionHeader(tr('settings.about.title')),
-                const SizedBox(height: 8),
-                _buildAboutCard(),
-                const SizedBox(height: 24),
+                    // About Section (App Info Card)
+                    _buildSectionHeader(tr('settings.about.title')),
+                    const SizedBox(height: 8),
+                    _buildAboutCard(),
+                    const SizedBox(height: 24),
 
-                // Cache Section
-                _buildCacheCard(),
-                const SizedBox(height: 24),
+                    // Cache Section
+                    _buildCacheCard(),
+                    const SizedBox(height: 24),
 
-                // Danger Zone
-                _buildDangerZoneCard(),
-                const SizedBox(height: 32),
-              ],
+                    // Danger Zone
+                    _buildDangerZoneCard(),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
+          // Loading overlay
+          if (_isChangingLanguage)
+            Container(
+              color: Colors.black.withAlpha(100),
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(25),
+                        blurRadius: 20,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(
+                        width: 48,
+                        height: 48,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        tr('settings.language.changing'),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -653,7 +700,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _isChangingLanguage = true);
 
     try {
-      await TranslationService.changeLocale(client, locale);
+      // Load translations and wait minimum 1.5 seconds for smooth UX
+      await Future.wait([
+        TranslationService.changeLocale(client, locale),
+        Future.delayed(const Duration(milliseconds: 1500)),
+      ]);
       
       if (mounted) {
         setState(() => _isChangingLanguage = false);

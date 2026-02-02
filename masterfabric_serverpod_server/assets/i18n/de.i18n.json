@@ -245,6 +245,7 @@
       "title": "Sprache",
       "subtitle": "Wählen Sie Ihre bevorzugte Sprache",
       "current": "Aktuell",
+      "changing": "Sprache wird geändert...",
       "changeSuccess": "Sprache zu $language geändert",
       "changeFailed": "Sprache konnte nicht geändert werden"
     },

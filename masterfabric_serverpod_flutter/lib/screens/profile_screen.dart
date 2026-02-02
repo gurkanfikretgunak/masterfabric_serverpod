@@ -34,15 +34,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    TranslationService.instance.addListener(_onLocaleChanged);
     _loadProfile();
     _loadGenderOptions();
   }
 
   @override
   void dispose() {
+    TranslationService.instance.removeListener(_onLocaleChanged);
     _fullNameController.dispose();
     _userNameController.dispose();
     super.dispose();
+  }
+
+  void _onLocaleChanged() {
+    if (mounted) setState(() {});
   }
   
   Future<void> _loadGenderOptions() async {

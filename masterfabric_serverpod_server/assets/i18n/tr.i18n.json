@@ -245,6 +245,7 @@
       "title": "Dil",
       "subtitle": "Tercih ettiğiniz dili seçin",
       "current": "Mevcut",
+      "changing": "Dil değiştiriliyor...",
       "changeSuccess": "Dil $language olarak değiştirildi",
       "changeFailed": "Dil değiştirilemedi"
     },

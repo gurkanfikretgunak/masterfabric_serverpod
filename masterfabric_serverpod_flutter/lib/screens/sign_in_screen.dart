@@ -21,12 +21,14 @@ class _SignInScreenState extends State<SignInScreen> {
   void initState() {
     super.initState();
     client.auth.authInfoListenable.addListener(_updateSignedInState);
+    TranslationService.instance.addListener(_onLocaleChanged);
     _isSignedIn = client.auth.isAuthenticated;
   }
 
   @override
   void dispose() {
     client.auth.authInfoListenable.removeListener(_updateSignedInState);
+    TranslationService.instance.removeListener(_onLocaleChanged);
     super.dispose();
   }
 
@@ -34,6 +36,10 @@ class _SignInScreenState extends State<SignInScreen> {
     setState(() {
       _isSignedIn = client.auth.isAuthenticated;
     });
+  }
+
+  void _onLocaleChanged() {
+    if (mounted) setState(() {});
   }
 
   @override

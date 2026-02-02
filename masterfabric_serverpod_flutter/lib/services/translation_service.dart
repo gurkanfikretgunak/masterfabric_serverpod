@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart';
 import 'package:masterfabric_serverpod_client/masterfabric_serverpod_client.dart';
 
 /// Global translations instance
@@ -18,7 +18,17 @@ List<String> _availableLocales = [];
 /// 
 /// Provides translation loading and lookup functionality.
 /// Translations are fetched from the server during app bootstrap.
-class TranslationService {
+/// Extends ChangeNotifier to notify listeners when locale changes.
+class TranslationService extends ChangeNotifier {
+  /// Singleton instance
+  static final TranslationService _instance = TranslationService._internal();
+  
+  /// Get the singleton instance
+  static TranslationService get instance => _instance;
+  
+  /// Private constructor
+  TranslationService._internal();
+
   /// Get current locale
   static String get currentLocale => _currentLocale;
   
@@ -97,13 +107,16 @@ class TranslationService {
   /// [locale] - New locale code
   /// [namespace] - Optional namespace
   /// 
-  /// Returns updated translations
+  /// Returns updated translations and notifies listeners
   static Future<Map<String, dynamic>> changeLocale(
     Client client,
     String locale, {
     String? namespace,
   }) async {
-    return await loadTranslations(client, locale: locale, namespace: namespace);
+    final translations = await loadTranslations(client, locale: locale, namespace: namespace);
+    // Notify listeners that locale has changed
+    _instance.notifyListeners();
+    return translations;
   }
 
   /// Get stored translations

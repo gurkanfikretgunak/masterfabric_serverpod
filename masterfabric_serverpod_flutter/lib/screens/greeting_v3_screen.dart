@@ -97,10 +97,21 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    TranslationService.instance.addListener(_onLocaleChanged);
+  }
+
+  @override
   void dispose() {
+    TranslationService.instance.removeListener(_onLocaleChanged);
     _nameController.dispose();
     _greetingIdController.dispose();
     super.dispose();
+  }
+
+  void _onLocaleChanged() {
+    if (mounted) setState(() {});
   }
 
   Future<void> _sendRequest() async {

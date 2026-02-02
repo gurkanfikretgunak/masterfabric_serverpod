@@ -14,10 +14,34 @@ import 'greeting_v2_screen.dart';
 import 'greeting_v3_screen.dart';
 
 /// Home screen after authentication
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final VoidCallback? onSignOut;
 
   const HomeScreen({super.key, this.onSignOut});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Listen to translation changes to rebuild UI
+    TranslationService.instance.addListener(_onLocaleChanged);
+  }
+
+  @override
+  void dispose() {
+    TranslationService.instance.removeListener(_onLocaleChanged);
+    super.dispose();
+  }
+
+  void _onLocaleChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +64,7 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(LucideIcons.logOut),
             tooltip: tr('auth.signOut'),
-            onPressed: onSignOut,
+            onPressed: widget.onSignOut,
           ),
           const SizedBox(width: 8),
         ],
