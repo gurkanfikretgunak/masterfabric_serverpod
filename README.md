@@ -792,9 +792,36 @@ await TranslationService.loadTranslations(client);
 // Use translations with interpolation
 Text(tr('welcome.title', args: {'name': 'John'}));
 
-// Switch locale at runtime
+// Switch locale at runtime (automatically notifies listeners)
 await TranslationService.changeLocale(client, 'tr');
 ```
+
+**Reactive UI updates:**
+
+The `TranslationService` extends `ChangeNotifier`, so screens can listen for locale changes and automatically rebuild:
+
+```dart
+class _MyScreenState extends State<MyScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Listen for language changes
+    TranslationService.instance.addListener(_onLocaleChanged);
+  }
+
+  @override
+  void dispose() {
+    TranslationService.instance.removeListener(_onLocaleChanged);
+    super.dispose();
+  }
+
+  void _onLocaleChanged() {
+    if (mounted) setState(() {});  // Rebuild with new translations
+  }
+}
+```
+
+When the user changes the language in Settings, all listening screens automatically update their text without requiring navigation or app restart.
 
 ---
 
@@ -1342,7 +1369,9 @@ Comprehensive settings with language selection and app info.
 ```
 
 **Features:**
-- Runtime language switching (EN, TR, DE, ES)
+- Runtime language switching (EN, TR, DE, ES) with loading indicator
+- Centered loading overlay (1.5s) during language change for smooth UX
+- All screens automatically update when language changes
 - Push/Email notification toggles
 - Privacy settings (analytics, crash reports)
 - App info card with version and features
