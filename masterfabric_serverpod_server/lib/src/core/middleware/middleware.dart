@@ -23,6 +23,29 @@
 /// }
 /// ```
 ///
+/// ## RBAC Example
+///
+/// ```dart
+/// // Use RbacEndpointMixin for role-based access
+/// class AdminEndpoint extends MasterfabricEndpoint with RbacEndpointMixin {
+///   @override
+///   List<String> get requiredRoles => ['admin'];
+///
+///   @override
+///   Map<String, List<String>> get methodRoles => {
+///     'deleteUser': ['superadmin'],
+///   };
+///
+///   Future<void> deleteUser(Session session, String userId) async {
+///     return executeWithRbac(
+///       session: session,
+///       methodName: 'deleteUser',
+///       handler: () async { /* ... */ },
+///     );
+///   }
+/// }
+/// ```
+///
 /// ## Features
 ///
 /// - **Logging**: Automatic request/response logging with PII masking
@@ -31,6 +54,10 @@
 /// - **Validation**: Request parameter validation
 /// - **Metrics**: Request metrics and analytics collection
 /// - **Error Handling**: Global error transformation and reporting
+/// - **RBAC**: Role and permission-based access control
+
+// Annotations
+export 'annotations/rbac_annotations.dart';
 
 // Base classes
 export 'base/middleware_base.dart';

@@ -1,0 +1,6 @@
+# Role assignment action enum
+# Defines the actions for role management
+enum: RoleAssignmentAction
+values:
+  - assign  # Assign role to user
+  - revoke  # Revoke role from user

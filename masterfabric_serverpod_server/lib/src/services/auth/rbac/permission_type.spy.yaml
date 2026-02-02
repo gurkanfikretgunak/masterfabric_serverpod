@@ -1,0 +1,9 @@
+# Permission types enum
+# Defines the standard permission actions available in the system
+enum: PermissionAction
+values:
+  - read      # Read/view access
+  - write     # Create/update access
+  - delete    # Delete access
+  - moderate  # Content moderation
+  - manage    # Full management access

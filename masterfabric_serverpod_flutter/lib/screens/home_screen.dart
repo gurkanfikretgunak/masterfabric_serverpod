@@ -8,6 +8,7 @@ import 'service_test_screen.dart';
 import 'profile_screen.dart';
 import 'notifications/notification_center_screen.dart';
 import 'greeting_v2_screen.dart';
+import 'greeting_v3_screen.dart';
 
 /// Home screen after authentication
 class HomeScreen extends StatelessWidget {
@@ -78,6 +79,15 @@ class HomeScreen extends StatelessWidget {
 
               // Developer Tools Section
               _buildSectionHeader('Developer Tools'),
+              const SizedBox(height: 12),
+              _buildToolCard(
+                context,
+                icon: LucideIcons.shieldCheck,
+                title: 'RBAC Test (V3)',
+                description: 'Test GreetingV3Endpoint with role-based access control (admin, user, moderator)',
+                onTap: () => _navigateToGreetingV3(context),
+                color: Colors.purple,
+              ),
               const SizedBox(height: 12),
               _buildToolCard(
                 context,
@@ -385,6 +395,13 @@ class HomeScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const NotificationCenterScreen()),
+    );
+  }
+
+  void _navigateToGreetingV3(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const GreetingV3Screen()),
     );
   }
 

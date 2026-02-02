@@ -1,3 +1,6 @@
+import 'package:serverpod/serverpod.dart';
+
+import '../../../services/auth/rbac/rbac_service.dart';
 import '../base/middleware_base.dart';
 import '../base/middleware_chain.dart';
 import '../base/middleware_config.dart';
@@ -137,8 +140,27 @@ class MiddlewareRegistry {
   }
 
   /// Register all default middleware with sensible defaults
+  ///
+  /// [config] - Optional global middleware configuration
+  /// [rbacService] - Optional RBAC service for role/permission verification
+  /// [customRoleChecker] - Optional custom function to check roles
+  /// [customPermissionChecker] - Optional custom function to check permissions
+  /// [customAuthorizers] - Optional map of custom authorizer functions
+  ///
+  /// Example with RBAC:
+  /// ```dart
+  /// MiddlewareRegistry.instance.registerDefaults(
+  ///   rbacService: RbacService(),
+  /// );
+  /// ```
   MiddlewareRegistry registerDefaults({
     MiddlewareGlobalConfig? config,
+    RbacService? rbacService,
+    Future<bool> Function(Session session, List<String> roles, {bool requireAll})?
+        customRoleChecker,
+    Future<bool> Function(Session session, List<String> permissions, {bool requireAll})?
+        customPermissionChecker,
+    Map<String, Future<bool> Function(Session session)>? customAuthorizers,
   }) {
     if (config != null) {
       configure(config);
@@ -155,7 +177,13 @@ class MiddlewareRegistry {
       defaultConfig: _globalConfig.defaultRateLimit,
     ));
 
-    register(AuthMiddleware());
+    // Register AuthMiddleware with RBAC integration
+    register(AuthMiddleware(
+      rbacService: rbacService,
+      roleChecker: customRoleChecker,
+      permissionChecker: customPermissionChecker,
+      customAuthorizers: customAuthorizers,
+    ));
 
     register(ValidationMiddleware());
 
@@ -164,6 +192,26 @@ class MiddlewareRegistry {
     register(ErrorMiddleware.development());
 
     return this;
+  }
+
+  /// Register default middleware with RBAC service
+  ///
+  /// Convenience method that creates an RbacService and registers
+  /// the middleware with it.
+  ///
+  /// Example:
+  /// ```dart
+  /// MiddlewareRegistry.instance.registerDefaultsWithRbac();
+  /// ```
+  MiddlewareRegistry registerDefaultsWithRbac({
+    MiddlewareGlobalConfig? config,
+    Map<String, Future<bool> Function(Session session)>? customAuthorizers,
+  }) {
+    return registerDefaults(
+      config: config,
+      rbacService: RbacService(),
+      customAuthorizers: customAuthorizers,
+    );
   }
 
   /// Clear all registered middleware

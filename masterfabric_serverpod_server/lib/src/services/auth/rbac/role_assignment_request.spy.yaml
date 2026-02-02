@@ -1,0 +1,7 @@
+# Request model for role assignment
+# Used when assigning or revoking roles from users
+class: RoleAssignmentRequest
+fields:
+  userId: String
+  roleName: String
+  action: RoleAssignmentAction

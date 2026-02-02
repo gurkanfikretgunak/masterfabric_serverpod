@@ -96,6 +96,14 @@ greetingV2:
   - hello:
   - helloPublic:
   - helloStrict:
+greetingV3:
+  - hello:
+  - goodbye:
+  - adminHello:
+  - deleteGreeting:
+  - moderatorHello:
+  - publicHello:
+  - strictHello:
 health:
   - check:
   - ping:

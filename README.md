@@ -33,6 +33,7 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 | **Authentication** | Email/password auth with JWT tokens and session management |
 | **Multi-Channel Verification** | Email, Telegram Bot API, WhatsApp Business API for OTP delivery |
 | **Middleware System** | Automatic logging, rate limiting, auth, validation, metrics per endpoint |
+| **RBAC** | Role-Based Access Control with automatic role assignment on signup |
 | **Integrations** | Firebase, Sentry, Mixpanel, Telegram, WhatsApp (configurable) |
 
 ## Screenshots
@@ -313,6 +314,7 @@ graph LR
     subgraph "Server Layer"
         ServerpodServer[Serverpod Server]
         Auth[Authentication<br/>Email/JWT/2FA]
+        RBAC[RBAC<br/>Role-Based Access]
         Endpoints[Endpoints<br/>Greeting, AppConfig<br/>Translations]
     end
     
@@ -341,6 +343,8 @@ graph LR
     FlutterApp --> RateLimitUI
     ClientSDK <--> ServerpodServer
     ServerpodServer --> Auth
+    ServerpodServer --> RBAC
+    Auth --> RBAC
     ServerpodServer --> Endpoints
     ServerpodServer --> RateLimitSvc
     ServerpodServer --> TranslationSvc
@@ -912,6 +916,187 @@ sequenceDiagram
 - JWT token-based authentication
 - Registration verification codes
 - Password reset functionality
+
+### Role-Based Access Control (RBAC)
+
+```mermaid
+graph TB
+    subgraph "Default Roles"
+        Public[🌍 public<br/>Unauthenticated access]
+        User[👤 user<br/>Default for all signups]
+        Moderator[🛡️ moderator<br/>Content moderation]
+        Admin[⚡ admin<br/>Full system access]
+    end
+    
+    subgraph "RBAC Flow"
+        Request[API Request] --> AuthMiddleware[Auth Middleware]
+        AuthMiddleware --> CheckAuth{Authenticated?}
+        CheckAuth -->|No| Public
+        CheckAuth -->|Yes| CheckRole{Has Required<br/>Role?}
+        CheckRole -->|Yes| Allow[✅ Allow Access]
+        CheckRole -->|No| Deny[❌ 403 Forbidden]
+    end
+    
+    subgraph "Role Assignment"
+        Signup[User Signup] --> AutoAssign[Auto-assign 'user' role]
+        AdminAction[Admin Action] --> ManualAssign[Assign/Revoke roles]
+    end
+```
+
+**Automatic role assignment on user registration:**
+
+When a new user signs up, they automatically receive the `user` role, enabling immediate access to protected endpoints.
+
+**Default Roles:**
+
+| Role | Description | Auto-Assigned |
+|------|-------------|---------------|
+| `public` | Unauthenticated/public access | No |
+| `user` | Default for all authenticated users | Yes (on signup) |
+| `moderator` | Content moderation privileges | No |
+| `admin` | Full system access | No |
+
+**Server-side RBAC configuration:**
+
+```dart
+class GreetingV3Endpoint extends MasterfabricEndpoint with RbacEndpointMixin {
+  // Base role requirement for all methods
+  @override
+  List<String> get requiredRoles => ['user'];
+
+  // Method-specific role requirements
+  @override
+  Map<String, List<String>> get methodRoles => {
+    'adminHello': ['user', 'admin'],        // Either role works (OR)
+    'moderatorHello': ['moderator', 'admin'], // Either role works (OR)
+    'deleteGreeting': ['user', 'admin'],    // Both required (AND)
+  };
+
+  // Require ALL roles vs ANY role
+  @override
+  Map<String, bool> get methodRequireAllRoles => {
+    'adminHello': false,      // OR logic (user OR admin)
+    'moderatorHello': false,  // OR logic (moderator OR admin)
+    'deleteGreeting': true,   // AND logic (user AND admin)
+  };
+
+  // Public endpoint (no auth required)
+  Future<Response> publicHello(Session session, String name) async {
+    return executeWithMiddleware(
+      session: session,
+      methodName: 'publicHello',
+      config: const EndpointMiddlewareConfig(skipAuth: true),
+      handler: () async { /* ... */ },
+    );
+  }
+
+  // Protected endpoint (requires 'user' role)
+  Future<Response> hello(Session session, String name) async {
+    return executeWithRbac(
+      session: session,
+      methodName: 'hello',
+      handler: () async { /* ... */ },
+    );
+  }
+}
+```
+
+**Role Requirements Examples:**
+
+| Method | Required Roles | Logic | Description |
+|--------|---------------|-------|-------------|
+| `publicHello` | None | - | No authentication required |
+| `hello` | `user` | - | Basic user access |
+| `adminHello` | `user`, `admin` | OR | Either role grants access |
+| `moderatorHello` | `moderator`, `admin` | OR | Either role grants access |
+| `deleteGreeting` | `user`, `admin` | AND | Must have BOTH roles |
+
+**Flutter usage:**
+
+```dart
+try {
+  // Public - always works
+  await client.greetingV3.publicHello('World');
+  
+  // User role required (auto-assigned on signup)
+  await client.greetingV3.hello('World');
+  
+  // Admin role required
+  await client.greetingV3.adminHello('Admin');
+} on MiddlewareError catch (e) {
+  if (e.code == 'ROLE_DENIED') {
+    print('Missing required role: ${e.message}');
+  }
+}
+```
+
+**RBAC Service API:**
+
+```dart
+final rbacService = RbacService();
+
+// Check if user has a role
+final isAdmin = await rbacService.hasRole(session, userId, 'admin');
+
+// Assign a role to user
+await rbacService.assignRole(session, userId, 'moderator');
+
+// Revoke a role from user
+await rbacService.revokeRole(session, userId, 'moderator');
+
+// Get all user roles
+final roles = await rbacService.getUserRoles(session, userId);
+
+// Get all user permissions (from roles)
+final permissions = await rbacService.getUserPermissions(session, userId);
+```
+
+**Server startup auto-seeding:**
+
+Default roles are automatically seeded on server startup:
+
+```
+[INFO] RBAC roles seeded - 4 role(s) created
+[INFO] Created role: public
+[INFO] Created role: user
+[INFO] Created role: moderator
+[INFO] Created role: admin
+```
+
+**RBAC Test Screen (Flutter):**
+
+```
+┌─────────────────────────────────────────────────┐
+│  Greeting V3 (RBAC)                        ↻    │
+├─────────────────────────────────────────────────┤
+│  Enter Name                                     │
+│  ┌─────────────────────────────────────────┐    │
+│  │ 👤  World                               │    │
+│  └─────────────────────────────────────────┘    │
+├─────────────────────────────────────────────────┤
+│  Select Endpoint Method                         │
+│  ┌─────────────────────────────────────────┐    │
+│  │ 🌍 Public Hello          [Public]       │    │
+│  │     No auth required                    │    │
+│  ├─────────────────────────────────────────┤    │
+│  │ 👤 Hello (User)          [user]         │    │
+│  │     Requires user role                  │    │
+│  ├─────────────────────────────────────────┤    │
+│  │ 🛡️ Admin Hello        [user | admin]  ✓ │    │
+│  │     Requires user OR admin role         │    │
+│  ├─────────────────────────────────────────┤    │
+│  │ 👥 Moderator Hello [moderator | admin]  │    │
+│  │     Requires moderator OR admin role    │    │
+│  ├─────────────────────────────────────────┤    │
+│  │ 🗑️ Delete Greeting    [user & admin]    │    │
+│  │     Requires user AND admin (both!)     │    │
+│  └─────────────────────────────────────────┘    │
+├─────────────────────────────────────────────────┤
+│  [           Send Request           ]           │
+└─────────────────────────────────────────────────┘
+```
+
+---
 
 ### Multi-Channel Verification
 

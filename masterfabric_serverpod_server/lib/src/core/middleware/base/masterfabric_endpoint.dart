@@ -85,6 +85,9 @@ abstract class MasterfabricEndpoint extends Endpoint {
   }
 
   /// Merge method config with endpoint config
+  ///
+  /// Method config takes precedence over endpoint config for single-value fields.
+  /// Lists (roles, permissions) are merged together.
   EndpointMiddlewareConfig? _mergeConfigs(
     EndpointMiddlewareConfig? methodConfig,
     EndpointMiddlewareConfig? endpointConfig,
@@ -101,7 +104,8 @@ abstract class MasterfabricEndpoint extends Endpoint {
       return methodConfig;
     }
 
-    // Merge: method config takes precedence
+    // Merge: method config takes precedence for single values
+    // Lists are combined (endpoint + method)
     return EndpointMiddlewareConfig(
       skipLogging: methodConfig.skipLogging || endpointConfig.skipLogging,
       skipRateLimit: methodConfig.skipRateLimit || endpointConfig.skipRateLimit,
@@ -119,6 +123,17 @@ abstract class MasterfabricEndpoint extends Endpoint {
         ...endpointConfig.requiredRoles,
         ...methodConfig.requiredRoles,
       ],
+      // Method config overrides endpoint config for requireAll flags
+      requireAllRoles:
+          methodConfig.requiredRoles.isNotEmpty
+              ? methodConfig.requireAllRoles
+              : endpointConfig.requireAllRoles,
+      requireAllPermissions:
+          methodConfig.requiredPermissions.isNotEmpty
+              ? methodConfig.requireAllPermissions
+              : endpointConfig.requireAllPermissions,
+      customAuthorizerId:
+          methodConfig.customAuthorizerId ?? endpointConfig.customAuthorizerId,
       logLevel: methodConfig.logLevel ?? endpointConfig.logLevel,
       additionalMaskedFields: [
         ...endpointConfig.additionalMaskedFields,
@@ -202,4 +217,214 @@ mixin RateLimitedEndpointMixin on MasterfabricEndpoint {
     // Returns a RateLimitConfig - import would be needed
     return null; // Override in implementation
   }
+}
+
+/// Mixin for RBAC-enabled endpoints
+///
+/// Provides a declarative way to define role and permission requirements
+/// at both endpoint and method levels.
+///
+/// Example:
+/// ```dart
+/// class UserManagementEndpoint extends MasterfabricEndpoint with RbacEndpointMixin {
+///   // All methods require 'user' role
+///   @override
+///   List<String> get requiredRoles => ['user'];
+///
+///   // Specific methods require additional roles
+///   @override
+///   Map<String, List<String>> get methodRoles => {
+///     'deleteUser': ['admin'],
+///     'updatePermissions': ['admin', 'superuser'],
+///   };
+///
+///   // Specific methods require specific permissions
+///   @override
+///   Map<String, List<String>> get methodPermissions => {
+///     'viewSensitiveData': ['user:read:sensitive'],
+///   };
+///
+///   Future<void> deleteUser(Session session, String userId) async {
+///     return executeWithRbac(
+///       session: session,
+///       methodName: 'deleteUser',
+///       handler: () async { /* ... */ },
+///     );
+///   }
+/// }
+/// ```
+mixin RbacEndpointMixin on MasterfabricEndpoint {
+  /// Roles required for all methods in this endpoint.
+  ///
+  /// Override to specify roles that ALL methods require.
+  /// By default, requires at least ONE of the specified roles.
+  List<String> get requiredRoles => const [];
+
+  /// Permissions required for all methods in this endpoint.
+  ///
+  /// Override to specify permissions that ALL methods require.
+  List<String> get requiredPermissions => const [];
+
+  /// Whether ALL endpoint-level roles are required (AND) vs at least ONE (OR).
+  ///
+  /// Default is false (at least ONE role is sufficient).
+  bool get requireAllRoles => false;
+
+  /// Whether ALL endpoint-level permissions are required (AND) vs at least ONE (OR).
+  ///
+  /// Default is false (at least ONE permission is sufficient).
+  bool get requireAllPermissions => false;
+
+  /// Method-specific role requirements.
+  ///
+  /// Override to specify additional roles required for specific methods.
+  /// These are added to the endpoint-level roles.
+  ///
+  /// Example:
+  /// ```dart
+  /// @override
+  /// Map<String, List<String>> get methodRoles => {
+  ///   'deleteUser': ['admin'],
+  ///   'banUser': ['admin', 'moderator'],
+  /// };
+  /// ```
+  Map<String, List<String>> get methodRoles => const {};
+
+  /// Method-specific permission requirements.
+  ///
+  /// Override to specify additional permissions required for specific methods.
+  /// These are added to the endpoint-level permissions.
+  Map<String, List<String>> get methodPermissions => const {};
+
+  /// Method-specific requireAll flags for roles.
+  ///
+  /// Override to specify whether specific methods require ALL roles.
+  /// Default is false (at least ONE role).
+  Map<String, bool> get methodRequireAllRoles => const {};
+
+  /// Method-specific requireAll flags for permissions.
+  ///
+  /// Override to specify whether specific methods require ALL permissions.
+  /// Default is false (at least ONE permission).
+  Map<String, bool> get methodRequireAllPermissions => const {};
+
+  /// Get the middleware config including RBAC requirements
+  @override
+  EndpointMiddlewareConfig? get middlewareConfig {
+    if (requiredRoles.isEmpty && requiredPermissions.isEmpty) {
+      return null;
+    }
+
+    return EndpointMiddlewareConfig(
+      requiredRoles: requiredRoles,
+      requiredPermissions: requiredPermissions,
+      requireAllRoles: requireAllRoles,
+      requireAllPermissions: requireAllPermissions,
+    );
+  }
+
+  /// Get RBAC config for a specific method
+  EndpointMiddlewareConfig? getRbacConfigForMethod(String methodName) {
+    final List<String> roles = [
+      ...requiredRoles,
+      ...(methodRoles[methodName] ?? <String>[]),
+    ];
+    final List<String> permissions = [
+      ...requiredPermissions,
+      ...(methodPermissions[methodName] ?? <String>[]),
+    ];
+
+    if (roles.isEmpty && permissions.isEmpty) {
+      return null;
+    }
+
+    // Method-level requireAll overrides endpoint-level
+    final methodRequireAllRolesFlag =
+        methodRequireAllRoles[methodName] ?? requireAllRoles;
+    final methodRequireAllPermissionsFlag =
+        methodRequireAllPermissions[methodName] ?? requireAllPermissions;
+
+    return EndpointMiddlewareConfig(
+      requiredRoles: roles,
+      requiredPermissions: permissions,
+      requireAllRoles: methodRequireAllRolesFlag,
+      requireAllPermissions: methodRequireAllPermissionsFlag,
+    );
+  }
+
+  /// Execute with RBAC-aware middleware
+  ///
+  /// Automatically applies role and permission requirements based on
+  /// the endpoint and method configurations.
+  Future<T> executeWithRbac<T>({
+    required Session session,
+    required String methodName,
+    Map<String, dynamic>? parameters,
+    required Future<T> Function() handler,
+    EndpointMiddlewareConfig? additionalConfig,
+  }) {
+    // Get RBAC config for this method
+    final rbacConfig = getRbacConfigForMethod(methodName);
+
+    // Merge with any additional config provided
+    EndpointMiddlewareConfig? finalConfig;
+    if (rbacConfig != null && additionalConfig != null) {
+      finalConfig = EndpointMiddlewareConfig(
+        skipLogging: additionalConfig.skipLogging,
+        skipRateLimit: additionalConfig.skipRateLimit,
+        skipAuth: additionalConfig.skipAuth,
+        skipValidation: additionalConfig.skipValidation,
+        skipMetrics: additionalConfig.skipMetrics,
+        customRateLimit: additionalConfig.customRateLimit,
+        requiredRoles: [
+          ...rbacConfig.requiredRoles,
+          ...additionalConfig.requiredRoles,
+        ],
+        requiredPermissions: [
+          ...rbacConfig.requiredPermissions,
+          ...additionalConfig.requiredPermissions,
+        ],
+        requireAllRoles: rbacConfig.requireAllRoles,
+        requireAllPermissions: rbacConfig.requireAllPermissions,
+        customAuthorizerId: additionalConfig.customAuthorizerId,
+        logLevel: additionalConfig.logLevel,
+        additionalMaskedFields: additionalConfig.additionalMaskedFields,
+        validationRules: additionalConfig.validationRules,
+        metadata: additionalConfig.metadata,
+      );
+    } else {
+      finalConfig = rbacConfig ?? additionalConfig;
+    }
+
+    return executeWithMiddleware<T>(
+      session: session,
+      methodName: methodName,
+      parameters: parameters,
+      handler: handler,
+      config: finalConfig,
+    );
+  }
+}
+
+/// Mixin for user-only endpoints (requires 'user' role)
+mixin UserEndpointMixin on MasterfabricEndpoint {
+  @override
+  bool get requireLogin => true;
+
+  @override
+  EndpointMiddlewareConfig? get middlewareConfig => const EndpointMiddlewareConfig(
+        requiredRoles: ['user'],
+      );
+}
+
+/// Mixin for moderator endpoints (requires 'moderator' or 'admin' role)
+mixin ModeratorEndpointMixin on MasterfabricEndpoint {
+  @override
+  bool get requireLogin => true;
+
+  @override
+  EndpointMiddlewareConfig? get middlewareConfig => const EndpointMiddlewareConfig(
+        requiredRoles: ['moderator', 'admin'],
+        requireAllRoles: false, // Either role is sufficient
+      );
 }

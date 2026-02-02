@@ -93,6 +93,16 @@ class MiddlewareGlobalConfig {
 /// Per-endpoint middleware configuration
 ///
 /// Allows endpoints to customize which middleware runs and with what settings.
+///
+/// Example:
+/// ```dart
+/// EndpointMiddlewareConfig(
+///   requiredRoles: ['admin', 'moderator'],
+///   requireAllRoles: false, // User needs at least ONE role
+///   requiredPermissions: ['user:read', 'user:write'],
+///   requireAllPermissions: true, // User needs ALL permissions
+/// )
+/// ```
 class EndpointMiddlewareConfig {
   /// Skip logging for this endpoint
   final bool skipLogging;
@@ -118,6 +128,17 @@ class EndpointMiddlewareConfig {
   /// Required roles for this endpoint
   final List<String> requiredRoles;
 
+  /// If true, user must have ALL required roles.
+  /// If false (default), user needs at least ONE of the required roles.
+  final bool requireAllRoles;
+
+  /// If true, user must have ALL required permissions.
+  /// If false (default), user needs at least ONE of the required permissions.
+  final bool requireAllPermissions;
+
+  /// ID of a custom authorizer function registered with AuthMiddleware
+  final String? customAuthorizerId;
+
   /// Custom log level for this endpoint
   final MiddlewareLogLevel? logLevel;
 
@@ -139,6 +160,9 @@ class EndpointMiddlewareConfig {
     this.customRateLimit,
     this.requiredPermissions = const [],
     this.requiredRoles = const [],
+    this.requireAllRoles = false,
+    this.requireAllPermissions = false,
+    this.customAuthorizerId,
     this.logLevel,
     this.additionalMaskedFields = const [],
     this.validationRules,
@@ -164,6 +188,28 @@ class EndpointMiddlewareConfig {
     );
   }
 
+  /// Create a config requiring specific roles (any of them)
+  static EndpointMiddlewareConfig withRoles(
+    List<String> roles, {
+    bool requireAll = false,
+  }) {
+    return EndpointMiddlewareConfig(
+      requiredRoles: roles,
+      requireAllRoles: requireAll,
+    );
+  }
+
+  /// Create a config requiring specific permissions (any of them)
+  static EndpointMiddlewareConfig withPermissions(
+    List<String> permissions, {
+    bool requireAll = false,
+  }) {
+    return EndpointMiddlewareConfig(
+      requiredPermissions: permissions,
+      requireAllPermissions: requireAll,
+    );
+  }
+
   /// Create a copy with modified values
   EndpointMiddlewareConfig copyWith({
     bool? skipLogging,
@@ -174,6 +220,9 @@ class EndpointMiddlewareConfig {
     RateLimitConfig? customRateLimit,
     List<String>? requiredPermissions,
     List<String>? requiredRoles,
+    bool? requireAllRoles,
+    bool? requireAllPermissions,
+    String? customAuthorizerId,
     MiddlewareLogLevel? logLevel,
     List<String>? additionalMaskedFields,
     Map<String, ValidationRule>? validationRules,
@@ -188,6 +237,9 @@ class EndpointMiddlewareConfig {
       customRateLimit: customRateLimit ?? this.customRateLimit,
       requiredPermissions: requiredPermissions ?? this.requiredPermissions,
       requiredRoles: requiredRoles ?? this.requiredRoles,
+      requireAllRoles: requireAllRoles ?? this.requireAllRoles,
+      requireAllPermissions: requireAllPermissions ?? this.requireAllPermissions,
+      customAuthorizerId: customAuthorizerId ?? this.customAuthorizerId,
       logLevel: logLevel ?? this.logLevel,
       additionalMaskedFields: additionalMaskedFields ?? this.additionalMaskedFields,
       validationRules: validationRules ?? this.validationRules,

@@ -17,6 +17,8 @@ import 'src/services/auth/email/email_validation_service.dart';
 import 'src/services/auth/email/email_service.dart';
 import 'src/services/auth/email/email_idp_endpoint.dart';
 import 'src/services/translations/services/translation_service.dart';
+import 'src/services/auth/rbac/rbac_service.dart';
+import 'src/services/auth/rbac/user_registration_hook.dart';
 import 'src/core/middleware/services/middleware_registry.dart';
 import 'src/core/middleware/base/middleware_config.dart';
 import 'src/core/rate_limit/services/rate_limit_service.dart';
@@ -55,6 +57,8 @@ void run(List<String> args) async {
       EmailIdpConfigFromPasswords(
         sendRegistrationVerificationCode: _sendRegistrationCode,
         sendPasswordResetVerificationCode: _sendPasswordResetCode,
+        // Assign default 'user' role when a new account is created
+        onAfterAccountCreated: _onUserAccountCreated,
       ),
     ],
   );
@@ -67,6 +71,9 @@ void run(List<String> args) async {
 
   // Seed translations from assets/i18n/ folder
   await _seedTranslations(pod);
+
+  // Seed default RBAC roles (admin, user, public, moderator)
+  await _seedRoles(pod);
 
   // Setup a default page at the web root.
   // These are used by the default page.
@@ -230,11 +237,14 @@ Future<void> _initializeMiddleware(Serverpod pod) async {
       ],
     );
 
-    // Register default middleware
-    MiddlewareRegistry.instance.registerDefaults(config: globalConfig);
+    // Register default middleware WITH RbacService for role checking
+    MiddlewareRegistry.instance.registerDefaults(
+      config: globalConfig,
+      rbacService: RbacService(), // Enable RBAC role/permission verification
+    );
 
     session.log(
-      'Middleware system initialized with ${MiddlewareRegistry.instance.middleware.length} middleware',
+      'Middleware system initialized with ${MiddlewareRegistry.instance.middleware.length} middleware (RBAC enabled)',
       level: LogLevel.info,
     );
   } catch (e, stackTrace) {
@@ -355,6 +365,82 @@ Future<void> _seedTranslations(Serverpod pod) async {
     } finally {
       await session.close();
     }
+  }
+}
+
+/// Seed default RBAC roles on server startup (only once)
+/// 
+/// Creates the default roles: public, user, moderator, admin
+/// This only seeds if roles don't already exist in the database.
+Future<void> _seedRoles(Serverpod pod) async {
+  try {
+    final session = await pod.createSession();
+    try {
+      final rbacService = RbacService();
+      final seededCount = await rbacService.seedDefaultRoles(session);
+      
+      if (seededCount > 0) {
+        session.log(
+          'RBAC roles seeded - $seededCount role(s) created',
+          level: LogLevel.info,
+        );
+      } else {
+        session.log(
+          'RBAC roles already exist - skipping seed',
+          level: LogLevel.debug,
+        );
+      }
+    } finally {
+      await session.close();
+    }
+  } catch (e, stackTrace) {
+    // Don't fail server startup if role seeding fails
+    final session = await pod.createSession();
+    try {
+      session.log(
+        'Failed to seed RBAC roles: $e',
+        level: LogLevel.warning,
+        exception: e is Exception ? e : Exception(e.toString()),
+        stackTrace: stackTrace,
+      );
+    } finally {
+      await session.close();
+    }
+  }
+}
+
+/// Called after a new email account is successfully created
+/// 
+/// This callback assigns the default 'user' role to every new user
+Future<void> _onUserAccountCreated(
+  Session session, {
+  required UuidValue authUserId,
+  required String email,
+  required UuidValue emailAccountId,
+  required Transaction? transaction,
+}) async {
+  session.log(
+    '[RBAC] New user registered: $email (ID: $authUserId)',
+    level: LogLevel.info,
+  );
+
+  try {
+    // Assign default 'user' role to the new user
+    await UserRegistrationHook.onUserRegistered(session, authUserId);
+    
+    session.log(
+      '[RBAC] Default user role assigned to: $email',
+      level: LogLevel.info,
+    );
+  } catch (e, stackTrace) {
+    // Don't fail user registration if role assignment fails
+    // The user can still be assigned roles later
+    session.log(
+      '[RBAC] Failed to assign default role to $email: $e',
+      level: LogLevel.warning,
+      exception: e is Exception ? e : Exception(e.toString()),
+      stackTrace: stackTrace,
+    );
   }
 }
 

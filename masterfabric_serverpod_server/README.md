@@ -95,6 +95,50 @@ await NotificationService.sendNotification(
 - **User-Based**: Notifications for specific users
 - **Project-Based**: Notifications for project members
 
+### Role-Based Access Control (RBAC)
+
+Automatic role assignment and endpoint protection:
+
+```dart
+// Define role requirements in your endpoint
+class MyEndpoint extends MasterfabricEndpoint with RbacEndpointMixin {
+  @override
+  List<String> get requiredRoles => ['user'];
+
+  @override
+  Map<String, List<String>> get methodRoles => {
+    'adminMethod': ['admin'],           // Admin only
+    'modMethod': ['moderator', 'admin'], // Either role
+  };
+
+  @override
+  Map<String, bool> get methodRequireAllRoles => {
+    'strictMethod': true,  // Require ALL roles
+  };
+}
+```
+
+**Default Roles (auto-seeded on startup):**
+- `public` - Unauthenticated access
+- `user` - Auto-assigned on signup
+- `moderator` - Content moderation
+- `admin` - Full access
+
+**RBAC Service:**
+
+```dart
+final rbacService = RbacService();
+
+// Check role
+final isAdmin = await rbacService.hasRole(session, userId, 'admin');
+
+// Assign role
+await rbacService.assignRole(session, userId, 'moderator');
+
+// Get user roles
+final roles = await rbacService.getUserRoles(session, userId);
+```
+
 ### SerializableExceptions
 
 Proper error responses to clients:

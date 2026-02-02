@@ -1,0 +1,9 @@
+# Role information model
+# Used for returning role details in API responses
+class: RoleInfo
+fields:
+  name: String
+  description: String?
+  permissions: List<String>
+  isActive: bool
+  userCount: int?

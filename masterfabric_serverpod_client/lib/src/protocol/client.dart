@@ -1619,6 +1619,133 @@ class EndpointGreetingV2 extends EndpointMasterfabric {
       );
 }
 
+/// Example endpoint demonstrating RBAC (Role-Based Access Control) integration.
+///
+/// This endpoint showcases how to use the [RbacEndpointMixin] to define
+/// role and permission requirements at both endpoint and method levels.
+///
+/// ## Key Features:
+/// - Endpoint-level role requirements (applied to all methods)
+/// - Method-specific role requirements (override/add to endpoint roles)
+/// - Permission-based access control
+/// - Public methods that bypass authentication
+/// - Admin-only methods
+///
+/// ## Usage from client:
+/// ```dart
+/// // Regular user greeting (requires 'user' role)
+/// final response = await client.greetingV3.hello('World');
+///
+/// // Admin-only greeting (requires 'admin' role)
+/// final adminResponse = await client.greetingV3.adminHello('Admin');
+///
+/// // Public greeting (no authentication required)
+/// final publicResponse = await client.greetingV3.publicHello('Guest');
+/// ```
+///
+/// ## Role Requirements:
+/// - `publicHello`: No auth required (public)
+/// - `hello`: Requires 'user' role
+/// - `goodbye`: Requires 'user' role
+/// - `adminHello`: Requires 'user' OR 'admin' role
+/// - `moderatorHello`: Requires 'moderator' OR 'admin' role
+/// - `deleteGreeting`: Requires 'user' AND 'admin' (both!)
+/// - `strictHello`: Requires 'user' role + 5 req/min limit
+/// {@category Endpoint}
+class EndpointGreetingV3 extends EndpointMasterfabric {
+  EndpointGreetingV3(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'greetingV3';
+
+  /// Returns a personalized greeting message: "Hello {name}".
+  ///
+  /// **Required Roles:** 'user'
+  ///
+  /// This method demonstrates the basic RBAC pattern where
+  /// only authenticated users with the 'user' role can access it.
+  _i2.Future<_i27.GreetingResponse> hello(String name) =>
+      caller.callServerEndpoint<_i27.GreetingResponse>(
+        'greetingV3',
+        'hello',
+        {'name': name},
+      );
+
+  /// Returns a farewell message: "Goodbye {name}".
+  ///
+  /// **Required Roles:** 'user'
+  _i2.Future<_i27.GreetingResponse> goodbye(String name) =>
+      caller.callServerEndpoint<_i27.GreetingResponse>(
+        'greetingV3',
+        'goodbye',
+        {'name': name},
+      );
+
+  /// Admin greeting with special privileges.
+  ///
+  /// **Required Roles:** 'user' OR 'admin' (either role grants access)
+  ///
+  /// This demonstrates the OR pattern where having ANY of the
+  /// specified roles grants access to the method.
+  _i2.Future<_i27.GreetingResponse> adminHello(String name) =>
+      caller.callServerEndpoint<_i27.GreetingResponse>(
+        'greetingV3',
+        'adminHello',
+        {'name': name},
+      );
+
+  /// Delete a greeting (requires both 'user' AND 'admin' roles).
+  ///
+  /// **Required Roles:** 'user' AND 'admin' (both roles required)
+  ///
+  /// This demonstrates the requireAllRoles=true pattern where
+  /// the user must have ALL specified roles.
+  _i2.Future<bool> deleteGreeting(String greetingId) =>
+      caller.callServerEndpoint<bool>(
+        'greetingV3',
+        'deleteGreeting',
+        {'greetingId': greetingId},
+      );
+
+  /// Moderator greeting with moderation privileges.
+  ///
+  /// **Required Roles:** 'moderator' OR 'admin' (either role grants access)
+  ///
+  /// Demonstrates allowing multiple roles where having ANY one is sufficient.
+  _i2.Future<_i27.GreetingResponse> moderatorHello(String name) =>
+      caller.callServerEndpoint<_i27.GreetingResponse>(
+        'greetingV3',
+        'moderatorHello',
+        {'name': name},
+      );
+
+  /// Public greeting that doesn't require authentication.
+  ///
+  /// **Required Roles:** None (public endpoint)
+  ///
+  /// This demonstrates how to bypass authentication for specific methods
+  /// using the [skipAuth] configuration.
+  _i2.Future<_i27.GreetingResponse> publicHello(String name) =>
+      caller.callServerEndpoint<_i27.GreetingResponse>(
+        'greetingV3',
+        'publicHello',
+        {'name': name},
+      );
+
+  /// Greeting with strict rate limiting.
+  ///
+  /// **Required Roles:** 'user'
+  /// **Rate Limit:** 5 requests per minute
+  ///
+  /// Demonstrates combining RBAC with custom rate limiting.
+  _i2.Future<_i27.GreetingResponse> strictHello(String name) =>
+      caller.callServerEndpoint<_i27.GreetingResponse>(
+        'greetingV3',
+        'strictHello',
+        {'name': name},
+      );
+}
+
 /// Health check endpoint for monitoring ALL service status
 /// {@category Endpoint}
 class EndpointHealth extends _i1.EndpointRef {
@@ -1790,6 +1917,7 @@ class Client extends _i1.ServerpodClientShared {
     verificationPreferences = EndpointVerificationPreferences(this);
     greeting = EndpointGreeting(this);
     greetingV2 = EndpointGreetingV2(this);
+    greetingV3 = EndpointGreetingV3(this);
     health = EndpointHealth(this);
     translation = EndpointTranslation(this);
     modules = Modules(this);
@@ -1829,6 +1957,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointGreetingV2 greetingV2;
 
+  late final EndpointGreetingV3 greetingV3;
+
   late final EndpointHealth health;
 
   late final EndpointTranslation translation;
@@ -1854,6 +1984,7 @@ class Client extends _i1.ServerpodClientShared {
     'verificationPreferences': verificationPreferences,
     'greeting': greeting,
     'greetingV2': greetingV2,
+    'greetingV3': greetingV3,
     'health': health,
     'translation': translation,
   };

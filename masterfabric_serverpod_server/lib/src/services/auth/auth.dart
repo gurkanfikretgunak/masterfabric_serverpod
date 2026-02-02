@@ -34,6 +34,8 @@ export 'password/password_management_service.dart';
 // RBAC (Role-Based Access Control)
 export 'rbac/rbac_endpoint.dart';
 export 'rbac/rbac_service.dart';
+export 'rbac/default_roles.dart';
+export 'rbac/user_registration_hook.dart';
 
 // Session Management
 export 'session/session_management_endpoint.dart';

@@ -1,0 +1,8 @@
+# Role types enum
+# Defines the standard role types available in the system
+enum: RoleType
+values:
+  - public    # Unauthenticated/public access
+  - user      # Standard authenticated user (default on signup)
+  - moderator # Content moderation access
+  - admin     # Full system administrator access

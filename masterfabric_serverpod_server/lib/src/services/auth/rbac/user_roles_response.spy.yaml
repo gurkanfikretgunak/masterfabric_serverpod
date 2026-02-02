@@ -1,0 +1,9 @@
+# Response model for user roles
+# Returns the roles assigned to a user
+class: UserRolesResponse
+fields:
+  userId: String
+  roles: List<String>
+  permissions: List<String>
+  primaryRole: String?
+  assignedAt: DateTime?

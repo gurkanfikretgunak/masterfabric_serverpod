@@ -1,22 +1,156 @@
-# App Config Seeding Guide
+# Data Seeding Guide
 
-This guide explains how to seed the `app_config_entry` table with initial configuration data.
+This guide explains how to seed initial data in the MasterFabric Serverpod project.
 
-## 🚀 Quick Start (Easiest Method)
+## 🌱 Auto-Seeding on Server Startup
 
-**Using Serverpod script command:**
+The server automatically seeds essential data on startup:
+
+| Data | Location | Auto-Seed | Manual Trigger |
+|------|----------|-----------|----------------|
+| **RBAC Roles** | Database | ✅ Yes | `RbacService.seedDefaultRoles()` |
+| **Translations** | Database | ✅ Yes | `TranslationService.seedFromAssets()` |
+| **App Config** | Database | ❌ No | `serverpod run seed-app-config` |
+
+### Server Startup Logs
+
+```
+[INFO] Middleware system initialized with 6 middleware (RBAC enabled)
+[INFO] Translations seeded from assets/i18n/ - 4 locale(s)
+[INFO] RBAC roles seeded - 4 role(s) created
+```
+
+---
+
+## 🛡️ RBAC Roles Seeding
+
+### Automatic Seeding
+
+Default roles are automatically seeded on server startup (only runs once):
+
+```dart
+// In server.dart
+await _seedRoles(pod);
+```
+
+### Default Roles
+
+| Role | Description | Permissions |
+|------|-------------|-------------|
+| `public` | Unauthenticated access | `read` |
+| `user` | Default for all signups | `read`, `write` |
+| `moderator` | Content moderation | `read`, `write`, `moderate` |
+| `admin` | Full system access | `read`, `write`, `delete`, `moderate`, `manage` |
+
+### Manual Seeding
+
+```dart
+// Force re-seed (update existing roles)
+final rbacService = RbacService();
+await rbacService.seedDefaultRoles(session, force: true);
+
+// Check if seeded
+final roles = await rbacService.getAllRoles(session);
+print('Available roles: ${roles.map((r) => r.name).toList()}');
+```
+
+### User Role Assignment
+
+When a new user registers, they automatically receive the `user` role:
+
+```dart
+// This happens automatically via onAfterAccountCreated callback
+// In server.dart:
+EmailIdpConfigFromPasswords(
+  onAfterAccountCreated: _onUserAccountCreated,
+)
+
+// Manual assignment
+await rbacService.assignRole(session, userId, 'moderator');
+```
+
+### Role Configuration (default_roles.dart)
+
+```dart
+// lib/src/services/auth/rbac/default_roles.dart
+abstract class DefaultRoles {
+  static const String public = 'public';
+  static const String user = 'user';
+  static const String moderator = 'moderator';
+  static const String admin = 'admin';
+  
+  static const String defaultUserRole = user; // Auto-assigned on signup
+}
+
+class DefaultRoleConfig {
+  static const List<DefaultRoleConfig> defaults = [
+    DefaultRoleConfig(
+      name: 'admin',
+      description: 'Full system access',
+      permissions: ['read', 'write', 'delete', 'moderate', 'manage'],
+    ),
+    // ... other roles
+  ];
+}
+```
+
+---
+
+## 🌍 Translations Seeding
+
+### Automatic Seeding
+
+Translations are auto-seeded from `assets/i18n/*.json` on server startup:
+
+```
+assets/i18n/
+├── en.i18n.json    # English (default)
+├── tr.i18n.json    # Turkish
+├── de.i18n.json    # German
+└── es.i18n.json    # Spanish
+```
+
+### Manual Seeding
+
+```dart
+final translationService = TranslationService();
+final count = await translationService.seedFromAssets(session);
+print('Seeded $count locale(s)');
+```
+
+### Translation File Format
+
+```json
+{
+  "welcome": {
+    "title": "Welcome, {name}!",
+    "subtitle": "We're glad to have you here"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}
+```
+
+See [README_TRANSLATIONS.md](README_TRANSLATIONS.md) for detailed translation guide.
+
+---
+
+## ⚙️ App Config Seeding
+
+App Config is NOT auto-seeded. Use one of the methods below:
+
+### Quick Start (Recommended)
 
 ```bash
-# Linux/Mac
+# Using Serverpod script command
 serverpod run seed-app-config
 
 # Or directly
 bash scripts/seed_app_config.sh
 
 # Windows PowerShell
-serverpod run seed-app-config
-
-# Or directly
 powershell -ExecutionPolicy Bypass -File scripts\seed_app_config.ps1
 ```
 
@@ -26,42 +160,23 @@ The script will:
 - ✅ Execute the seed SQL file
 - ✅ Verify the seeded data
 
-## Option 1: Direct SQL Injection (Manual)
-
-### Using psql command line:
+### Option 1: Direct SQL Injection
 
 ```bash
-# Connect to your database and run the seed file
+# Using psql command line
 psql -U serverpod -d serverpod -f migrations/seed_app_config.sql
 
-# Or if using docker-compose
+# Using docker-compose
 docker-compose exec postgres psql -U serverpod -d serverpod -f /path/to/migrations/seed_app_config.sql
 ```
 
-### Using docker-compose:
+### Option 2: Using Docker Compose
 
 ```bash
-# Copy the seed file into the container and execute
-docker-compose exec postgres psql -U serverpod -d serverpod < migrations/seed_app_config.sql
-```
-
-### Manual SQL execution:
-
-1. Connect to your PostgreSQL database
-2. Open `migrations/seed_app_config.sql`
-3. Copy and paste the SQL into your database client
-4. Execute the SQL
-
-## Option 2: Using Docker Compose (if database is in container)
-
-```bash
-# From the project root
 docker-compose exec postgres psql -U serverpod -d serverpod -c "$(cat migrations/seed_app_config.sql)"
 ```
 
-## Option 3: Using Serverpod Script (Dart)
-
-If you prefer using Dart code:
+### Option 3: Using Dart Script
 
 ```bash
 # Run the seeding script
@@ -74,42 +189,15 @@ dart bin/seed_app_config.dart --clear
 dart bin/seed_app_config.dart --environment=production
 ```
 
-## What Gets Seeded
+### What Gets Seeded
 
-The seed file creates default configurations for:
+| Environment | Debug Mode | API URL | Analytics | Encryption |
+|-------------|------------|---------|-----------|------------|
+| Development | ✅ | http://localhost:8080 | ❌ | ❌ |
+| Staging | ❌ | https://staging-api.example.com | ❌ | ❌ |
+| Production | ❌ | https://api.example.com | ✅ | ✅ |
 
-1. **Development Environment**
-   - Debug mode: enabled
-   - API URL: http://localhost:8080
-   - Analytics: disabled
-   - Encryption: disabled
-
-2. **Staging Environment**
-   - Debug mode: disabled
-   - API URL: https://staging-api.examplepod.com
-   - Analytics: disabled
-   - Encryption: disabled
-
-3. **Production Environment**
-   - Debug mode: disabled
-   - API URL: https://api.examplepod.com
-   - Analytics: enabled
-   - Encryption: enabled
-   - Push notifications: enabled
-
-## Customizing Seed Data
-
-Edit `migrations/seed_app_config.sql` to customize:
-- API URLs
-- App names and versions
-- Feature flags
-- Store URLs
-- Push notification providers
-- Any other configuration values
-
-## Verifying Seed Data
-
-After seeding, verify the data was inserted:
+### Verifying Seed Data
 
 ```sql
 SELECT 
@@ -121,15 +209,142 @@ FROM "app_config_entry"
 ORDER BY "environment", "platform";
 ```
 
-## Updating Existing Configurations
+---
 
-The seed file uses `ON CONFLICT DO NOTHING` to prevent duplicates. To update existing configurations:
+## 🔄 Seeding Order
 
-1. Delete existing entries:
-```sql
-DELETE FROM "app_config_entry" WHERE "environment" = 'production';
+The server seeds data in this order:
+
+```mermaid
+graph TD
+    A[Server Start] --> B[Initialize Core Components]
+    B --> C[Initialize Middleware + RBAC]
+    C --> D[Seed Translations]
+    D --> E[Seed RBAC Roles]
+    E --> F[Server Ready]
+    
+    style D fill:#4CAF50
+    style E fill:#2196F3
 ```
 
-2. Re-run the seed file, or
+### In `server.dart`:
 
-3. Use the admin endpoint/script to update configurations programmatically.
+```dart
+void run(List<String> args) async {
+  // 1. Initialize Serverpod
+  final pod = Serverpod(...);
+  
+  // 2. Initialize Auth Services
+  pod.initializeAuthServices(...);
+  
+  // 3. Initialize Core Components (includes Middleware + RBAC)
+  await _initializeCoreComponents(pod);
+  
+  // 4. Seed Translations
+  await _seedTranslations(pod);
+  
+  // 5. Seed RBAC Roles
+  await _seedRoles(pod);
+  
+  // 6. Start Server
+  await pod.start();
+}
+```
+
+---
+
+## 🧪 Testing Seeded Data
+
+### Check RBAC Roles
+
+```dart
+// Via endpoint
+final roles = await client.rbac.getAllRoles();
+print('Available roles: $roles');
+
+// Via database
+SELECT * FROM "role" ORDER BY "name";
+```
+
+### Check Translations
+
+```dart
+// Via endpoint
+final translations = await client.translation.getTranslations(locale: 'en');
+print('English translations: ${translations.length} keys');
+
+// Via database
+SELECT "locale", COUNT(*) as count 
+FROM "translation" 
+GROUP BY "locale";
+```
+
+### Check User Roles
+
+```dart
+// Via endpoint
+final userRoles = await client.rbac.getUserRoles(userId);
+print('User roles: $userRoles');
+
+// Via database
+SELECT u."userId", r."name" as role
+FROM "user_role" u
+JOIN "role" r ON u."roleId" = r."id";
+```
+
+---
+
+## 🔧 Customization
+
+### Adding New Default Roles
+
+Edit `lib/src/services/auth/rbac/default_roles.dart`:
+
+```dart
+class DefaultRoleConfig {
+  static const List<DefaultRoleConfig> defaults = [
+    // Existing roles...
+    
+    // Add new role
+    DefaultRoleConfig(
+      name: 'editor',
+      description: 'Content editor',
+      permissions: ['read', 'write', 'publish'],
+      isActive: true,
+    ),
+  ];
+}
+```
+
+### Adding New Translations
+
+Create or edit `assets/i18n/{locale}.i18n.json`:
+
+```json
+{
+  "new_feature": {
+    "title": "New Feature",
+    "description": "This is a new feature"
+  }
+}
+```
+
+Translations will be seeded on next server restart.
+
+### Forcing Re-Seed
+
+```dart
+// Force re-seed roles (updates existing)
+await rbacService.seedDefaultRoles(session, force: true);
+
+// Translations are always updated if files changed
+await translationService.seedFromAssets(session);
+```
+
+---
+
+## 📚 Related Documentation
+
+- [README_TRANSLATIONS.md](README_TRANSLATIONS.md) - Detailed translation guide
+- [Main README](../README.md) - Project overview
+- [Serverpod Documentation](https://docs.serverpod.dev)

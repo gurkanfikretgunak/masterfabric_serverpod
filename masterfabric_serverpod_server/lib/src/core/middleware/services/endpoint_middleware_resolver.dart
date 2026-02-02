@@ -111,12 +111,20 @@ class EndpointMiddlewareResolver {
     if (config.customRateLimit != null) {
       context.setMetadata('customRateLimit', config.customRateLimit);
     }
+
+    // RBAC configuration
     if (config.requiredPermissions.isNotEmpty) {
       context.setMetadata('requiredPermissions', config.requiredPermissions);
+      context.setMetadata('requireAllPermissions', config.requireAllPermissions);
     }
     if (config.requiredRoles.isNotEmpty) {
       context.setMetadata('requiredRoles', config.requiredRoles);
+      context.setMetadata('requireAllRoles', config.requireAllRoles);
     }
+    if (config.customAuthorizerId != null) {
+      context.setMetadata('customAuthorizerId', config.customAuthorizerId);
+    }
+
     if (config.validationRules != null) {
       context.setMetadata('validationRules', config.validationRules);
     }
