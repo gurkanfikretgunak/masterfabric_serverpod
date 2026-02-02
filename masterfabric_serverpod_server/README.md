@@ -61,11 +61,21 @@ Auto-seeds translations from `assets/i18n/*.json` on startup:
 
 ```
 assets/i18n/
-├── en.i18n.json
-├── tr.i18n.json
-├── de.i18n.json
-└── es.i18n.json
+├── en.i18n.json    # English (default)
+├── tr.i18n.json    # Turkish
+├── de.i18n.json    # German
+└── es.i18n.json    # Spanish
 ```
+
+**Translation structure includes:**
+- `app` - App name and version
+- `welcome`, `auth` - Authentication screens
+- `dashboard`, `devTools` - Main screens
+- `settings` - Settings screen (language, notifications, privacy, about)
+- `greeting.v3` - RBAC test screen
+- `profile` - User profile
+- `common`, `errors` - Shared strings
+- `languages` - Language names for selector
 
 ### Real-Time Notifications
 

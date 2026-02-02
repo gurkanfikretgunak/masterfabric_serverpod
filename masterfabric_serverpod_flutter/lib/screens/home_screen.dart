@@ -8,6 +8,7 @@ import '../widgets/health_status_bar.dart';
 import '../widgets/notification_badge.dart';
 import 'service_test_screen.dart';
 import 'profile_screen.dart';
+import 'settings_screen.dart';
 import 'notifications/notification_center_screen.dart';
 import 'greeting_v2_screen.dart';
 import 'greeting_v3_screen.dart';
@@ -32,9 +33,9 @@ class HomeScreen extends StatelessWidget {
             onTap: () => _navigateToNotifications(context),
           ),
           IconButton(
-            icon: const Icon(LucideIcons.circleUser),
-            tooltip: tr('devTools.profile.title'),
-            onPressed: () => _navigateToProfile(context),
+            icon: const Icon(LucideIcons.settings),
+            tooltip: tr('settings.title'),
+            onPressed: () => _navigateToSettings(context),
           ),
           IconButton(
             icon: const Icon(LucideIcons.logOut),
@@ -449,6 +450,13 @@ class HomeScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const ProfileScreen()),
+    );
+  }
+
+  void _navigateToSettings(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SettingsScreen()),
     );
   }
 }

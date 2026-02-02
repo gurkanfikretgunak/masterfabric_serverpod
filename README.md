@@ -28,6 +28,7 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 | **Real-Time Notifications** | WebSocket streaming for broadcasts, user-based, and project-based notifications |
 | **Modern Error Handling** | SerializableExceptions with detailed error responses |
 | **Health Monitoring** | Real-time service health checks with auto-refresh |
+| **Settings & i18n** | Settings screen with language selection, responsive layouts |
 | **Service Testing** | Built-in test UI for API, Auth, and Rate Limit testing |
 | **Beautiful Flutter UI** | Rate limit banners, health indicators, notification center |
 | **Authentication** | Email/password auth with JWT tokens and session management |
@@ -234,6 +235,7 @@ Located in `.cursor/commands/`:
 | Command | Description |
 |---------|-------------|
 | `/create-server-service` | Scaffold new Serverpod service with endpoint, service class, and models |
+| `/create-server-endpoint` | Create V2 (middleware) or V3 (RBAC) endpoints with templates |
 | `/create-server-integration` | Create REST API integration with base client and patterns |
 | `/check-performance-service` | Test and monitor service performance |
 
@@ -258,6 +260,7 @@ The AI agent automatically uses these skills when:
 .cursor/
 ├── commands/
 │   ├── create-server-service.md
+│   ├── create-server-endpoint.md
 │   ├── create-server-integration.md
 │   └── check-performance-service.md
 └── skills/
@@ -555,7 +558,10 @@ lib/
 ├── main.dart                     # App entry point with bootstrap
 ├── screens/
 │   ├── home_screen.dart              # Dashboard with health status
+│   ├── settings_screen.dart          # Settings with language, about, preferences
 │   ├── service_test_screen.dart      # Service testing (API, Auth, Rate Limit)
+│   ├── greeting_v2_screen.dart       # Middleware test (V2)
+│   ├── greeting_v3_screen.dart       # RBAC test (V3)
 │   ├── greetings_screen.dart         # Greeting screen with rate limit UI
 │   ├── sign_in_screen.dart           # Email authentication screen
 │   ├── profile_screen.dart           # User profile screen
@@ -569,6 +575,8 @@ lib/
 │   ├── health_service.dart           # Health monitoring service
 │   ├── notification_service.dart     # Real-time notification service
 │   └── translation_service.dart      # i18n client with locale switching
+├── utils/
+│   └── responsive.dart               # Responsive layout utilities
 └── widgets/
     ├── health_status_bar.dart        # Health indicator & status card
     ├── notification_badge.dart       # Notification count badge
@@ -577,15 +585,19 @@ lib/
 
 **Features**:
 - **Email Sign-in** with verification
+- **Settings Screen** with language selection, notifications, privacy, about info
 - **Health Monitoring** with auto-check (configurable interval)
 - **Real-Time Notifications** with WebSocket streaming
 - **Service Testing** screen (API, Auth, Rate Limit tabs)
+- **RBAC Testing** screen (V3) with role-based method testing
+- **Middleware Testing** screen (V2) with rate limit and auth testing
 - **Verification Settings** for Email, Telegram, WhatsApp preferences
+- **Responsive Layouts** adapting to mobile, tablet, and desktop
+- **Internationalization** with runtime locale switching (EN, TR, DE, ES)
 - Notification center with filtering and real-time updates
 - Rate limit banner with countdown timer
 - Rate limit indicator showing remaining requests
 - Modern greeting result cards
-- Locale switching at runtime (EN, TR, DE)
 - Loading states & error handling
 
 ## Available Scripts
@@ -745,21 +757,29 @@ graph LR
 assets/i18n/
 ├── en.i18n.json    # English translations
 ├── tr.i18n.json    # Turkish translations
-└── de.i18n.json    # German translations
+├── de.i18n.json    # German translations
+└── es.i18n.json    # Spanish translations
 ```
 
 **Translation file format:**
 
 ```json
 {
+  "app": { "name": "MasterFabric", "version": "1.0.0" },
   "welcome": {
-    "title": "Welcome, {name}!",
-    "subtitle": "We're glad to have you here"
+    "title": "Welcome",
+    "subtitle": "Sign in to continue"
   },
-  "common": {
-    "save": "Save",
-    "cancel": "Cancel"
-  }
+  "settings": {
+    "title": "Settings",
+    "language": {
+      "title": "Language",
+      "subtitle": "Choose your preferred language",
+      "changeSuccess": "Language changed to $language"
+    }
+  },
+  "common": { "save": "Save", "cancel": "Cancel" },
+  "languages": { "en": "English", "tr": "Turkish", "de": "German", "es": "Spanish" }
 }
 ```
 
@@ -1276,6 +1296,114 @@ Danger:   [🔴  1 left ██████████████████�
 - Loading states with disabled inputs
 - Auto-retry button when countdown finishes
 - Beautiful gradient cards
+
+---
+
+### Settings Screen
+
+Comprehensive settings with language selection and app info.
+
+**Settings Screen Layout:**
+
+```
+┌────────────────────────────────────────────────────┐
+│  ⚙️ Settings                                        │
+├────────────────────────────────────────────────────┤
+│  LANGUAGE                                          │
+│  ┌──────────────────────────────────────────────┐  │
+│  │ 🌐 Choose your preferred language            │  │
+│  │    Current: English                          │  │
+│  ├──────────────────────────────────────────────┤  │
+│  │ 🇺🇸 English                             ✓    │  │
+│  │ 🇹🇷 Turkish                                  │  │
+│  │ 🇩🇪 German                                   │  │
+│  │ 🇪🇸 Spanish                                  │  │
+│  └──────────────────────────────────────────────┘  │
+│                                                    │
+│  NOTIFICATIONS                                     │
+│  ┌──────────────────────────────────────────────┐  │
+│  │ 🔔 Push Notifications              [ON]      │  │
+│  │ ✉️ Email Notifications             [OFF]     │  │
+│  │ 🔊 Notification Sound              [ON]      │  │
+│  └──────────────────────────────────────────────┘  │
+│                                                    │
+│  ABOUT                                             │
+│  ┌──────────────────────────────────────────────┐  │
+│  │ ╔════════════════════════════════════════╗   │  │
+│  │ ║ 📦 MasterFabric     DEVELOPMENT       ║   │  │
+│  │ ╚════════════════════════════════════════╝   │  │
+│  │ Version      1.0.0                           │  │
+│  │ Auth         Email, Google, Apple sign-in    │  │
+│  │ Rate Limit   20 requests/minute              │  │
+│  │ Caching      Redis + Local cache             │  │
+│  │ i18n         EN, TR, DE, ES                  │  │
+│  └──────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────┘
+```
+
+**Features:**
+- Runtime language switching (EN, TR, DE, ES)
+- Push/Email notification toggles
+- Privacy settings (analytics, crash reports)
+- App info card with version and features
+- Cache clearing
+- Account deletion (danger zone)
+
+**Flutter usage:**
+
+```dart
+// Navigate to settings
+Navigator.push(context, MaterialPageRoute(
+  builder: (context) => const SettingsScreen(),
+));
+
+// Language is changed via TranslationService
+await TranslationService.changeLocale(client, 'tr');
+```
+
+---
+
+### Responsive Layouts
+
+All screens adapt to different screen sizes using the responsive utility.
+
+**Breakpoints:**
+
+| Breakpoint | Width | Use Case |
+|------------|-------|----------|
+| Mobile | < 600px | Single column, compact UI |
+| Tablet | 600-900px | Two columns, medium spacing |
+| Desktop | > 900px | Multi-column, wider spacing |
+
+**Flutter usage:**
+
+```dart
+// Check device type
+if (context.isMobile) { /* mobile layout */ }
+if (context.isTablet) { /* tablet layout */ }
+if (context.isDesktop) { /* desktop layout */ }
+
+// Responsive layout wrapper
+ResponsiveLayout(
+  maxWidth: 700,
+  child: MyContent(),
+)
+
+// Responsive grid
+ResponsiveGrid(
+  mobileColumns: 1,
+  tabletColumns: 2,
+  desktopColumns: 3,
+  children: myWidgets,
+)
+
+// Responsive builder
+ResponsiveBuilder(
+  mobile: MobileLayout(),
+  tablet: TabletLayout(),
+  desktop: DesktopLayout(),
+)
+```
 
 ---
 

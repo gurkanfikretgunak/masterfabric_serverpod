@@ -239,6 +239,66 @@
     "confirm": "Confirmar",
     "search": "Buscar"
   },
+  "settings": {
+    "title": "Configuración",
+    "language": {
+      "title": "Idioma",
+      "subtitle": "Elige tu idioma preferido",
+      "current": "Actual",
+      "changeSuccess": "Idioma cambiado a $language",
+      "changeFailed": "No se pudo cambiar el idioma"
+    },
+    "appearance": {
+      "title": "Apariencia",
+      "theme": "Tema",
+      "dark": "Modo Oscuro",
+      "light": "Modo Claro",
+      "system": "Sistema"
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "push": "Notificaciones Push",
+      "pushDesc": "Recibir notificaciones push",
+      "email": "Notificaciones por Correo",
+      "emailDesc": "Recibir actualizaciones por correo",
+      "sound": "Sonido de Notificación",
+      "soundDesc": "Reproducir sonido para notificaciones"
+    },
+    "privacy": {
+      "title": "Privacidad",
+      "analytics": "Analíticas",
+      "analyticsDesc": "Ayuda a mejorar la app compartiendo datos de uso",
+      "crashReports": "Informes de Errores",
+      "crashReportsDesc": "Enviar automáticamente informes de errores"
+    },
+    "about": {
+      "title": "Acerca de",
+      "version": "Versión",
+      "buildNumber": "Compilación",
+      "environment": "Entorno",
+      "serverUrl": "URL del Servidor",
+      "licenses": "Licencias",
+      "privacyPolicy": "Política de Privacidad",
+      "termsOfService": "Términos de Servicio"
+    },
+    "cache": {
+      "title": "Caché",
+      "clear": "Limpiar Caché",
+      "clearDesc": "Liberar espacio limpiando datos en caché",
+      "cleared": "Caché limpiada exitosamente"
+    },
+    "danger": {
+      "title": "Zona de Peligro",
+      "deleteAccount": "Eliminar Cuenta",
+      "deleteAccountDesc": "Eliminar permanentemente tu cuenta y todos los datos"
+    }
+  },
+  "languages": {
+    "en": "Inglés",
+    "tr": "Turco",
+    "de": "Alemán",
+    "es": "Español"
+  },
   "errors": {
     "network": "Error de red. Por favor, verifica tu conexión.",
     "server": "Error del servidor. Por favor, intenta más tarde.",

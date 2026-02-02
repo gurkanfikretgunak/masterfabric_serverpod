@@ -239,6 +239,66 @@
     "confirm": "Confirm",
     "search": "Search"
   },
+  "settings": {
+    "title": "Settings",
+    "language": {
+      "title": "Language",
+      "subtitle": "Choose your preferred language",
+      "current": "Current",
+      "changeSuccess": "Language changed to $language",
+      "changeFailed": "Failed to change language"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "theme": "Theme",
+      "dark": "Dark Mode",
+      "light": "Light Mode",
+      "system": "System"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "push": "Push Notifications",
+      "pushDesc": "Receive push notifications",
+      "email": "Email Notifications",
+      "emailDesc": "Receive email updates",
+      "sound": "Notification Sound",
+      "soundDesc": "Play sound for notifications"
+    },
+    "privacy": {
+      "title": "Privacy",
+      "analytics": "Analytics",
+      "analyticsDesc": "Help improve the app by sharing usage data",
+      "crashReports": "Crash Reports",
+      "crashReportsDesc": "Automatically send crash reports"
+    },
+    "about": {
+      "title": "About",
+      "version": "Version",
+      "buildNumber": "Build",
+      "environment": "Environment",
+      "serverUrl": "Server URL",
+      "licenses": "Licenses",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service"
+    },
+    "cache": {
+      "title": "Cache",
+      "clear": "Clear Cache",
+      "clearDesc": "Free up storage by clearing cached data",
+      "cleared": "Cache cleared successfully"
+    },
+    "danger": {
+      "title": "Danger Zone",
+      "deleteAccount": "Delete Account",
+      "deleteAccountDesc": "Permanently delete your account and all data"
+    }
+  },
+  "languages": {
+    "en": "English",
+    "tr": "Turkish",
+    "de": "German",
+    "es": "Spanish"
+  },
   "errors": {
     "network": "Network error. Please check your connection.",
     "server": "Server error. Please try again later.",

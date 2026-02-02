@@ -239,6 +239,66 @@
     "confirm": "Bestätigen",
     "search": "Suchen"
   },
+  "settings": {
+    "title": "Einstellungen",
+    "language": {
+      "title": "Sprache",
+      "subtitle": "Wählen Sie Ihre bevorzugte Sprache",
+      "current": "Aktuell",
+      "changeSuccess": "Sprache zu $language geändert",
+      "changeFailed": "Sprache konnte nicht geändert werden"
+    },
+    "appearance": {
+      "title": "Erscheinungsbild",
+      "theme": "Thema",
+      "dark": "Dunkelmodus",
+      "light": "Hellmodus",
+      "system": "System"
+    },
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "push": "Push-Benachrichtigungen",
+      "pushDesc": "Push-Benachrichtigungen empfangen",
+      "email": "E-Mail-Benachrichtigungen",
+      "emailDesc": "E-Mail-Updates empfangen",
+      "sound": "Benachrichtigungston",
+      "soundDesc": "Ton für Benachrichtigungen abspielen"
+    },
+    "privacy": {
+      "title": "Datenschutz",
+      "analytics": "Analytik",
+      "analyticsDesc": "Helfen Sie die App zu verbessern, indem Sie Nutzungsdaten teilen",
+      "crashReports": "Absturzberichte",
+      "crashReportsDesc": "Absturzberichte automatisch senden"
+    },
+    "about": {
+      "title": "Über",
+      "version": "Version",
+      "buildNumber": "Build",
+      "environment": "Umgebung",
+      "serverUrl": "Server-URL",
+      "licenses": "Lizenzen",
+      "privacyPolicy": "Datenschutzrichtlinie",
+      "termsOfService": "Nutzungsbedingungen"
+    },
+    "cache": {
+      "title": "Cache",
+      "clear": "Cache leeren",
+      "clearDesc": "Speicherplatz freigeben durch Löschen der Cache-Daten",
+      "cleared": "Cache erfolgreich geleert"
+    },
+    "danger": {
+      "title": "Gefahrenzone",
+      "deleteAccount": "Konto löschen",
+      "deleteAccountDesc": "Konto und alle Daten dauerhaft löschen"
+    }
+  },
+  "languages": {
+    "en": "Englisch",
+    "tr": "Türkisch",
+    "de": "Deutsch",
+    "es": "Spanisch"
+  },
   "errors": {
     "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
     "server": "Serverfehler. Bitte versuchen Sie es später erneut.",

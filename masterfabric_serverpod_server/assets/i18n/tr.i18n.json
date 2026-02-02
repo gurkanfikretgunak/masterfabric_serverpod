@@ -239,6 +239,66 @@
     "confirm": "Onayla",
     "search": "Ara"
   },
+  "settings": {
+    "title": "Ayarlar",
+    "language": {
+      "title": "Dil",
+      "subtitle": "Tercih ettiğiniz dili seçin",
+      "current": "Mevcut",
+      "changeSuccess": "Dil $language olarak değiştirildi",
+      "changeFailed": "Dil değiştirilemedi"
+    },
+    "appearance": {
+      "title": "Görünüm",
+      "theme": "Tema",
+      "dark": "Karanlık Mod",
+      "light": "Aydınlık Mod",
+      "system": "Sistem"
+    },
+    "notifications": {
+      "title": "Bildirimler",
+      "push": "Push Bildirimleri",
+      "pushDesc": "Push bildirimleri al",
+      "email": "E-posta Bildirimleri",
+      "emailDesc": "E-posta güncellemeleri al",
+      "sound": "Bildirim Sesi",
+      "soundDesc": "Bildirimler için ses çal"
+    },
+    "privacy": {
+      "title": "Gizlilik",
+      "analytics": "Analitik",
+      "analyticsDesc": "Kullanım verilerini paylaşarak uygulamayı geliştirmeye yardımcı olun",
+      "crashReports": "Çökme Raporları",
+      "crashReportsDesc": "Çökme raporlarını otomatik gönder"
+    },
+    "about": {
+      "title": "Hakkında",
+      "version": "Sürüm",
+      "buildNumber": "Yapı",
+      "environment": "Ortam",
+      "serverUrl": "Sunucu URL",
+      "licenses": "Lisanslar",
+      "privacyPolicy": "Gizlilik Politikası",
+      "termsOfService": "Hizmet Şartları"
+    },
+    "cache": {
+      "title": "Önbellek",
+      "clear": "Önbelleği Temizle",
+      "clearDesc": "Önbelleği temizleyerek depolama alanı açın",
+      "cleared": "Önbellek başarıyla temizlendi"
+    },
+    "danger": {
+      "title": "Tehlikeli Bölge",
+      "deleteAccount": "Hesabı Sil",
+      "deleteAccountDesc": "Hesabınızı ve tüm verilerinizi kalıcı olarak silin"
+    }
+  },
+  "languages": {
+    "en": "İngilizce",
+    "tr": "Türkçe",
+    "de": "Almanca",
+    "es": "İspanyolca"
+  },
   "errors": {
     "network": "Ağ hatası. Lütfen bağlantınızı kontrol edin.",
     "server": "Sunucu hatası. Lütfen daha sonra tekrar deneyin.",
