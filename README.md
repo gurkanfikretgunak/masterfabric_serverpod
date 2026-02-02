@@ -41,16 +41,32 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 
 <table>
   <tr>
-    <td><img src=".github/images/image-1.png" width="200" alt="Dashboard"/></td>
-    <td><img src=".github/images/image-2.png" width="200" alt="Test View"/></td>
-    <td><img src=".github/images/image-3.png" width="200" alt="Service Testing"/></td>
-    <td><img src=".github/images/image-4.png" width="200" alt="Auth Check"/></td>
+    <td><img src=".github/images/image-1.png" width="180"/></td>
+    <td><img src=".github/images/image-2.png" width="180"/></td>
+    <td><img src=".github/images/image-3.png" width="180"/></td>
+    <td><img src=".github/images/image-4.png" width="180"/></td>
+    <td><img src=".github/images/image-5.png" width="180"/></td>
   </tr>
   <tr>
-    <td align="center"><b>Dashboard</b></td>
-    <td align="center"><b>Test View</b></td>
-    <td align="center"><b>Service Testing</b></td>
-    <td align="center"><b>Auth Check</b></td>
+    <td><img src=".github/images/image-6.png" width="180"/></td>
+    <td><img src=".github/images/image-7.png" width="180"/></td>
+    <td><img src=".github/images/image-8.png" width="180"/></td>
+    <td><img src=".github/images/image-9.png" width="180"/></td>
+    <td><img src=".github/images/image-10.png" width="180"/></td>
+  </tr>
+  <tr>
+    <td><img src=".github/images/image-11.png" width="180"/></td>
+    <td><img src=".github/images/image-12.png" width="180"/></td>
+    <td><img src=".github/images/image-13.png" width="180"/></td>
+    <td><img src=".github/images/image-14.png" width="180"/></td>
+    <td><img src=".github/images/image-15.png" width="180"/></td>
+  </tr>
+  <tr>
+    <td><img src=".github/images/image-16.png" width="180"/></td>
+    <td><img src=".github/images/image-17.png" width="180"/></td>
+    <td><img src=".github/images/image-18.png" width="180"/></td>
+    <td><img src=".github/images/image-19.png" width="180"/></td>
+    <td><img src=".github/images/image-20.png" width="180"/></td>
   </tr>
 </table>
 
