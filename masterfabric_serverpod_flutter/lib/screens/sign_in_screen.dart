@@ -3,6 +3,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
 import '../main.dart';
+import '../services/translation_service.dart';
+import '../utils/responsive.dart';
 
 class SignInScreen extends StatefulWidget {
   final Widget child;
@@ -43,42 +45,44 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  LucideIcons.lock,
-                  size: 64,
-                  color: Colors.blue,
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'Welcome',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+        child: ResponsiveLayout(
+          maxWidth: 450,
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    LucideIcons.lock,
+                    size: context.isMobile ? 56 : 64,
+                    color: Colors.blue,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Sign in to continue',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
+                  const SizedBox(height: 24),
+                  Text(
+                    tr('welcome.title'),
+                    style: TextStyle(
+                      fontSize: context.isMobile ? 24 : 28,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 32),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 400),
-                  child: SignInWidget(
-                    client: client,
-                    onAuthenticated: () {},
+                  const SizedBox(height: 8),
+                  Text(
+                    tr('welcome.subtitle'),
+                    style: TextStyle(
+                      fontSize: context.isMobile ? 14 : 16,
+                      color: Colors.grey[600],
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 32),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: SignInWidget(
+                      client: client,
+                      onAuthenticated: () {},
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -1,17 +1,225 @@
 {
+  "app": {
+    "name": "MasterFabric",
+    "version": "1.0.0"
+  },
   "welcome": {
-    "title": "Welcome 🤩 $name",
-    "subtitle": "Get started with MasterFabric",
+    "title": "Welcome",
+    "subtitle": "Sign in to continue",
     "description": "Your journey begins here"
   },
-  "login": {
-    "title": "Login",
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "signUp": "Sign Up",
     "email": "Email",
     "password": "Password",
-    "submit": "Sign In",
+    "forgotPassword": "Forgot password?",
     "success": "Logged in successfully",
-    "fail": "Login failed",
-    "forgotPassword": "Forgot password?"
+    "fail": "Login failed"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Monitor and test your Serverpod backend services"
+  },
+  "notifications": {
+    "title": "Notification Center",
+    "live": "Live",
+    "offline": "Offline",
+    "realTimeActive": "Real-time notifications active",
+    "tapToConnect": "Tap to connect and receive notifications"
+  },
+  "devTools": {
+    "title": "Developer Tools",
+    "rbacTest": {
+      "title": "RBAC Test (V3)",
+      "description": "Test GreetingV3Endpoint with role-based access control (admin, user, moderator)"
+    },
+    "middlewareTest": {
+      "title": "Middleware Test (V2)",
+      "description": "Test GreetingV2Endpoint with automatic logging, rate limiting, and metrics"
+    },
+    "serviceTest": {
+      "title": "Service Testing",
+      "description": "Test API endpoints, authentication flows, and rate limiting behavior"
+    },
+    "profile": {
+      "title": "User Profile",
+      "description": "View and edit your account information and settings"
+    }
+  },
+  "about": {
+    "title": "About",
+    "appName": "MasterFabric Serverpod",
+    "auth": "Auth",
+    "authDesc": "Email, Google, Apple sign-in",
+    "rateLimit": "Rate Limit",
+    "rateLimitDesc": "20 requests/minute",
+    "caching": "Caching",
+    "cachingDesc": "Redis + Local cache",
+    "i18n": "i18n",
+    "i18nDesc": "EN, TR, DE, ES"
+  },
+  "greeting": {
+    "v3": {
+      "title": "Greeting V3 (RBAC)",
+      "header": {
+        "title": "RBAC System Test",
+        "subtitle": "GreetingV3Endpoint with Role-Based Access"
+      },
+      "features": {
+        "public": "Public",
+        "user": "User",
+        "admin": "Admin",
+        "moderator": "Moderator"
+      },
+      "input": {
+        "enterName": "Enter Name",
+        "namePlaceholder": "Enter your name...",
+        "enterGreetingId": "Enter Greeting ID",
+        "greetingIdPlaceholder": "Enter greeting ID to delete..."
+      },
+      "methods": {
+        "selectMethod": "Select Endpoint Method",
+        "publicHello": {
+          "title": "Public Hello",
+          "description": "No auth required",
+          "roleInfo": "Public"
+        },
+        "hello": {
+          "title": "Hello (User)",
+          "description": "Requires user role",
+          "roleInfo": "user"
+        },
+        "goodbye": {
+          "title": "Goodbye (User)",
+          "description": "Requires user role",
+          "roleInfo": "user"
+        },
+        "adminHello": {
+          "title": "Admin Hello",
+          "description": "Requires user OR admin role",
+          "roleInfo": "user | admin"
+        },
+        "moderatorHello": {
+          "title": "Moderator Hello",
+          "description": "Requires moderator OR admin role",
+          "roleInfo": "moderator | admin"
+        },
+        "deleteGreeting": {
+          "title": "Delete Greeting",
+          "description": "Requires user AND admin (both!)",
+          "roleInfo": "user & admin"
+        },
+        "strictHello": {
+          "title": "Strict Hello",
+          "description": "User role + 5 req/min limit",
+          "roleInfo": "user + rate limit"
+        }
+      },
+      "actions": {
+        "sendRequest": "Send Request",
+        "clearResults": "Clear Results"
+      },
+      "response": {
+        "title": "Response Received",
+        "message": "Message",
+        "author": "Author",
+        "timestamp": "Timestamp"
+      },
+      "rateLimit": {
+        "title": "Rate Limit Info",
+        "exceeded": "Rate Limit Exceeded",
+        "tooManyRequests": "Too many requests",
+        "max": "Max",
+        "current": "Current",
+        "remaining": "Remaining",
+        "retry": "Retry",
+        "limit": "Limit"
+      },
+      "error": {
+        "accessDenied": "Access Denied",
+        "error": "Error",
+        "code": "Code",
+        "roleRequired": "You need the required role to access this endpoint. Try \"Public Hello\" which requires no authentication."
+      },
+      "delete": {
+        "success": "Greeting Deleted",
+        "fail": "Delete Failed",
+        "greetingId": "Greeting ID"
+      },
+      "stats": {
+        "title": "Session Statistics",
+        "totalRequests": "Total Requests",
+        "lastRequest": "Last Request"
+      }
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "refresh": "Refresh",
+    "loading": "Loading profile...",
+    "failedToLoad": "Failed to load profile",
+    "retry": "Retry",
+    "header": {
+      "verified": "Verified",
+      "blocked": "Blocked"
+    },
+    "info": {
+      "userId": "User ID",
+      "memberSince": "Member Since"
+    },
+    "edit": {
+      "title": "Edit Profile",
+      "fullName": "Full Name",
+      "userName": "Username",
+      "birthDate": "Birth Date",
+      "selectDate": "Select date",
+      "gender": "Gender",
+      "loadingOptions": "Loading options...",
+      "selectGender": "Select gender",
+      "save": "Save with Verification",
+      "minChars": "Min 3 characters"
+    },
+    "gender": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "preferNotToSay": "Prefer not to say",
+      "notApplicable": "Not applicable",
+      "unknown": "Unknown"
+    },
+    "actions": {
+      "changePassword": "Change Password",
+      "twoFactor": "Two-Factor Authentication",
+      "activeSessions": "Active Sessions",
+      "verificationSettings": "Verification Settings"
+    },
+    "verification": {
+      "title": "Verify Your Identity",
+      "subtitle": "Enter the 6-digit code sent to your email",
+      "requesting": "Requesting verification code...",
+      "expiresIn": "Expires in",
+      "resendCode": "Resend Code",
+      "resendIn": "Resend in",
+      "verifyUpdate": "Verify & Update",
+      "cancel": "Cancel",
+      "invalidCode": "Invalid verification code. Please try again.",
+      "codeExpired": "Code expired. Please request a new one.",
+      "verificationFailed": "Verification failed. Please try again.",
+      "enterCode": "Please enter the 6-digit code",
+      "profileUpdated": "Profile updated successfully"
+    },
+    "comingSoon": "$feature coming soon",
+    "copiedToClipboard": "Copied to clipboard"
+  },
+  "health": {
+    "title": "Health",
+    "status": {
+      "healthy": "Healthy",
+      "unhealthy": "Unhealthy",
+      "checking": "Checking..."
+    }
   },
   "common": {
     "save": "Save",
@@ -24,12 +232,19 @@
     "loading": "Loading...",
     "error": "An error occurred",
     "retry": "Retry",
-    "ok": "OK"
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
+    "confirm": "Confirm",
+    "search": "Search"
   },
   "errors": {
     "network": "Network error. Please check your connection.",
     "server": "Server error. Please try again later.",
     "validation": "Please check your input.",
-    "unauthorized": "You are not authorized to perform this action."
+    "unauthorized": "You are not authorized to perform this action.",
+    "notFound": "Resource not found.",
+    "unknown": "An unknown error occurred."
   }
 }

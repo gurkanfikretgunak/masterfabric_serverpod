@@ -1,17 +1,225 @@
 {
+  "app": {
+    "name": "MasterFabric",
+    "version": "1.0.0"
+  },
   "welcome": {
-    "title": "Bienvenido 🤩 $name",
-    "subtitle": "Comienza con MasterFabric",
+    "title": "Bienvenido",
+    "subtitle": "Inicia sesión para continuar",
     "description": "Tu viaje comienza aquí"
   },
-  "login": {
-    "title": "Iniciar sesión",
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "signUp": "Registrarse",
     "email": "Correo electrónico",
     "password": "Contraseña",
-    "submit": "Entrar",
-    "success": "Sesión iniciada correctamente",
-    "fail": "Error al iniciar sesión",
-    "forgotPassword": "¿Olvidaste tu contraseña?"
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "success": "Sesión iniciada exitosamente",
+    "fail": "Error al iniciar sesión"
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "subtitle": "Monitorea y prueba tus servicios backend de Serverpod"
+  },
+  "notifications": {
+    "title": "Centro de Notificaciones",
+    "live": "En vivo",
+    "offline": "Sin conexión",
+    "realTimeActive": "Notificaciones en tiempo real activas",
+    "tapToConnect": "Toca para conectar y recibir notificaciones"
+  },
+  "devTools": {
+    "title": "Herramientas de Desarrollo",
+    "rbacTest": {
+      "title": "Prueba RBAC (V3)",
+      "description": "Prueba GreetingV3Endpoint con control de acceso basado en roles (admin, usuario, moderador)"
+    },
+    "middlewareTest": {
+      "title": "Prueba Middleware (V2)",
+      "description": "Prueba GreetingV2Endpoint con registro automático, limitación de velocidad y métricas"
+    },
+    "serviceTest": {
+      "title": "Prueba de Servicios",
+      "description": "Prueba endpoints API, flujos de autenticación y comportamiento de limitación de velocidad"
+    },
+    "profile": {
+      "title": "Perfil de Usuario",
+      "description": "Ver y editar información de tu cuenta y configuración"
+    }
+  },
+  "about": {
+    "title": "Acerca de",
+    "appName": "MasterFabric Serverpod",
+    "auth": "Autenticación",
+    "authDesc": "Correo, Google, Apple inicio de sesión",
+    "rateLimit": "Límite de Velocidad",
+    "rateLimitDesc": "20 solicitudes/minuto",
+    "caching": "Caché",
+    "cachingDesc": "Redis + Caché local",
+    "i18n": "Multiidioma",
+    "i18nDesc": "EN, TR, DE, ES"
+  },
+  "greeting": {
+    "v3": {
+      "title": "Greeting V3 (RBAC)",
+      "header": {
+        "title": "Prueba del Sistema RBAC",
+        "subtitle": "GreetingV3Endpoint con Acceso Basado en Roles"
+      },
+      "features": {
+        "public": "Público",
+        "user": "Usuario",
+        "admin": "Admin",
+        "moderator": "Moderador"
+      },
+      "input": {
+        "enterName": "Ingresa tu Nombre",
+        "namePlaceholder": "Ingresa tu nombre...",
+        "enterGreetingId": "Ingresa ID del Saludo",
+        "greetingIdPlaceholder": "Ingresa ID del saludo a eliminar..."
+      },
+      "methods": {
+        "selectMethod": "Seleccionar Método del Endpoint",
+        "publicHello": {
+          "title": "Hola Público",
+          "description": "No requiere autenticación",
+          "roleInfo": "Público"
+        },
+        "hello": {
+          "title": "Hola (Usuario)",
+          "description": "Requiere rol de usuario",
+          "roleInfo": "usuario"
+        },
+        "goodbye": {
+          "title": "Adiós (Usuario)",
+          "description": "Requiere rol de usuario",
+          "roleInfo": "usuario"
+        },
+        "adminHello": {
+          "title": "Hola Admin",
+          "description": "Requiere rol de usuario O admin",
+          "roleInfo": "usuario | admin"
+        },
+        "moderatorHello": {
+          "title": "Hola Moderador",
+          "description": "Requiere rol de moderador O admin",
+          "roleInfo": "moderador | admin"
+        },
+        "deleteGreeting": {
+          "title": "Eliminar Saludo",
+          "description": "Requiere usuario Y admin (¡ambos!)",
+          "roleInfo": "usuario & admin"
+        },
+        "strictHello": {
+          "title": "Hola Estricto",
+          "description": "Rol de usuario + límite 5 sol/min",
+          "roleInfo": "usuario + límite"
+        }
+      },
+      "actions": {
+        "sendRequest": "Enviar Solicitud",
+        "clearResults": "Limpiar Resultados"
+      },
+      "response": {
+        "title": "Respuesta Recibida",
+        "message": "Mensaje",
+        "author": "Autor",
+        "timestamp": "Marca de Tiempo"
+      },
+      "rateLimit": {
+        "title": "Info de Límite de Velocidad",
+        "exceeded": "Límite de Velocidad Excedido",
+        "tooManyRequests": "Demasiadas solicitudes",
+        "max": "Máx",
+        "current": "Actual",
+        "remaining": "Restante",
+        "retry": "Reintentar",
+        "limit": "Límite"
+      },
+      "error": {
+        "accessDenied": "Acceso Denegado",
+        "error": "Error",
+        "code": "Código",
+        "roleRequired": "Necesitas el rol requerido para acceder a este endpoint. Prueba \"Hola Público\" que no requiere autenticación."
+      },
+      "delete": {
+        "success": "Saludo Eliminado",
+        "fail": "Error al Eliminar",
+        "greetingId": "ID del Saludo"
+      },
+      "stats": {
+        "title": "Estadísticas de Sesión",
+        "totalRequests": "Total de Solicitudes",
+        "lastRequest": "Última Solicitud"
+      }
+    }
+  },
+  "profile": {
+    "title": "Perfil",
+    "refresh": "Actualizar",
+    "loading": "Cargando perfil...",
+    "failedToLoad": "Error al cargar el perfil",
+    "retry": "Reintentar",
+    "header": {
+      "verified": "Verificado",
+      "blocked": "Bloqueado"
+    },
+    "info": {
+      "userId": "ID de Usuario",
+      "memberSince": "Miembro Desde"
+    },
+    "edit": {
+      "title": "Editar Perfil",
+      "fullName": "Nombre Completo",
+      "userName": "Nombre de Usuario",
+      "birthDate": "Fecha de Nacimiento",
+      "selectDate": "Seleccionar fecha",
+      "gender": "Género",
+      "loadingOptions": "Cargando opciones...",
+      "selectGender": "Seleccionar género",
+      "save": "Guardar con Verificación",
+      "minChars": "Mín. 3 caracteres"
+    },
+    "gender": {
+      "male": "Masculino",
+      "female": "Femenino",
+      "other": "Otro",
+      "preferNotToSay": "Prefiero no decirlo",
+      "notApplicable": "No aplicable",
+      "unknown": "Desconocido"
+    },
+    "actions": {
+      "changePassword": "Cambiar Contraseña",
+      "twoFactor": "Autenticación de Dos Factores",
+      "activeSessions": "Sesiones Activas",
+      "verificationSettings": "Configuración de Verificación"
+    },
+    "verification": {
+      "title": "Verifica tu Identidad",
+      "subtitle": "Ingresa el código de 6 dígitos enviado a tu correo",
+      "requesting": "Solicitando código de verificación...",
+      "expiresIn": "Expira en",
+      "resendCode": "Reenviar Código",
+      "resendIn": "Reenviar en",
+      "verifyUpdate": "Verificar y Actualizar",
+      "cancel": "Cancelar",
+      "invalidCode": "Código de verificación inválido. Por favor, intenta de nuevo.",
+      "codeExpired": "Código expirado. Por favor, solicita uno nuevo.",
+      "verificationFailed": "Verificación fallida. Por favor, intenta de nuevo.",
+      "enterCode": "Por favor, ingresa el código de 6 dígitos",
+      "profileUpdated": "Perfil actualizado exitosamente"
+    },
+    "comingSoon": "$feature próximamente",
+    "copiedToClipboard": "Copiado al portapapeles"
+  },
+  "health": {
+    "title": "Estado",
+    "status": {
+      "healthy": "Saludable",
+      "unhealthy": "No saludable",
+      "checking": "Verificando..."
+    }
   },
   "common": {
     "save": "Guardar",
@@ -20,16 +228,23 @@
     "edit": "Editar",
     "back": "Atrás",
     "next": "Siguiente",
-    "done": "Hecho",
+    "done": "Listo",
     "loading": "Cargando...",
-    "error": "Se produjo un error",
+    "error": "Ocurrió un error",
     "retry": "Reintentar",
-    "ok": "Aceptar"
+    "ok": "OK",
+    "yes": "Sí",
+    "no": "No",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "search": "Buscar"
   },
   "errors": {
     "network": "Error de red. Por favor, verifica tu conexión.",
-    "server": "Error del servidor. Por favor, inténtalo más tarde.",
-    "validation": "Por favor, verifica tu información.",
-    "unauthorized": "No tienes autorización para realizar esta acción."
+    "server": "Error del servidor. Por favor, intenta más tarde.",
+    "validation": "Por favor, verifica tu entrada.",
+    "unauthorized": "No tienes autorización para realizar esta acción.",
+    "notFound": "Recurso no encontrado.",
+    "unknown": "Ocurrió un error desconocido."
   }
 }

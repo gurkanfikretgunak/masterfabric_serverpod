@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../services/health_service.dart';
 import '../services/notification_service.dart';
+import '../services/translation_service.dart';
+import '../utils/responsive.dart';
 import '../widgets/health_status_bar.dart';
 import '../widgets/notification_badge.dart';
 import 'service_test_screen.dart';
@@ -21,7 +23,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('MasterFabric'),
+        title: Text(tr('app.name')),
         actions: [
           HealthStatusIndicator(
             onTap: () => HealthService.instance.checkHealth(),
@@ -31,99 +33,114 @@ class HomeScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(LucideIcons.circleUser),
-            tooltip: 'Profile',
+            tooltip: tr('devTools.profile.title'),
             onPressed: () => _navigateToProfile(context),
           ),
           IconButton(
             icon: const Icon(LucideIcons.logOut),
-            tooltip: 'Sign Out',
+            tooltip: tr('auth.signOut'),
             onPressed: onSignOut,
           ),
           const SizedBox(width: 8),
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              const Text(
-                'Dashboard',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+        child: ResponsiveLayout(
+          maxWidth: 900,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Text(
+                  tr('dashboard.title'),
+                  style: TextStyle(
+                    fontSize: context.isMobile ? 24 : 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Monitor and test your Serverpod backend services',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey[600],
+                const SizedBox(height: 8),
+                Text(
+                  tr('dashboard.subtitle'),
+                  style: TextStyle(
+                    fontSize: context.isMobile ? 14 : 15,
+                    color: Colors.grey[600],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-              // Health Status
-              const HealthStatusCard(),
-              const SizedBox(height: 24),
+                // Health Status
+                const HealthStatusCard(),
+                const SizedBox(height: 24),
 
-              // Notifications Section
-              _buildSectionHeader('Notifications'),
-              const SizedBox(height: 12),
-              _buildNotificationCard(context),
-              const SizedBox(height: 24),
+                // Notifications Section
+                _buildSectionHeader(tr('notifications.title')),
+                const SizedBox(height: 12),
+                _buildNotificationCard(context),
+                const SizedBox(height: 24),
 
-              // Developer Tools Section
-              _buildSectionHeader('Developer Tools'),
-              const SizedBox(height: 12),
-              _buildToolCard(
-                context,
-                icon: LucideIcons.shieldCheck,
-                title: 'RBAC Test (V3)',
-                description: 'Test GreetingV3Endpoint with role-based access control (admin, user, moderator)',
-                onTap: () => _navigateToGreetingV3(context),
-                color: Colors.purple,
-              ),
-              const SizedBox(height: 12),
-              _buildToolCard(
-                context,
-                icon: LucideIcons.layers,
-                title: 'Middleware Test (V2)',
-                description: 'Test GreetingV2Endpoint with automatic logging, rate limiting, and metrics',
-                onTap: () => _navigateToGreetingV2(context),
-                color: Colors.indigo,
-              ),
-              const SizedBox(height: 12),
-              _buildToolCard(
-                context,
-                icon: LucideIcons.flaskConical,
-                title: 'Service Testing',
-                description: 'Test API endpoints, authentication flows, and rate limiting behavior',
-                onTap: () => _navigateToServiceTest(context),
-              ),
-              const SizedBox(height: 12),
-              _buildToolCard(
-                context,
-                icon: LucideIcons.userCog,
-                title: 'User Profile',
-                description: 'View and edit your account information and settings',
-                onTap: () => _navigateToProfile(context),
-              ),
-              const SizedBox(height: 24),
+                // Developer Tools Section
+                _buildSectionHeader(tr('devTools.title')),
+                const SizedBox(height: 12),
+                
+                // Responsive grid for tool cards
+                ResponsiveBuilder(
+                  mobile: Column(
+                    children: _buildToolCards(context),
+                  ),
+                  tablet: ResponsiveGrid(
+                    tabletColumns: 2,
+                    children: _buildToolCards(context),
+                  ),
+                ),
+                const SizedBox(height: 24),
 
-              // About Section
-              _buildSectionHeader('About'),
-              const SizedBox(height: 12),
-              _buildInfoCard(),
-            ],
+                // About Section
+                _buildSectionHeader(tr('about.title')),
+                const SizedBox(height: 12),
+                _buildInfoCard(context),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  List<Widget> _buildToolCards(BuildContext context) {
+    return [
+      _buildToolCard(
+        context,
+        icon: LucideIcons.shieldCheck,
+        title: tr('devTools.rbacTest.title'),
+        description: tr('devTools.rbacTest.description'),
+        onTap: () => _navigateToGreetingV3(context),
+        color: Colors.purple,
+      ),
+      _buildToolCard(
+        context,
+        icon: LucideIcons.layers,
+        title: tr('devTools.middlewareTest.title'),
+        description: tr('devTools.middlewareTest.description'),
+        onTap: () => _navigateToGreetingV2(context),
+        color: Colors.indigo,
+      ),
+      _buildToolCard(
+        context,
+        icon: LucideIcons.flaskConical,
+        title: tr('devTools.serviceTest.title'),
+        description: tr('devTools.serviceTest.description'),
+        onTap: () => _navigateToServiceTest(context),
+      ),
+      _buildToolCard(
+        context,
+        icon: LucideIcons.userCog,
+        title: tr('devTools.profile.title'),
+        description: tr('devTools.profile.description'),
+        onTap: () => _navigateToProfile(context),
+      ),
+    ];
   }
 
   Widget _buildSectionHeader(String title) {
@@ -146,59 +163,66 @@ class HomeScreen extends StatelessWidget {
     Color? color,
   }) {
     final cardColor = color ?? Colors.blue;
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey[200]!),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: cardColor.withAlpha(25),
-                  borderRadius: BorderRadius.circular(10),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Card(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: Colors.grey[200]!),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: cardColor.withAlpha(25),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: cardColor, size: 24),
                 ),
-                child: Icon(icon, color: cardColor, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 13,
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Icon(LucideIcons.chevronRight, color: Colors.grey[400]),
-            ],
+                Icon(LucideIcons.chevronRight, color: Colors.grey[400]),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildInfoCard() {
+  Widget _buildInfoCard(BuildContext context) {
+    // Use AppConfig if available for dynamic values
+    // Rate limit is configured per-endpoint, using default from translations
+    final rateLimitDesc = tr('about.rateLimitDesc');
+
     return Card(
       elevation: 0,
       color: Colors.grey[50],
@@ -215,7 +239,7 @@ class HomeScreen extends StatelessWidget {
                 Icon(LucideIcons.info, color: Colors.grey[600], size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  'MasterFabric Serverpod',
+                  tr('about.appName'),
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.grey[800],
@@ -224,10 +248,10 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            _buildInfoRow('Auth', 'Email, Google, Apple sign-in'),
-            _buildInfoRow('Rate Limit', '20 requests/minute'),
-            _buildInfoRow('Caching', 'Redis + Local cache'),
-            _buildInfoRow('i18n', 'EN, TR, DE, ES'),
+            _buildInfoRow(tr('about.auth'), tr('about.authDesc')),
+            _buildInfoRow(tr('about.rateLimit'), rateLimitDesc),
+            _buildInfoRow(tr('about.caching'), tr('about.cachingDesc')),
+            _buildInfoRow(tr('about.i18n'), tr('about.i18nDesc')),
           ],
         ),
       ),
@@ -338,9 +362,9 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Text(
-                              'Notification Center',
-                              style: TextStyle(
+                            Text(
+                              tr('notifications.title'),
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 15,
                               ),
@@ -358,7 +382,9 @@ class HomeScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                isConnected ? 'Live' : 'Offline',
+                                isConnected 
+                                    ? tr('notifications.live') 
+                                    : tr('notifications.offline'),
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
@@ -371,8 +397,8 @@ class HomeScreen extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           isConnected
-                              ? 'Real-time notifications active'
-                              : 'Tap to connect and receive notifications',
+                              ? tr('notifications.realTimeActive')
+                              : tr('notifications.tapToConnect'),
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 13,
@@ -426,4 +452,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-

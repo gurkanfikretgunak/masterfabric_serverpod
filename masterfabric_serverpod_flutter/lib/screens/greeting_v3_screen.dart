@@ -3,23 +3,10 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:masterfabric_serverpod_client/masterfabric_serverpod_client.dart';
 
 import '../main.dart';
+import '../services/translation_service.dart';
+import '../utils/responsive.dart';
 
 /// Test screen for the GreetingV3Endpoint with RBAC (Role-Based Access Control)
-///
-/// This screen demonstrates the new RBAC-enabled endpoint that provides:
-/// - Role-based access control (user, admin, moderator roles)
-/// - Permission-based access control
-/// - Public endpoints that bypass authentication
-/// - Combined RBAC + rate limiting
-///
-/// Available methods for testing:
-/// 1. `publicHello` - No auth required (public)
-/// 2. `hello` - Requires 'user' role
-/// 3. `goodbye` - Requires 'user' role
-/// 4. `adminHello` - Requires 'user' OR 'admin' role
-/// 5. `moderatorHello` - Requires 'moderator' OR 'admin' role
-/// 6. `deleteGreeting` - Requires 'user' AND 'admin' role (both!)
-/// 7. `strictHello` - Requires 'user' role + strict rate limit
 class GreetingV3Screen extends StatefulWidget {
   const GreetingV3Screen({super.key});
 
@@ -43,68 +30,68 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
   int _requestCount = 0;
   DateTime? _lastRequestTime;
 
-  final List<_MethodOption> _methods = [
+  List<_MethodOption> get _methods => [
     _MethodOption(
       id: 'publicHello',
-      title: 'Public Hello',
-      description: 'No auth required',
+      title: tr('greeting.v3.methods.publicHello.title'),
+      description: tr('greeting.v3.methods.publicHello.description'),
       icon: LucideIcons.globe,
       color: Colors.green,
-      roleInfo: 'Public',
+      roleInfo: tr('greeting.v3.methods.publicHello.roleInfo'),
       requiresGreetingId: false,
     ),
     _MethodOption(
       id: 'hello',
-      title: 'Hello (User)',
-      description: 'Requires user role',
+      title: tr('greeting.v3.methods.hello.title'),
+      description: tr('greeting.v3.methods.hello.description'),
       icon: LucideIcons.user,
       color: Colors.blue,
-      roleInfo: 'user',
+      roleInfo: tr('greeting.v3.methods.hello.roleInfo'),
       requiresGreetingId: false,
     ),
     _MethodOption(
       id: 'goodbye',
-      title: 'Goodbye (User)',
-      description: 'Requires user role',
+      title: tr('greeting.v3.methods.goodbye.title'),
+      description: tr('greeting.v3.methods.goodbye.description'),
       icon: LucideIcons.logOut,
       color: Colors.indigo,
-      roleInfo: 'user',
+      roleInfo: tr('greeting.v3.methods.goodbye.roleInfo'),
       requiresGreetingId: false,
     ),
     _MethodOption(
       id: 'adminHello',
-      title: 'Admin Hello',
-      description: 'Requires user OR admin role',
+      title: tr('greeting.v3.methods.adminHello.title'),
+      description: tr('greeting.v3.methods.adminHello.description'),
       icon: LucideIcons.shield,
       color: Colors.purple,
-      roleInfo: 'user | admin',
+      roleInfo: tr('greeting.v3.methods.adminHello.roleInfo'),
       requiresGreetingId: false,
     ),
     _MethodOption(
       id: 'moderatorHello',
-      title: 'Moderator Hello',
-      description: 'Requires moderator OR admin role',
+      title: tr('greeting.v3.methods.moderatorHello.title'),
+      description: tr('greeting.v3.methods.moderatorHello.description'),
       icon: LucideIcons.userCog,
       color: Colors.orange,
-      roleInfo: 'moderator | admin',
+      roleInfo: tr('greeting.v3.methods.moderatorHello.roleInfo'),
       requiresGreetingId: false,
     ),
     _MethodOption(
       id: 'deleteGreeting',
-      title: 'Delete Greeting',
-      description: 'Requires user AND admin (both!)',
+      title: tr('greeting.v3.methods.deleteGreeting.title'),
+      description: tr('greeting.v3.methods.deleteGreeting.description'),
       icon: LucideIcons.trash2,
       color: Colors.red,
-      roleInfo: 'user & admin',
+      roleInfo: tr('greeting.v3.methods.deleteGreeting.roleInfo'),
       requiresGreetingId: true,
     ),
     _MethodOption(
       id: 'strictHello',
-      title: 'Strict Hello',
-      description: 'User role + 5 req/min limit',
+      title: tr('greeting.v3.methods.strictHello.title'),
+      description: tr('greeting.v3.methods.strictHello.description'),
       icon: LucideIcons.shieldAlert,
       color: Colors.amber,
-      roleInfo: 'user + rate limit',
+      roleInfo: tr('greeting.v3.methods.strictHello.roleInfo'),
       requiresGreetingId: false,
     ),
   ];
@@ -206,66 +193,61 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('Greeting V3 (RBAC)'),
+        title: Text(tr('greeting.v3.title')),
         backgroundColor: Colors.white,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(LucideIcons.refreshCw),
-            onPressed: _clearResults,
-            tooltip: 'Clear Results',
-          ),
-        ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header Card
-              _buildHeaderCard(),
-              const SizedBox(height: 16),
-
-              // Input Section
-              _buildInputSection(selectedMethod),
-              const SizedBox(height: 16),
-
-              // Method Selector
-              _buildMethodSelector(),
-              const SizedBox(height: 16),
-
-              // Send Button
-              _buildSendButton(),
-              const SizedBox(height: 24),
-
-              // Rate Limit Error
-              if (_rateLimitError != null) ...[
-                _buildRateLimitCard(),
+        child: ResponsiveLayout(
+          maxWidth: 700,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header Card
+                _buildHeaderCard(),
                 const SizedBox(height: 16),
-              ],
 
-              // Auth/Role Error
-              if (_error != null) ...[
-                _buildErrorCard(),
+                // Input Section
+                _buildInputSection(selectedMethod),
                 const SizedBox(height: 16),
-              ],
 
-              // Delete Result
-              if (_deleteResult != null) ...[
-                _buildDeleteResultCard(),
+                // Method Selector
+                _buildMethodSelector(),
                 const SizedBox(height: 16),
-              ],
 
-              // Response Card
-              if (_response != null) ...[
-                _buildResponseCard(),
-                const SizedBox(height: 16),
-              ],
+                // Action Buttons
+                _buildActionButtons(),
+                const SizedBox(height: 24),
 
-              // Stats Card
-              if (_requestCount > 0) _buildStatsCard(),
-            ],
+                // Rate Limit Error
+                if (_rateLimitError != null) ...[
+                  _buildRateLimitCard(),
+                  const SizedBox(height: 16),
+                ],
+
+                // Auth/Role Error
+                if (_error != null) ...[
+                  _buildErrorCard(),
+                  const SizedBox(height: 16),
+                ],
+
+                // Delete Result
+                if (_deleteResult != null) ...[
+                  _buildDeleteResultCard(),
+                  const SizedBox(height: 16),
+                ],
+
+                // Response Card
+                if (_response != null) ...[
+                  _buildResponseCard(),
+                  const SizedBox(height: 16),
+                ],
+
+                // Stats Card
+                if (_requestCount > 0) _buildStatsCard(),
+              ],
+            ),
           ),
         ),
       ),
@@ -274,7 +256,7 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
 
   Widget _buildHeaderCard() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(context.isMobile ? 14 : 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [Colors.purple.shade400, Colors.indigo.shade500],
@@ -301,22 +283,22 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'RBAC System Test',
+                      tr('greeting.v3.header.title'),
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: context.isMobile ? 16 : 18,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
-                      'GreetingV3Endpoint with Role-Based Access',
-                      style: TextStyle(
+                      tr('greeting.v3.header.subtitle'),
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 12,
                       ),
@@ -331,10 +313,10 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildFeatureChip('Public', LucideIcons.globe),
-              _buildFeatureChip('User', LucideIcons.user),
-              _buildFeatureChip('Admin', LucideIcons.shield),
-              _buildFeatureChip('Moderator', LucideIcons.userCog),
+              _buildFeatureChip(tr('greeting.v3.features.public'), LucideIcons.globe),
+              _buildFeatureChip(tr('greeting.v3.features.user'), LucideIcons.user),
+              _buildFeatureChip(tr('greeting.v3.features.admin'), LucideIcons.shield),
+              _buildFeatureChip(tr('greeting.v3.features.moderator'), LucideIcons.userCog),
             ],
           ),
         ],
@@ -380,16 +362,16 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!method.requiresGreetingId) ...[
-            const Text(
-              'Enter Name',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            Text(
+              tr('greeting.v3.input.enterName'),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _nameController,
               enabled: !_isLoading,
               decoration: InputDecoration(
-                hintText: 'Enter your name...',
+                hintText: tr('greeting.v3.input.namePlaceholder'),
                 prefixIcon: const Icon(LucideIcons.user),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -408,16 +390,16 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
               ),
             ),
           ] else ...[
-            const Text(
-              'Enter Greeting ID',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            Text(
+              tr('greeting.v3.input.enterGreetingId'),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _greetingIdController,
               enabled: !_isLoading,
               decoration: InputDecoration(
-                hintText: 'Enter greeting ID to delete...',
+                hintText: tr('greeting.v3.input.greetingIdPlaceholder'),
                 prefixIcon: const Icon(LucideIcons.hash),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -452,9 +434,9 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Select Endpoint Method',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+          Text(
+            tr('greeting.v3.methods.selectMethod'),
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
           ),
           const SizedBox(height: 12),
           ..._methods.map((method) => Padding(
@@ -506,11 +488,14 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        method.title,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: isSelected ? method.color : Colors.black87,
+                      Flexible(
+                        child: Text(
+                          method.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: isSelected ? method.color : Colors.black87,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -547,33 +532,51 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
     );
   }
 
-  Widget _buildSendButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _sendRequest,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.purple,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          elevation: 0,
+  Widget _buildActionButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton(
+            onPressed: _isLoading ? null : _sendRequest,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.purple,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 0,
+            ),
+            child: _isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(LucideIcons.send, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        tr('greeting.v3.actions.sendRequest'),
+                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                      ),
+                    ],
+                  ),
+          ),
         ),
-        child: _isLoading
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-              )
-            : const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(LucideIcons.send, size: 18),
-                  SizedBox(width: 8),
-                  Text('Send Request', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                ],
-              ),
-      ),
+        if (_requestCount > 0) ...[
+          const SizedBox(width: 12),
+          IconButton(
+            onPressed: _clearResults,
+            icon: const Icon(LucideIcons.refreshCw),
+            tooltip: tr('greeting.v3.actions.clearResults'),
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.grey[100],
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -614,7 +617,9 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isAuthError ? 'Access Denied' : 'Error',
+                      isAuthError 
+                          ? tr('greeting.v3.error.accessDenied') 
+                          : tr('greeting.v3.error.error'),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: isAuthError ? Colors.orange.shade800 : Colors.red.shade700,
@@ -622,7 +627,7 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
                     ),
                     if (_errorCode != null)
                       Text(
-                        'Code: $_errorCode',
+                        '${tr('greeting.v3.error.code')}: $_errorCode',
                         style: TextStyle(
                           fontSize: 11,
                           color: isAuthError ? Colors.orange.shade600 : Colors.red.shade600,
@@ -654,8 +659,7 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'You need the required role to access this endpoint. '
-                      'Try "Public Hello" which requires no authentication.',
+                      tr('greeting.v3.error.roleRequired'),
                       style: TextStyle(fontSize: 12, color: Colors.grey[700]),
                     ),
                   ),
@@ -695,11 +699,11 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Rate Limit Exceeded',
+                      tr('greeting.v3.rateLimit.exceeded'),
                       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange.shade800),
                     ),
                     Text(
-                      _rateLimitError?.message ?? 'Too many requests',
+                      _rateLimitError?.message ?? tr('greeting.v3.rateLimit.tooManyRequests'),
                       style: TextStyle(fontSize: 12, color: Colors.orange.shade700),
                     ),
                   ],
@@ -710,11 +714,23 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
           const SizedBox(height: 12),
           Row(
             children: [
-              _buildRateLimitStat('Limit', '${_rateLimitError?.limit ?? 0}', Colors.orange),
+              _buildRateLimitStat(
+                tr('greeting.v3.rateLimit.limit'),
+                '${_rateLimitError?.limit ?? 0}',
+                Colors.orange,
+              ),
               const SizedBox(width: 12),
-              _buildRateLimitStat('Current', '${_rateLimitError?.current ?? 0}', Colors.red),
+              _buildRateLimitStat(
+                tr('greeting.v3.rateLimit.current'),
+                '${_rateLimitError?.current ?? 0}',
+                Colors.red,
+              ),
               const SizedBox(width: 12),
-              _buildRateLimitStat('Retry', '${_rateLimitError?.retryAfterSeconds ?? 0}s', Colors.blue),
+              _buildRateLimitStat(
+                tr('greeting.v3.rateLimit.retry'),
+                '${_rateLimitError?.retryAfterSeconds ?? 0}s',
+                Colors.blue,
+              ),
             ],
           ),
         ],
@@ -770,14 +786,16 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _deleteResult! ? 'Greeting Deleted' : 'Delete Failed',
+                  _deleteResult! 
+                      ? tr('greeting.v3.delete.success') 
+                      : tr('greeting.v3.delete.fail'),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: _deleteResult! ? Colors.green.shade700 : Colors.red.shade700,
                   ),
                 ),
                 Text(
-                  'Greeting ID: ${_greetingIdController.text}',
+                  '${tr('greeting.v3.delete.greetingId')}: ${_greetingIdController.text}',
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
@@ -821,9 +839,9 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
                   child: const Icon(LucideIcons.check, color: Colors.white, size: 18),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'Response Received',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                Text(
+                  tr('greeting.v3.response.title'),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ],
             ),
@@ -832,11 +850,26 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _buildResponseRow('Message', _response!.message, LucideIcons.messageSquare, Colors.blue),
+                _buildResponseRow(
+                  tr('greeting.v3.response.message'),
+                  _response!.message,
+                  LucideIcons.messageSquare,
+                  Colors.blue,
+                ),
                 const SizedBox(height: 12),
-                _buildResponseRow('Author', _response!.author, LucideIcons.user, Colors.purple),
+                _buildResponseRow(
+                  tr('greeting.v3.response.author'),
+                  _response!.author,
+                  LucideIcons.user,
+                  Colors.purple,
+                ),
                 const SizedBox(height: 12),
-                _buildResponseRow('Timestamp', _formatTimestamp(_response!.timestamp), LucideIcons.clock, Colors.teal),
+                _buildResponseRow(
+                  tr('greeting.v3.response.timestamp'),
+                  _formatTimestamp(_response!.timestamp),
+                  LucideIcons.clock,
+                  Colors.teal,
+                ),
                 const SizedBox(height: 16),
                 Container(
                   padding: const EdgeInsets.all(12),
@@ -852,7 +885,7 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
                           Icon(LucideIcons.gauge, size: 16, color: Colors.grey[600]),
                           const SizedBox(width: 8),
                           Text(
-                            'Rate Limit Info',
+                            tr('greeting.v3.rateLimit.title'),
                             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.grey[700]),
                           ),
                         ],
@@ -860,9 +893,9 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          _buildMiniStat('Max', '${_response!.rateLimitMax}'),
-                          _buildMiniStat('Current', '${_response!.rateLimitCurrent}'),
-                          _buildMiniStat('Remaining', '${_response!.rateLimitRemaining}'),
+                          _buildMiniStat(tr('greeting.v3.rateLimit.max'), '${_response!.rateLimitMax}'),
+                          _buildMiniStat(tr('greeting.v3.rateLimit.current'), '${_response!.rateLimitCurrent}'),
+                          _buildMiniStat(tr('greeting.v3.rateLimit.remaining'), '${_response!.rateLimitRemaining}'),
                         ],
                       ),
                     ],
@@ -927,19 +960,27 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
             children: [
               Icon(LucideIcons.chartBar, color: Colors.grey[600], size: 18),
               const SizedBox(width: 8),
-              Text('Session Statistics', style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700])),
+              Text(
+                tr('greeting.v3.stats.title'),
+                style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700]),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
-                child: _buildStatItem('Total Requests', '$_requestCount', LucideIcons.send, Colors.blue),
+                child: _buildStatItem(
+                  tr('greeting.v3.stats.totalRequests'),
+                  '$_requestCount',
+                  LucideIcons.send,
+                  Colors.blue,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildStatItem(
-                  'Last Request',
+                  tr('greeting.v3.stats.lastRequest'),
                   _lastRequestTime != null ? _formatTimestamp(_lastRequestTime!) : '-',
                   LucideIcons.clock,
                   Colors.green,
@@ -963,12 +1004,22 @@ class _GreetingV3ScreenState extends State<GreetingV3Screen> {
         children: [
           Icon(icon, color: color, size: 18),
           const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color)),
-              Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
-            ],
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: color),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  label,
+                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),

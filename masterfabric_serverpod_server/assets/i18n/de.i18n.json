@@ -1,17 +1,225 @@
 {
+  "app": {
+    "name": "MasterFabric",
+    "version": "1.0.0"
+  },
   "welcome": {
-    "title": "Willkommen $name",
-    "subtitle": "Starten Sie mit MasterFabric",
+    "title": "Willkommen",
+    "subtitle": "Melden Sie sich an, um fortzufahren",
     "description": "Ihre Reise beginnt hier"
   },
-  "login": {
-    "title": "Anmelden",
+  "auth": {
+    "signIn": "Anmelden",
+    "signOut": "Abmelden",
+    "signUp": "Registrieren",
     "email": "E-Mail",
     "password": "Passwort",
-    "submit": "Anmelden",
+    "forgotPassword": "Passwort vergessen?",
     "success": "Erfolgreich angemeldet",
-    "fail": "Anmeldung fehlgeschlagen",
-    "forgotPassword": "Passwort vergessen?"
+    "fail": "Anmeldung fehlgeschlagen"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Überwachen und testen Sie Ihre Serverpod-Backend-Dienste"
+  },
+  "notifications": {
+    "title": "Benachrichtigungszentrale",
+    "live": "Live",
+    "offline": "Offline",
+    "realTimeActive": "Echtzeit-Benachrichtigungen aktiv",
+    "tapToConnect": "Tippen Sie, um sich zu verbinden und Benachrichtigungen zu erhalten"
+  },
+  "devTools": {
+    "title": "Entwicklertools",
+    "rbacTest": {
+      "title": "RBAC-Test (V3)",
+      "description": "Testen Sie GreetingV3Endpoint mit rollenbasierter Zugriffskontrolle (Admin, Benutzer, Moderator)"
+    },
+    "middlewareTest": {
+      "title": "Middleware-Test (V2)",
+      "description": "Testen Sie GreetingV2Endpoint mit automatischer Protokollierung, Ratenbegrenzung und Metriken"
+    },
+    "serviceTest": {
+      "title": "Diensttest",
+      "description": "Testen Sie API-Endpunkte, Authentifizierungsabläufe und Ratenbegrenzungsverhalten"
+    },
+    "profile": {
+      "title": "Benutzerprofil",
+      "description": "Anzeigen und Bearbeiten Ihrer Kontoinformationen und Einstellungen"
+    }
+  },
+  "about": {
+    "title": "Über",
+    "appName": "MasterFabric Serverpod",
+    "auth": "Authentifizierung",
+    "authDesc": "E-Mail, Google, Apple-Anmeldung",
+    "rateLimit": "Ratenlimit",
+    "rateLimitDesc": "20 Anfragen/Minute",
+    "caching": "Caching",
+    "cachingDesc": "Redis + Lokaler Cache",
+    "i18n": "Mehrsprachig",
+    "i18nDesc": "EN, TR, DE, ES"
+  },
+  "greeting": {
+    "v3": {
+      "title": "Greeting V3 (RBAC)",
+      "header": {
+        "title": "RBAC-Systemtest",
+        "subtitle": "GreetingV3Endpoint mit rollenbasiertem Zugriff"
+      },
+      "features": {
+        "public": "Öffentlich",
+        "user": "Benutzer",
+        "admin": "Admin",
+        "moderator": "Moderator"
+      },
+      "input": {
+        "enterName": "Name eingeben",
+        "namePlaceholder": "Geben Sie Ihren Namen ein...",
+        "enterGreetingId": "Gruß-ID eingeben",
+        "greetingIdPlaceholder": "Gruß-ID zum Löschen eingeben..."
+      },
+      "methods": {
+        "selectMethod": "Endpunkt-Methode auswählen",
+        "publicHello": {
+          "title": "Öffentliches Hallo",
+          "description": "Keine Authentifizierung erforderlich",
+          "roleInfo": "Öffentlich"
+        },
+        "hello": {
+          "title": "Hallo (Benutzer)",
+          "description": "Benutzerrolle erforderlich",
+          "roleInfo": "Benutzer"
+        },
+        "goodbye": {
+          "title": "Auf Wiedersehen (Benutzer)",
+          "description": "Benutzerrolle erforderlich",
+          "roleInfo": "Benutzer"
+        },
+        "adminHello": {
+          "title": "Admin Hallo",
+          "description": "Benutzer ODER Admin-Rolle erforderlich",
+          "roleInfo": "Benutzer | Admin"
+        },
+        "moderatorHello": {
+          "title": "Moderator Hallo",
+          "description": "Moderator ODER Admin-Rolle erforderlich",
+          "roleInfo": "Moderator | Admin"
+        },
+        "deleteGreeting": {
+          "title": "Gruß löschen",
+          "description": "Benutzer UND Admin erforderlich (beide!)",
+          "roleInfo": "Benutzer & Admin"
+        },
+        "strictHello": {
+          "title": "Striktes Hallo",
+          "description": "Benutzerrolle + 5 Anf./Min Limit",
+          "roleInfo": "Benutzer + Ratenlimit"
+        }
+      },
+      "actions": {
+        "sendRequest": "Anfrage senden",
+        "clearResults": "Ergebnisse löschen"
+      },
+      "response": {
+        "title": "Antwort erhalten",
+        "message": "Nachricht",
+        "author": "Autor",
+        "timestamp": "Zeitstempel"
+      },
+      "rateLimit": {
+        "title": "Ratenlimit-Info",
+        "exceeded": "Ratenlimit überschritten",
+        "tooManyRequests": "Zu viele Anfragen",
+        "max": "Max",
+        "current": "Aktuell",
+        "remaining": "Verbleibend",
+        "retry": "Wiederholen",
+        "limit": "Limit"
+      },
+      "error": {
+        "accessDenied": "Zugriff verweigert",
+        "error": "Fehler",
+        "code": "Code",
+        "roleRequired": "Sie benötigen die erforderliche Rolle, um auf diesen Endpunkt zuzugreifen. Versuchen Sie \"Öffentliches Hallo\", das keine Authentifizierung erfordert."
+      },
+      "delete": {
+        "success": "Gruß gelöscht",
+        "fail": "Löschen fehlgeschlagen",
+        "greetingId": "Gruß-ID"
+      },
+      "stats": {
+        "title": "Sitzungsstatistiken",
+        "totalRequests": "Gesamtanfragen",
+        "lastRequest": "Letzte Anfrage"
+      }
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "refresh": "Aktualisieren",
+    "loading": "Profil wird geladen...",
+    "failedToLoad": "Profil konnte nicht geladen werden",
+    "retry": "Erneut versuchen",
+    "header": {
+      "verified": "Verifiziert",
+      "blocked": "Gesperrt"
+    },
+    "info": {
+      "userId": "Benutzer-ID",
+      "memberSince": "Mitglied seit"
+    },
+    "edit": {
+      "title": "Profil bearbeiten",
+      "fullName": "Vollständiger Name",
+      "userName": "Benutzername",
+      "birthDate": "Geburtsdatum",
+      "selectDate": "Datum auswählen",
+      "gender": "Geschlecht",
+      "loadingOptions": "Optionen werden geladen...",
+      "selectGender": "Geschlecht auswählen",
+      "save": "Mit Verifizierung speichern",
+      "minChars": "Mind. 3 Zeichen"
+    },
+    "gender": {
+      "male": "Männlich",
+      "female": "Weiblich",
+      "other": "Andere",
+      "preferNotToSay": "Keine Angabe",
+      "notApplicable": "Nicht zutreffend",
+      "unknown": "Unbekannt"
+    },
+    "actions": {
+      "changePassword": "Passwort ändern",
+      "twoFactor": "Zwei-Faktor-Authentifizierung",
+      "activeSessions": "Aktive Sitzungen",
+      "verificationSettings": "Verifizierungseinstellungen"
+    },
+    "verification": {
+      "title": "Identität bestätigen",
+      "subtitle": "Geben Sie den 6-stelligen Code ein, der an Ihre E-Mail gesendet wurde",
+      "requesting": "Verifizierungscode wird angefordert...",
+      "expiresIn": "Läuft ab in",
+      "resendCode": "Code erneut senden",
+      "resendIn": "Erneut senden in",
+      "verifyUpdate": "Verifizieren & Aktualisieren",
+      "cancel": "Abbrechen",
+      "invalidCode": "Ungültiger Verifizierungscode. Bitte versuchen Sie es erneut.",
+      "codeExpired": "Code abgelaufen. Bitte fordern Sie einen neuen an.",
+      "verificationFailed": "Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "enterCode": "Bitte geben Sie den 6-stelligen Code ein",
+      "profileUpdated": "Profil erfolgreich aktualisiert"
+    },
+    "comingSoon": "$feature kommt bald",
+    "copiedToClipboard": "In Zwischenablage kopiert"
+  },
+  "health": {
+    "title": "Gesundheit",
+    "status": {
+      "healthy": "Gesund",
+      "unhealthy": "Ungesund",
+      "checking": "Wird überprüft..."
+    }
   },
   "common": {
     "save": "Speichern",
@@ -21,15 +229,22 @@
     "back": "Zurück",
     "next": "Weiter",
     "done": "Fertig",
-    "loading": "Laden...",
+    "loading": "Wird geladen...",
     "error": "Ein Fehler ist aufgetreten",
     "retry": "Erneut versuchen",
-    "ok": "OK"
+    "ok": "OK",
+    "yes": "Ja",
+    "no": "Nein",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "search": "Suchen"
   },
   "errors": {
     "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
     "server": "Serverfehler. Bitte versuchen Sie es später erneut.",
     "validation": "Bitte überprüfen Sie Ihre Eingabe.",
-    "unauthorized": "Sie sind nicht berechtigt, diese Aktion durchzuführen."
+    "unauthorized": "Sie sind nicht berechtigt, diese Aktion durchzuführen.",
+    "notFound": "Ressource nicht gefunden.",
+    "unknown": "Ein unbekannter Fehler ist aufgetreten."
   }
 }

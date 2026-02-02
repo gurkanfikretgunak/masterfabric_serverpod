@@ -1,17 +1,225 @@
 {
+  "app": {
+    "name": "MasterFabric",
+    "version": "1.0.0"
+  },
   "welcome": {
-    "title": "Hoş geldiniz $name",
-    "subtitle": "MasterFabric ile başlayın",
+    "title": "Hoş Geldiniz",
+    "subtitle": "Devam etmek için giriş yapın",
     "description": "Yolculuğunuz burada başlıyor"
   },
-  "login": {
-    "title": "Giriş Yap",
+  "auth": {
+    "signIn": "Giriş Yap",
+    "signOut": "Çıkış Yap",
+    "signUp": "Kayıt Ol",
     "email": "E-posta",
     "password": "Şifre",
-    "submit": "Giriş Yap",
+    "forgotPassword": "Şifrenizi mi unuttunuz?",
     "success": "Başarıyla giriş yapıldı",
-    "fail": "Giriş başarısız",
-    "forgotPassword": "Şifremi unuttum?"
+    "fail": "Giriş başarısız"
+  },
+  "dashboard": {
+    "title": "Kontrol Paneli",
+    "subtitle": "Serverpod backend servislerinizi izleyin ve test edin"
+  },
+  "notifications": {
+    "title": "Bildirim Merkezi",
+    "live": "Canlı",
+    "offline": "Çevrimdışı",
+    "realTimeActive": "Gerçek zamanlı bildirimler aktif",
+    "tapToConnect": "Bağlanmak ve bildirim almak için dokunun"
+  },
+  "devTools": {
+    "title": "Geliştirici Araçları",
+    "rbacTest": {
+      "title": "RBAC Testi (V3)",
+      "description": "Rol tabanlı erişim kontrolü ile GreetingV3Endpoint'i test edin (admin, user, moderator)"
+    },
+    "middlewareTest": {
+      "title": "Middleware Testi (V2)",
+      "description": "Otomatik loglama, hız sınırlama ve metriklerle GreetingV2Endpoint'i test edin"
+    },
+    "serviceTest": {
+      "title": "Servis Testi",
+      "description": "API endpointlerini, kimlik doğrulama akışlarını ve hız sınırlama davranışını test edin"
+    },
+    "profile": {
+      "title": "Kullanıcı Profili",
+      "description": "Hesap bilgilerinizi ve ayarlarınızı görüntüleyin ve düzenleyin"
+    }
+  },
+  "about": {
+    "title": "Hakkında",
+    "appName": "MasterFabric Serverpod",
+    "auth": "Kimlik Doğrulama",
+    "authDesc": "E-posta, Google, Apple ile giriş",
+    "rateLimit": "Hız Limiti",
+    "rateLimitDesc": "Dakikada 20 istek",
+    "caching": "Önbellekleme",
+    "cachingDesc": "Redis + Yerel önbellek",
+    "i18n": "Çoklu Dil",
+    "i18nDesc": "EN, TR, DE, ES"
+  },
+  "greeting": {
+    "v3": {
+      "title": "Greeting V3 (RBAC)",
+      "header": {
+        "title": "RBAC Sistem Testi",
+        "subtitle": "Rol Tabanlı Erişim ile GreetingV3Endpoint"
+      },
+      "features": {
+        "public": "Herkese Açık",
+        "user": "Kullanıcı",
+        "admin": "Yönetici",
+        "moderator": "Moderatör"
+      },
+      "input": {
+        "enterName": "İsim Girin",
+        "namePlaceholder": "İsminizi girin...",
+        "enterGreetingId": "Selamlama ID Girin",
+        "greetingIdPlaceholder": "Silmek için selamlama ID girin..."
+      },
+      "methods": {
+        "selectMethod": "Endpoint Metodu Seçin",
+        "publicHello": {
+          "title": "Herkese Açık Merhaba",
+          "description": "Kimlik doğrulama gerektirmez",
+          "roleInfo": "Herkese Açık"
+        },
+        "hello": {
+          "title": "Merhaba (Kullanıcı)",
+          "description": "Kullanıcı rolü gerektirir",
+          "roleInfo": "kullanıcı"
+        },
+        "goodbye": {
+          "title": "Hoşça Kal (Kullanıcı)",
+          "description": "Kullanıcı rolü gerektirir",
+          "roleInfo": "kullanıcı"
+        },
+        "adminHello": {
+          "title": "Yönetici Merhaba",
+          "description": "Kullanıcı VEYA yönetici rolü gerektirir",
+          "roleInfo": "kullanıcı | yönetici"
+        },
+        "moderatorHello": {
+          "title": "Moderatör Merhaba",
+          "description": "Moderatör VEYA yönetici rolü gerektirir",
+          "roleInfo": "moderatör | yönetici"
+        },
+        "deleteGreeting": {
+          "title": "Selamlama Sil",
+          "description": "Kullanıcı VE yönetici gerektirir (ikisi de!)",
+          "roleInfo": "kullanıcı & yönetici"
+        },
+        "strictHello": {
+          "title": "Sıkı Merhaba",
+          "description": "Kullanıcı rolü + 5 istek/dk limiti",
+          "roleInfo": "kullanıcı + hız limiti"
+        }
+      },
+      "actions": {
+        "sendRequest": "İstek Gönder",
+        "clearResults": "Sonuçları Temizle"
+      },
+      "response": {
+        "title": "Yanıt Alındı",
+        "message": "Mesaj",
+        "author": "Yazar",
+        "timestamp": "Zaman Damgası"
+      },
+      "rateLimit": {
+        "title": "Hız Limiti Bilgisi",
+        "exceeded": "Hız Limiti Aşıldı",
+        "tooManyRequests": "Çok fazla istek",
+        "max": "Maks",
+        "current": "Mevcut",
+        "remaining": "Kalan",
+        "retry": "Tekrar",
+        "limit": "Limit"
+      },
+      "error": {
+        "accessDenied": "Erişim Reddedildi",
+        "error": "Hata",
+        "code": "Kod",
+        "roleRequired": "Bu endpoint'e erişmek için gerekli role sahip olmanız gerekir. Kimlik doğrulama gerektirmeyen \"Herkese Açık Merhaba\"yı deneyin."
+      },
+      "delete": {
+        "success": "Selamlama Silindi",
+        "fail": "Silme Başarısız",
+        "greetingId": "Selamlama ID"
+      },
+      "stats": {
+        "title": "Oturum İstatistikleri",
+        "totalRequests": "Toplam İstek",
+        "lastRequest": "Son İstek"
+      }
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "refresh": "Yenile",
+    "loading": "Profil yükleniyor...",
+    "failedToLoad": "Profil yüklenemedi",
+    "retry": "Tekrar Dene",
+    "header": {
+      "verified": "Doğrulanmış",
+      "blocked": "Engelli"
+    },
+    "info": {
+      "userId": "Kullanıcı ID",
+      "memberSince": "Üyelik Başlangıcı"
+    },
+    "edit": {
+      "title": "Profili Düzenle",
+      "fullName": "Ad Soyad",
+      "userName": "Kullanıcı Adı",
+      "birthDate": "Doğum Tarihi",
+      "selectDate": "Tarih seçin",
+      "gender": "Cinsiyet",
+      "loadingOptions": "Seçenekler yükleniyor...",
+      "selectGender": "Cinsiyet seçin",
+      "save": "Doğrulama ile Kaydet",
+      "minChars": "En az 3 karakter"
+    },
+    "gender": {
+      "male": "Erkek",
+      "female": "Kadın",
+      "other": "Diğer",
+      "preferNotToSay": "Belirtmek istemiyorum",
+      "notApplicable": "Uygulanamaz",
+      "unknown": "Bilinmiyor"
+    },
+    "actions": {
+      "changePassword": "Şifre Değiştir",
+      "twoFactor": "İki Faktörlü Kimlik Doğrulama",
+      "activeSessions": "Aktif Oturumlar",
+      "verificationSettings": "Doğrulama Ayarları"
+    },
+    "verification": {
+      "title": "Kimliğinizi Doğrulayın",
+      "subtitle": "E-postanıza gönderilen 6 haneli kodu girin",
+      "requesting": "Doğrulama kodu isteniyor...",
+      "expiresIn": "Geçerlilik süresi",
+      "resendCode": "Kodu Tekrar Gönder",
+      "resendIn": "Tekrar gönderme süresi",
+      "verifyUpdate": "Doğrula ve Güncelle",
+      "cancel": "İptal",
+      "invalidCode": "Geçersiz doğrulama kodu. Lütfen tekrar deneyin.",
+      "codeExpired": "Kod süresi doldu. Lütfen yeni bir kod isteyin.",
+      "verificationFailed": "Doğrulama başarısız. Lütfen tekrar deneyin.",
+      "enterCode": "Lütfen 6 haneli kodu girin",
+      "profileUpdated": "Profil başarıyla güncellendi"
+    },
+    "comingSoon": "$feature yakında",
+    "copiedToClipboard": "Panoya kopyalandı"
+  },
+  "health": {
+    "title": "Sağlık",
+    "status": {
+      "healthy": "Sağlıklı",
+      "unhealthy": "Sağlıksız",
+      "checking": "Kontrol ediliyor..."
+    }
   },
   "common": {
     "save": "Kaydet",
@@ -24,12 +232,19 @@
     "loading": "Yükleniyor...",
     "error": "Bir hata oluştu",
     "retry": "Tekrar Dene",
-    "ok": "Tamam"
+    "ok": "Tamam",
+    "yes": "Evet",
+    "no": "Hayır",
+    "close": "Kapat",
+    "confirm": "Onayla",
+    "search": "Ara"
   },
   "errors": {
     "network": "Ağ hatası. Lütfen bağlantınızı kontrol edin.",
     "server": "Sunucu hatası. Lütfen daha sonra tekrar deneyin.",
-    "validation": "Lütfen girdiğiniz bilgileri kontrol edin.",
-    "unauthorized": "Bu işlemi gerçekleştirmek için yetkiniz yok."
+    "validation": "Lütfen girişinizi kontrol edin.",
+    "unauthorized": "Bu işlemi gerçekleştirme yetkiniz yok.",
+    "notFound": "Kaynak bulunamadı.",
+    "unknown": "Bilinmeyen bir hata oluştu."
   }
 }

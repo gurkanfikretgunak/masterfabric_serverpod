@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:masterfabric_serverpod_client/masterfabric_serverpod_client.dart';
 import '../main.dart';
+import '../services/translation_service.dart';
+import '../utils/responsive.dart';
 import 'verification_settings_screen.dart';
 
 /// User profile screen for viewing and editing user information
@@ -87,24 +89,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: const Icon(LucideIcons.arrowLeft),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Profile'),
+        title: Text(tr('profile.title')),
         actions: [
           if (!_isLoading && _user != null)
             IconButton(
               icon: const Icon(LucideIcons.refreshCw),
-              tooltip: 'Refresh',
+              tooltip: tr('profile.refresh'),
               onPressed: _loadProfile,
             ),
         ],
       ),
-      body: _buildBody(),
+      body: ResponsiveLayout(
+        maxWidth: 600,
+        child: _buildBody(),
+      ),
     );
   }
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(tr('profile.loading')),
+          ],
+        ),
       );
     }
 
@@ -118,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Icon(LucideIcons.circleAlert, size: 48, color: Colors.red[300]),
               const SizedBox(height: 16),
               Text(
-                'Failed to load profile',
+                tr('profile.failedToLoad'),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -135,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ElevatedButton.icon(
                 onPressed: _loadProfile,
                 icon: const Icon(LucideIcons.refreshCw),
-                label: const Text('Retry'),
+                label: Text(tr('profile.retry')),
               ),
             ],
           ),
@@ -144,7 +156,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Form(
         key: _formKey,
         child: Column(
@@ -193,13 +204,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   border: Border.all(color: Colors.white, width: 3),
                 ),
                 child: CircleAvatar(
-                  radius: 36,
+                  radius: context.isMobile ? 32 : 36,
                   backgroundColor: Colors.white.withAlpha(50),
                   backgroundImage: _user?.imageUrl != null
                       ? NetworkImage(_user!.imageUrl!)
                       : null,
                   child: _user?.imageUrl == null
-                      ? const Icon(LucideIcons.user, size: 32, color: Colors.white)
+                      ? Icon(LucideIcons.user, size: context.isMobile ? 28 : 32, color: Colors.white)
                       : null,
                 ),
               ),
@@ -230,10 +241,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _user?.fullName ?? _user?.userName ?? 'User',
-                  style: const TextStyle(
+                  _user?.fullName ?? _user?.userName ?? tr('profile.title'),
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18,
+                    fontSize: context.isMobile ? 16 : 18,
                     fontWeight: FontWeight.bold,
                   ),
                   maxLines: 1,
@@ -253,9 +264,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Row(
                   children: [
                     if (_user?.emailVerified == true)
-                      _buildHeaderBadge('Verified', LucideIcons.circleCheck),
+                      _buildHeaderBadge(tr('profile.header.verified'), LucideIcons.circleCheck),
                     if (_user?.blocked == true)
-                      _buildHeaderBadge('Blocked', LucideIcons.ban, isWarning: true),
+                      _buildHeaderBadge(tr('profile.header.blocked'), LucideIcons.ban, isWarning: true),
                   ],
                 ),
               ],
@@ -298,9 +309,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       child: Column(
         children: [
-          _buildCompactInfoRow(LucideIcons.hash, 'User ID', _user?.id ?? 'Unknown'),
+          _buildCompactInfoRow(LucideIcons.hash, tr('profile.info.userId'), _user?.id ?? 'Unknown'),
           const Divider(height: 16),
-          _buildCompactInfoRow(LucideIcons.calendar, 'Member Since', 
+          _buildCompactInfoRow(LucideIcons.calendar, tr('profile.info.memberSince'), 
             _user != null ? _formatDate(_user!.createdAt) : 'Unknown'),
         ],
       ),
@@ -355,9 +366,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Icon(LucideIcons.userPen, size: 18, color: Colors.blue.shade600),
               const SizedBox(width: 8),
-              const Text(
-                'Edit Profile',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              Text(
+                tr('profile.edit.title'),
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -366,7 +377,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Full Name
           _buildCompactTextField(
             controller: _fullNameController,
-            label: 'Full Name',
+            label: tr('profile.edit.fullName'),
             icon: LucideIcons.user,
           ),
           const SizedBox(height: 12),
@@ -374,11 +385,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Username
           _buildCompactTextField(
             controller: _userNameController,
-            label: 'Username',
+            label: tr('profile.edit.userName'),
             icon: LucideIcons.atSign,
             validator: (value) {
               if (value != null && value.isNotEmpty && value.length < 3) {
-                return 'Min 3 characters';
+                return tr('profile.edit.minChars');
               }
               return null;
             },
@@ -413,12 +424,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
-                  : const Row(
+                  : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(LucideIcons.shieldCheck, size: 16),
-                        SizedBox(width: 8),
-                        Text('Save with Verification', style: TextStyle(fontWeight: FontWeight.w600)),
+                        const Icon(LucideIcons.shieldCheck, size: 16),
+                        const SizedBox(width: 8),
+                        Text(tr('profile.edit.save'), style: const TextStyle(fontWeight: FontWeight.w600)),
                       ],
                     ),
             ),
@@ -466,7 +477,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       borderRadius: BorderRadius.circular(10),
       child: InputDecorator(
         decoration: InputDecoration(
-          labelText: 'Birth Date',
+          labelText: tr('profile.edit.birthDate'),
           labelStyle: TextStyle(fontSize: 13, color: Colors.grey.shade600),
           prefixIcon: const Icon(LucideIcons.cake, size: 18),
           isDense: true,
@@ -484,7 +495,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              _selectedBirthDate != null ? _formatDate(_selectedBirthDate!) : 'Select date',
+              _selectedBirthDate != null 
+                  ? _formatDate(_selectedBirthDate!) 
+                  : tr('profile.edit.selectDate'),
               style: TextStyle(
                 fontSize: 14,
                 color: _selectedBirthDate != null ? Colors.grey.shade800 : Colors.grey.shade500,
@@ -502,7 +515,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (_genderOptions.isEmpty) {
       return InputDecorator(
         decoration: InputDecoration(
-          labelText: 'Gender',
+          labelText: tr('profile.edit.gender'),
           labelStyle: TextStyle(fontSize: 13, color: Colors.grey.shade600),
           prefixIcon: const Icon(LucideIcons.user, size: 18),
           isDense: true,
@@ -528,7 +541,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(width: 12),
             Text(
-              'Loading options...',
+              tr('profile.edit.loadingOptions'),
               style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
             ),
           ],
@@ -540,7 +553,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       value: _selectedGender,
       style: const TextStyle(fontSize: 14, color: Colors.black87),
       decoration: InputDecoration(
-        labelText: 'Gender',
+        labelText: tr('profile.edit.gender'),
         labelStyle: TextStyle(fontSize: 13, color: Colors.grey.shade600),
         prefixIcon: Icon(
           _selectedGender != null ? _getGenderIcon(_selectedGender!) : LucideIcons.user,
@@ -580,7 +593,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onChanged: (Gender? newValue) {
         setState(() => _selectedGender = newValue);
       },
-      hint: Text('Select gender', style: TextStyle(color: Colors.grey.shade500)),
+      hint: Text(tr('profile.edit.selectGender'), style: TextStyle(color: Colors.grey.shade500)),
       isExpanded: true,
     );
   }
@@ -607,25 +620,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           _buildActionItem(
             icon: LucideIcons.key,
-            label: 'Change Password',
-            onTap: () => _showComingSoon('Change Password'),
+            label: tr('profile.actions.changePassword'),
+            onTap: () => _showComingSoon(tr('profile.actions.changePassword')),
           ),
           Divider(height: 1, color: Colors.grey.shade200),
           _buildActionItem(
             icon: LucideIcons.shield,
-            label: 'Two-Factor Authentication',
-            onTap: () => _showComingSoon('2FA'),
+            label: tr('profile.actions.twoFactor'),
+            onTap: () => _showComingSoon(tr('profile.actions.twoFactor')),
           ),
           Divider(height: 1, color: Colors.grey.shade200),
           _buildActionItem(
             icon: LucideIcons.smartphone,
-            label: 'Active Sessions',
-            onTap: () => _showComingSoon('Sessions'),
+            label: tr('profile.actions.activeSessions'),
+            onTap: () => _showComingSoon(tr('profile.actions.activeSessions')),
           ),
           Divider(height: 1, color: Colors.grey.shade200),
           _buildActionItem(
             icon: LucideIcons.shieldCheck,
-            label: 'Verification Settings',
+            label: tr('profile.actions.verificationSettings'),
             onTap: () => _navigateToVerificationSettings(),
             isLast: true,
           ),
@@ -673,9 +686,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _copyToClipboard(String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Copied to clipboard'),
-        duration: Duration(seconds: 1),
+      SnackBar(
+        content: Text(tr('profile.copiedToClipboard')),
+        duration: const Duration(seconds: 1),
       ),
     );
   }
@@ -689,7 +702,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _showComingSoon(String feature) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$feature coming soon'),
+        content: Text(tr('profile.comingSoon', args: {'feature': feature})),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -723,20 +736,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String _getGenderLabel(Gender gender) {
-    // Dynamic labels based on enum name - converts camelCase to readable text
     switch (gender) {
       case Gender.male:
-        return 'Male';
+        return tr('profile.gender.male');
       case Gender.female:
-        return 'Female';
+        return tr('profile.gender.female');
       case Gender.other:
-        return 'Other';
+        return tr('profile.gender.other');
       case Gender.preferNotToSay:
-        return 'Prefer not to say';
+        return tr('profile.gender.preferNotToSay');
       case Gender.notApplicable:
-        return 'Not applicable';
+        return tr('profile.gender.notApplicable');
       case Gender.unknown:
-        return 'Unknown';
+        return tr('profile.gender.unknown');
     }
   }
   
@@ -899,7 +911,7 @@ class _VerificationBottomSheetState extends State<_VerificationBottomSheet> {
   Future<void> _verifyAndUpdate() async {
     final code = _enteredCode;
     if (code.length != 6) {
-      setState(() => _error = 'Please enter the 6-digit code');
+      setState(() => _error = tr('profile.verification.enterCode'));
       return;
     }
 
@@ -923,8 +935,8 @@ class _VerificationBottomSheetState extends State<_VerificationBottomSheet> {
         Navigator.pop(context);
         widget.onVerified(updatedUser);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profile updated successfully'),
+          SnackBar(
+            content: Text(tr('profile.verification.profileUpdated')),
             backgroundColor: Colors.green,
           ),
         );
@@ -933,10 +945,10 @@ class _VerificationBottomSheetState extends State<_VerificationBottomSheet> {
       setState(() {
         _isVerifying = false;
         _error = e.toString().contains('Invalid') 
-            ? 'Invalid verification code. Please try again.'
+            ? tr('profile.verification.invalidCode')
             : e.toString().contains('expired')
-            ? 'Code expired. Please request a new one.'
-            : 'Verification failed. Please try again.';
+            ? tr('profile.verification.codeExpired')
+            : tr('profile.verification.verificationFailed');
       });
     }
   }
@@ -1002,9 +1014,9 @@ class _VerificationBottomSheetState extends State<_VerificationBottomSheet> {
             const SizedBox(height: 16),
             
             // Title
-            const Text(
-              'Verify Your Identity',
-              style: TextStyle(
+            Text(
+              tr('profile.verification.title'),
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -1014,8 +1026,8 @@ class _VerificationBottomSheetState extends State<_VerificationBottomSheet> {
             // Subtitle
             Text(
               _codeSent 
-                  ? 'Enter the 6-digit code sent to your email'
-                  : 'Requesting verification code...',
+                  ? tr('profile.verification.subtitle')
+                  : tr('profile.verification.requesting'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.grey[600],
@@ -1085,7 +1097,7 @@ class _VerificationBottomSheetState extends State<_VerificationBottomSheet> {
                   Icon(LucideIcons.clock, size: 14, color: Colors.grey[500]),
                   const SizedBox(width: 4),
                   Text(
-                    'Expires in ${_expiresInSeconds ~/ 60}:${(_expiresInSeconds % 60).toString().padLeft(2, '0')}',
+                    '${tr('profile.verification.expiresIn')} ${_expiresInSeconds ~/ 60}:${(_expiresInSeconds % 60).toString().padLeft(2, '0')}',
                     style: TextStyle(
                       color: Colors.grey[500],
                       fontSize: 12,
@@ -1096,8 +1108,8 @@ class _VerificationBottomSheetState extends State<_VerificationBottomSheet> {
                     onPressed: (_isRequestingCode || _resendCooldown > 0) ? null : _requestCode,
                     child: Text(
                       _resendCooldown > 0 
-                          ? 'Resend in ${_resendCooldown}s'
-                          : 'Resend Code',
+                          ? '${tr('profile.verification.resendIn')} ${_resendCooldown}s'
+                          : tr('profile.verification.resendCode'),
                     ),
                   ),
                 ],
@@ -1150,7 +1162,7 @@ class _VerificationBottomSheetState extends State<_VerificationBottomSheet> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text('Verify & Update'),
+                    : Text(tr('profile.verification.verifyUpdate')),
               ),
             ),
             
@@ -1159,7 +1171,7 @@ class _VerificationBottomSheetState extends State<_VerificationBottomSheet> {
             // Cancel button
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(tr('profile.verification.cancel')),
             ),
             
             const SizedBox(height: 8),
