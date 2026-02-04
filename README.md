@@ -37,7 +37,9 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 | **Multi-Channel Verification** | Email, Telegram Bot API, WhatsApp Business API for OTP delivery |
 | **Middleware System** | Automatic logging, rate limiting, auth, validation, metrics per endpoint |
 | **RBAC** | Role-Based Access Control with automatic role assignment on signup |
-| **Integrations** | Firebase, Sentry, Mixpanel, Telegram, WhatsApp (configurable) |
+| **Currency Converter** | Real-time currency conversion with ExchangeRate-API.com integration and caching |
+| **AI Integration** | OpenAI API integration for chat completions, embeddings, and image generation |
+| **Integrations** | Firebase, Sentry, Mixpanel, Telegram, WhatsApp, OpenAI (configurable) |
 
 ## Screenshots
 
@@ -550,9 +552,10 @@ module_name/
   - `RateLimitService`: Distributed rate limiting with Redis
   - `TranslationService`: i18n with auto-seeding from JSON files
   - `SessionManager`: Manages user sessions with configurable TTL
-  - `IntegrationManager`: Manages integrations (Firebase, Sentry, Mixpanel, Telegram, WhatsApp)
+  - `IntegrationManager`: Manages integrations (Firebase, Sentry, Mixpanel, Telegram, WhatsApp, OpenAI)
   - `SchedulerManager`: Handles cron-based scheduled tasks
   - `VerificationChannelRouter`: Routes verification codes to preferred channel
+  - `CurrencyService`: Fetches and caches exchange rates from ExchangeRate-API.com
 
 - **Features**:
   - **Rate Limiting**: Per-endpoint configurable limits with Redis
@@ -561,13 +564,16 @@ module_name/
   - **App Configuration**: Centralized settings, feature flags
   - **Authentication**: Email/password with JWT tokens, 2FA
   - **Multi-Channel Verification**: Email, Telegram Bot API, WhatsApp Business API
-  - **Integrations**: Firebase, Sentry, Mixpanel, Telegram, WhatsApp (configurable)
+  - **Currency Conversion**: Real-time exchange rates with ExchangeRate-API.com, automatic caching
+  - **AI Integration**: OpenAI API for chat completions, embeddings, image generation
+  - **Integrations**: Firebase, Sentry, Mixpanel, Telegram, WhatsApp, OpenAI (configurable)
 
 - **Endpoints**:
   - `GreetingEndpoint`: Example with rate limiting & caching
   - `AppConfigEndpoint`: App configuration management
   - `TranslationEndpoint`: Translation retrieval & management
   - `StatusEndpoint`: Public server status endpoint with uptime, environment, and maintenance mode
+  - `CurrencyEndpoint`: Currency conversion, exchange rates, and formatting with real-time API integration
 
 ### Client (`masterfabric_serverpod_client`)
 
@@ -593,6 +599,7 @@ lib/
 │   ├── sign_in_screen.dart           # Email authentication screen
 │   ├── profile_screen.dart           # User profile screen
 │   ├── verification_settings_screen.dart  # Multi-channel verification preferences
+│   ├── currency_converter_screen.dart     # Currency converter with Stripe-like UI
 │   └── notifications/                # Real-time notifications
 │       ├── notifications.dart            # Barrel export
 │       ├── notification_center_screen.dart   # Notification center UI
@@ -620,6 +627,7 @@ lib/
 - **RBAC Testing** screen (V3) with role-based method testing
 - **Middleware Testing** screen (V2) with rate limit and auth testing
 - **Verification Settings** for Email, Telegram, WhatsApp preferences
+- **Currency Converter** with Stripe-like design, real-time conversion, and currency picker
 - **Responsive Layouts** adapting to mobile, tablet, and desktop
 - **Internationalization** with runtime locale switching (EN, TR, DE, ES)
 - Notification center with filtering and real-time updates
@@ -879,6 +887,7 @@ graph LR
     IntMgr --> Mixpanel[Mixpanel<br/>Analytics]
     IntMgr --> Telegram[Telegram<br/>Bot API]
     IntMgr --> WhatsApp[WhatsApp<br/>Business API]
+    IntMgr --> OpenAI[OpenAI<br/>AI APIs]
     
     Config[Config Files] -.->|Enable/Disable| IntMgr
 ```
@@ -890,6 +899,45 @@ graph LR
 | **Mixpanel** | Analytics and event tracking | Mixpanel API |
 | **Telegram** | Verification codes via bot | Telegram Bot API |
 | **WhatsApp** | Verification codes via templates | WhatsApp Business Cloud API |
+| **OpenAI** | Chat completions, embeddings, image generation | OpenAI API v1 |
+
+### Currency Service
+
+Real-time currency conversion service with ExchangeRate-API.com integration:
+
+**Features:**
+- Currency conversion between any supported currencies
+- Real-time exchange rate retrieval
+- Exchange rate caching (1 hour TTL)
+- Currency formatting with proper symbols
+- Dynamic currency list from API
+
+**Endpoints:**
+- `convertCurrency`: Convert amount from one currency to another
+- `getExchangeRate`: Get current exchange rate between two currencies
+- `getSupportedCurrencies`: List all available currencies
+- `formatCurrency`: Format currency amount with symbol
+
+**Usage Example:**
+```dart
+// Convert currency
+final result = await client.currency.convertCurrency(
+  'USD',  // fromCurrency
+  'EUR',  // toCurrency
+  100.0,  // amount
+);
+print('${result.amount} ${result.fromCurrency} = ${result.convertedAmount} ${result.toCurrency}');
+
+// Get exchange rate
+final rate = await client.currency.getExchangeRate('USD', 'EUR');
+print('1 ${rate.baseCurrency} = ${rate.rate} ${rate.targetCurrency}');
+```
+
+**Configuration:**
+```yaml
+currency:
+  apiKey: "your_exchangerate_api_key"  # ExchangeRate-API.com API key
+```
 
 Integrations can be enabled/disabled via configuration files (`config/development.yaml`, `config/production.yaml`).
 
@@ -1249,8 +1297,142 @@ await client.verificationPreferences.generateTelegramLinkCode();
 // User sends code to bot via Telegram
 
 // Verify WhatsApp phone number
-await client.verificationPreferences.sendPhoneVerificationCode('+14155551234');
-await client.verificationPreferences.verifyPhoneNumber('+14155551234', code);
+
+---
+
+### Currency Service
+
+Real-time currency conversion with ExchangeRate-API.com integration and automatic caching.
+
+**Features:**
+- ✅ Real-time exchange rates from ExchangeRate-API.com
+- ✅ Automatic caching (1 hour TTL) to reduce API calls
+- ✅ Currency conversion between any supported currencies
+- ✅ Exchange rate retrieval
+- ✅ Currency formatting with proper symbols ($, €, £, etc.)
+- ✅ Dynamic currency list from API
+- ✅ Fallback handling when API is unavailable
+
+**Server Configuration (config/development.yaml):**
+
+```yaml
+currency:
+  apiKey: "your_exchangerate_api_key"  # ExchangeRate-API.com API key
+```
+
+**API Endpoints:**
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `currency.convertCurrency` | POST | No | Convert amount from one currency to another |
+| `currency.getExchangeRate` | POST | No | Get current exchange rate between two currencies |
+| `currency.getSupportedCurrencies` | POST | No | List all available currencies from API |
+| `currency.formatCurrency` | POST | No | Format currency amount with symbol |
+
+**Server Usage:**
+
+```dart
+// Convert currency
+final result = await client.currency.convertCurrency(
+  'USD',  // fromCurrency
+  'EUR',  // toCurrency
+  100.0,  // amount
+);
+// Returns: CurrencyConversionResponse with convertedAmount and exchangeRate
+
+// Get exchange rate
+final rate = await client.currency.getExchangeRate('USD', 'EUR');
+// Returns: ExchangeRateResponse with rate and timestamp
+
+// Get supported currencies
+final currencies = await client.currency.getSupportedCurrencies();
+// Returns: SupportedCurrenciesResponse with list of currency codes
+
+// Format currency
+final formatted = await client.currency.formatCurrency('USD', 1234.56);
+// Returns: CurrencyFormatResponse with formatted string and symbol
+```
+
+**Flutter UI:**
+
+The currency converter screen provides a Stripe-like interface:
+
+- **Hero Section**: Two currency inputs side-by-side with swap button
+- **Real-time Conversion**: Updates as you type
+- **Currency Picker**: Dropdowns with currency symbols
+- **Exchange Rate Display**: Shows current rate and last update time
+- **Clean Design**: White hierarchy with subtle shadows
+
+Accessible from Home Screen → Developer Tools → Currency Converter.
+
+**Service Architecture:**
+
+```
+currency/
+├── currency.dart                    # Barrel export
+├── endpoints/
+│   └── currency_endpoint.dart       # API endpoints
+├── models/
+│   ├── currency_conversion_response.spy.yaml
+│   ├── exchange_rate_response.spy.yaml
+│   ├── exchange_rate_cache.spy.yaml
+│   ├── supported_currencies_response.spy.yaml
+│   └── currency_format_response.spy.yaml
+└── services/
+    └── currency_service.dart        # ExchangeRate-API.com client with caching
+```
+
+**Caching Strategy:**
+
+- Exchange rates cached for 1 hour (API updates daily)
+- Cached in both Redis (global) and local priority cache
+- Automatic fallback to cached rates if API fails
+- Cache-first approach to minimize API calls
+
+---
+
+### OpenAI Integration
+
+AI-powered features integration with OpenAI API:
+
+**Features:**
+- ✅ Chat completions (GPT models)
+- ✅ Text embeddings
+- ✅ Image generation (DALL-E)
+- ✅ Model management
+- ✅ Fine-tuning job management
+
+**Server Configuration (config/development.yaml):**
+
+```yaml
+integrations:
+  openai:
+    enabled: true
+    apiKey: "${OPENAI_API_KEY}"  # Store in passwords.yaml for production
+    organizationId: ""  # Optional
+    baseUrl: ""  # Optional, defaults to https://api.openai.com/v1
+    defaultModel: "gpt-3.5-turbo"
+```
+
+**Usage:**
+
+```dart
+final openai = integrationManager.openai;
+if (openai != null && openai.enabled) {
+  // Chat completion
+  final response = await openai.completeText(
+    prompt: 'Hello, how are you?',
+    systemMessage: 'You are a helpful assistant.',
+  );
+  
+  // Get embeddings
+  final embedding = await openai.getEmbedding(text: 'Hello world');
+  
+  // Generate image
+  final imageUrl = await openai.generateImageUrl(
+    prompt: 'A beautiful sunset over mountains',
+  );
+}
 ```
 
 **Verification Settings Screen:**
