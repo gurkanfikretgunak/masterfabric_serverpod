@@ -28,6 +28,8 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 | **Real-Time Notifications** | WebSocket streaming for broadcasts, user-based, and project-based notifications |
 | **Modern Error Handling** | SerializableExceptions with detailed error responses |
 | **Health Monitoring** | Real-time service health checks with auto-refresh |
+| **Server Status** | Public status endpoint with server info, uptime, and maintenance mode detection |
+| **Splash Screen** | Beautiful startup screen displaying server status, connection status, and maintenance mode handling |
 | **Settings & i18n** | Settings screen with language selection, responsive layouts |
 | **Service Testing** | Built-in test UI for API, Auth, and Rate Limit testing |
 | **Beautiful Flutter UI** | Rate limit banners, health indicators, notification center |
@@ -67,6 +69,10 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
     <td><img src=".github/images/image-18.png" width="180"/></td>
     <td><img src=".github/images/image-19.png" width="180"/></td>
     <td><img src=".github/images/image-20.png" width="180"/></td>
+  </tr>
+  <tr>
+    <td><img src=".github/images/image-21.png" width="180"/></td>
+    <td><img src=".github/images/image-22.png" width="180"/></td>
   </tr>
 </table>
 
@@ -517,6 +523,9 @@ lib/src/
 │   ├── health/              # Health check endpoints
 │   │   ├── endpoints/       # Health endpoint
 │   │   └── models/          # Health response models
+│   ├── status/              # Server status endpoint
+│   │   ├── endpoints/       # Status endpoint
+│   │   └── models/          # ServerStatus model
 │   └── translations/        # i18n translation service
 │       ├── endpoints/       # Translation endpoint
 │       ├── models/          # Translation models
@@ -558,6 +567,7 @@ module_name/
   - `GreetingEndpoint`: Example with rate limiting & caching
   - `AppConfigEndpoint`: App configuration management
   - `TranslationEndpoint`: Translation retrieval & management
+  - `StatusEndpoint`: Public server status endpoint with uptime, environment, and maintenance mode
 
 ### Client (`masterfabric_serverpod_client`)
 
@@ -573,6 +583,7 @@ Generated client code that provides:
 lib/
 ├── main.dart                     # App entry point with bootstrap
 ├── screens/
+│   ├── splash_screen.dart            # Startup splash with server status
 │   ├── home_screen.dart              # Dashboard with health status
 │   ├── settings_screen.dart          # Settings with language, about, preferences
 │   ├── service_test_screen.dart      # Service testing (API, Auth, Rate Limit)
@@ -600,6 +611,7 @@ lib/
 ```
 
 **Features**:
+- **Splash Screen** with server status display, connection status, and maintenance mode handling
 - **Email Sign-in** with verification
 - **Settings Screen** with language selection, notifications, privacy, about info
 - **Health Monitoring** with auto-check (configurable interval)
@@ -1449,6 +1461,86 @@ ResponsiveBuilder(
   desktop: DesktopLayout(),
 )
 ```
+
+---
+
+### Server Status Endpoint
+
+Public endpoint that provides real-time server information without authentication.
+
+**ServerStatus Model:**
+- `appName`: Application name from config
+- `appVersion`: Application version
+- `environment`: Current environment (development/staging/production)
+- `serverTime`: Current server timestamp
+- `serverStartTime`: When the server was started
+- `uptime`: Human-readable uptime string (e.g., "2d 5h 30m")
+- `clientIp`: Requesting client's IP address (if available)
+- `locale`: Detected locale from request
+- `debugMode`: Whether debug mode is enabled
+- `maintenanceMode`: Whether maintenance mode is active
+
+**Server-side usage:**
+```dart
+// Public endpoint (no auth required)
+final status = await client.status.getStatus();
+print('Server: ${status.appName} v${status.appVersion}');
+print('Uptime: ${status.uptime}');
+print('Environment: ${status.environment}');
+```
+
+**Features:**
+- Public endpoint (no authentication required)
+- Cached server info for performance (5-minute TTL)
+- Multi-level caching (Redis → LocalPrio → Local)
+- Rate limited to 60 requests per minute
+- RBAC pattern with public access using `skipAuth`
+
+---
+
+### Splash Screen
+
+Beautiful startup screen that displays server status on first boot.
+
+**Features:**
+- Fetches server status from public status endpoint
+- Displays server information (name, version, environment, uptime, server time)
+- Connection status indicator (online/offline)
+- Maintenance mode detection with bottom sheet modal
+- Refresh functionality to check server status
+- Smooth fade-in animation
+- Error handling with retry option
+- Internationalized with translations (EN, TR, DE, ES)
+- Responsive layout adapting to screen sizes
+
+**Splash Screen States:**
+
+1. **Loading State**: Shows loading indicator while fetching server status
+2. **Success State**: Displays server info card with:
+   - App name and version
+   - Environment (development/staging/production)
+   - Server uptime
+   - Server time and start time
+   - Debug mode and maintenance mode indicators
+3. **Error State**: Shows connection error with retry button
+4. **Maintenance Mode**: Shows non-dismissible bottom sheet when maintenance mode is active
+
+**Flutter usage:**
+```dart
+// Wrap your home screen with SplashScreen
+MaterialApp(
+  home: SplashScreen(
+    child: HomeScreen(),
+  ),
+)
+```
+
+**Maintenance Mode Handling:**
+- Automatically detects maintenance mode from server status
+- Shows bottom sheet modal that cannot be dismissed
+- Prevents navigation to home screen during maintenance
+- Provides "Check Again" button to refresh status
+- Continue button is disabled during maintenance mode
 
 ---
 
