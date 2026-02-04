@@ -89,18 +89,19 @@ import 'services/greetings/models/greeting.dart' as _i64;
 import 'services/greetings/models/greeting_response.dart' as _i65;
 import 'services/health/models/health_check_response.dart' as _i66;
 import 'services/health/models/service_health_info.dart' as _i67;
-import 'services/translations/models/translation_entry.dart' as _i68;
-import 'services/translations/models/translation_response.dart' as _i69;
+import 'services/status/models/server_status.dart' as _i68;
+import 'services/translations/models/translation_entry.dart' as _i69;
+import 'services/translations/models/translation_response.dart' as _i70;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/role.dart'
-    as _i70;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/permission.dart'
     as _i71;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/session/session_info_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/permission.dart'
     as _i72;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/session/session_info_response.dart'
     as _i73;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
     as _i74;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
+    as _i75;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -164,6 +165,7 @@ export 'services/greetings/models/greeting.dart';
 export 'services/greetings/models/greeting_response.dart';
 export 'services/health/models/health_check_response.dart';
 export 'services/health/models/service_health_info.dart';
+export 'services/status/models/server_status.dart';
 export 'services/translations/models/translation_entry.dart';
 export 'services/translations/models/translation_response.dart';
 
@@ -1147,11 +1149,14 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i67.ServiceHealthInfo) {
       return _i67.ServiceHealthInfo.fromJson(data) as T;
     }
-    if (t == _i68.TranslationEntry) {
-      return _i68.TranslationEntry.fromJson(data) as T;
+    if (t == _i68.ServerStatus) {
+      return _i68.ServerStatus.fromJson(data) as T;
     }
-    if (t == _i69.TranslationResponse) {
-      return _i69.TranslationResponse.fromJson(data) as T;
+    if (t == _i69.TranslationEntry) {
+      return _i69.TranslationEntry.fromJson(data) as T;
+    }
+    if (t == _i70.TranslationResponse) {
+      return _i70.TranslationResponse.fromJson(data) as T;
     }
     if (t == _i1.getType<_i5.AppConfig?>()) {
       return (data != null ? _i5.AppConfig.fromJson(data) : null) as T;
@@ -1388,11 +1393,14 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i67.ServiceHealthInfo?>()) {
       return (data != null ? _i67.ServiceHealthInfo.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i68.TranslationEntry?>()) {
-      return (data != null ? _i68.TranslationEntry.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i68.ServerStatus?>()) {
+      return (data != null ? _i68.ServerStatus.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i69.TranslationResponse?>()) {
-      return (data != null ? _i69.TranslationResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i69.TranslationEntry?>()) {
+      return (data != null ? _i69.TranslationEntry.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i70.TranslationResponse?>()) {
+      return (data != null ? _i70.TranslationResponse.fromJson(data) : null)
           as T;
     }
     if (t == List<String>) {
@@ -1437,32 +1445,32 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == List<_i70.Role>) {
-      return (data as List).map((e) => deserialize<_i70.Role>(e)).toList() as T;
+    if (t == List<_i71.Role>) {
+      return (data as List).map((e) => deserialize<_i71.Role>(e)).toList() as T;
     }
-    if (t == List<_i71.Permission>) {
-      return (data as List).map((e) => deserialize<_i71.Permission>(e)).toList()
+    if (t == List<_i72.Permission>) {
+      return (data as List).map((e) => deserialize<_i72.Permission>(e)).toList()
           as T;
     }
     if (t == Set<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
     }
-    if (t == List<_i72.SessionInfoResponse>) {
+    if (t == List<_i73.SessionInfoResponse>) {
       return (data as List)
-              .map((e) => deserialize<_i72.SessionInfoResponse>(e))
+              .map((e) => deserialize<_i73.SessionInfoResponse>(e))
               .toList()
           as T;
     }
-    if (t == List<_i73.Gender>) {
-      return (data as List).map((e) => deserialize<_i73.Gender>(e)).toList()
+    if (t == List<_i74.Gender>) {
+      return (data as List).map((e) => deserialize<_i74.Gender>(e)).toList()
           as T;
     }
     if (t == List<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toList() as T;
     }
-    if (t == List<_i74.VerificationChannel>) {
+    if (t == List<_i75.VerificationChannel>) {
       return (data as List)
-              .map((e) => deserialize<_i74.VerificationChannel>(e))
+              .map((e) => deserialize<_i75.VerificationChannel>(e))
               .toList()
           as T;
     }
@@ -1549,8 +1557,9 @@ class Protocol extends _i1.SerializationManagerServer {
       _i65.GreetingResponse => 'GreetingResponse',
       _i66.HealthCheckResponse => 'HealthCheckResponse',
       _i67.ServiceHealthInfo => 'ServiceHealthInfo',
-      _i68.TranslationEntry => 'TranslationEntry',
-      _i69.TranslationResponse => 'TranslationResponse',
+      _i68.ServerStatus => 'ServerStatus',
+      _i69.TranslationEntry => 'TranslationEntry',
+      _i70.TranslationResponse => 'TranslationResponse',
       _ => null,
     };
   }
@@ -1694,9 +1703,11 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'HealthCheckResponse';
       case _i67.ServiceHealthInfo():
         return 'ServiceHealthInfo';
-      case _i68.TranslationEntry():
+      case _i68.ServerStatus():
+        return 'ServerStatus';
+      case _i69.TranslationEntry():
         return 'TranslationEntry';
-      case _i69.TranslationResponse():
+      case _i70.TranslationResponse():
         return 'TranslationResponse';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -1909,11 +1920,14 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'ServiceHealthInfo') {
       return deserialize<_i67.ServiceHealthInfo>(data['data']);
     }
+    if (dataClassName == 'ServerStatus') {
+      return deserialize<_i68.ServerStatus>(data['data']);
+    }
     if (dataClassName == 'TranslationEntry') {
-      return deserialize<_i68.TranslationEntry>(data['data']);
+      return deserialize<_i69.TranslationEntry>(data['data']);
     }
     if (dataClassName == 'TranslationResponse') {
-      return deserialize<_i69.TranslationResponse>(data['data']);
+      return deserialize<_i70.TranslationResponse>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -1969,8 +1983,8 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i60.UserVerificationPreferences.t;
       case _i62.VerificationCode:
         return _i62.VerificationCode.t;
-      case _i68.TranslationEntry:
-        return _i68.TranslationEntry.t;
+      case _i69.TranslationEntry:
+        return _i69.TranslationEntry.t;
     }
     return null;
   }

@@ -107,6 +107,8 @@ greetingV3:
 health:
   - check:
   - ping:
+status:
+  - getStatus:
 translation:
   - getTranslations:
   - saveTranslations:

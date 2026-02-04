@@ -307,5 +307,37 @@
     "unauthorized": "You are not authorized to perform this action.",
     "notFound": "Resource not found.",
     "unknown": "An unknown error occurred."
+  },
+  "splash": {
+    "title": "Welcome to MasterFabric",
+    "subtitle": "Connecting to server...",
+    "connected": "Connected to Server",
+    "serverInfo": "Server Information",
+    "appName": "Application",
+    "version": "Version",
+    "environment": "Environment",
+    "serverTime": "Server Time",
+    "serverStartTime": "Server Started",
+    "uptime": "Uptime",
+    "status": "Status",
+    "online": "Online",
+    "offline": "Offline",
+    "debugMode": "Debug Mode",
+    "maintenanceMode": "Maintenance",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "active": "Active",
+    "inactive": "Inactive",
+    "continue": "Continue",
+    "retry": "Retry Connection",
+    "connectionFailed": "Connection Failed",
+    "connectionFailedDesc": "Unable to connect to the server. Please check your network connection.",
+    "loading": "Loading server information...",
+    "maintenance": {
+      "title": "Maintenance Mode",
+      "message": "The server is currently under maintenance. Please try again later.",
+      "checkAgain": "Check Again",
+      "description": "We're performing scheduled maintenance to improve your experience. The service will be available shortly."
+    }
   }
 }

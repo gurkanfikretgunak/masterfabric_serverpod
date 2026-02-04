@@ -307,5 +307,37 @@
     "unauthorized": "Bu işlemi gerçekleştirme yetkiniz yok.",
     "notFound": "Kaynak bulunamadı.",
     "unknown": "Bilinmeyen bir hata oluştu."
+  },
+  "splash": {
+    "title": "MasterFabric'e Hoş Geldiniz",
+    "subtitle": "Sunucuya bağlanılıyor...",
+    "connected": "Sunucuya Bağlandı",
+    "serverInfo": "Sunucu Bilgileri",
+    "appName": "Uygulama",
+    "version": "Sürüm",
+    "environment": "Ortam",
+    "serverTime": "Sunucu Saati",
+    "serverStartTime": "Sunucu Başlatıldı",
+    "uptime": "Çalışma Süresi",
+    "status": "Durum",
+    "online": "Çevrimiçi",
+    "offline": "Çevrimdışı",
+    "debugMode": "Hata Ayıklama",
+    "maintenanceMode": "Bakım",
+    "enabled": "Etkin",
+    "disabled": "Devre Dışı",
+    "active": "Aktif",
+    "inactive": "Pasif",
+    "continue": "Devam Et",
+    "retry": "Tekrar Bağlan",
+    "connectionFailed": "Bağlantı Başarısız",
+    "connectionFailedDesc": "Sunucuya bağlanılamıyor. Lütfen ağ bağlantınızı kontrol edin.",
+    "loading": "Sunucu bilgileri yükleniyor...",
+    "maintenance": {
+      "title": "Bakım Modu",
+      "message": "Sunucu şu anda bakım altında. Lütfen daha sonra tekrar deneyin.",
+      "checkAgain": "Tekrar Kontrol Et",
+      "description": "Deneyiminizi iyileştirmek için planlı bakım yapıyoruz. Hizmet kısa süre içinde kullanılabilir olacaktır."
+    }
   }
 }

@@ -22,6 +22,7 @@ import 'src/services/auth/rbac/user_registration_hook.dart';
 import 'src/core/middleware/services/middleware_registry.dart';
 import 'src/core/middleware/base/middleware_config.dart';
 import 'src/core/rate_limit/services/rate_limit_service.dart';
+import 'src/services/status/endpoints/status_endpoint.dart';
 
 /// Global instances for core components
 IntegrationManager? _integrationManager;
@@ -32,6 +33,9 @@ EmailService? _emailService;
 
 /// The starting point of the Serverpod server.
 void run(List<String> args) async {
+  // Initialize server start time for status endpoint
+  initializeServerStartTime();
+
   // Initialize Serverpod and connect it with your generated code.
   final pod = Serverpod(
     args,

@@ -1,0 +1,12 @@
+class: ServerStatus
+fields:
+  appName: String
+  appVersion: String
+  environment: String
+  serverTime: DateTime
+  serverStartTime: DateTime
+  uptime: String
+  clientIp: String?
+  locale: String?
+  debugMode: bool
+  maintenanceMode: bool

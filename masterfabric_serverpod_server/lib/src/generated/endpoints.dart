@@ -33,21 +33,22 @@ import '../services/greetings/endpoints/greeting_endpoint.dart' as _i17;
 import '../services/greetings/endpoints/greeting_endpoint_v2.dart' as _i18;
 import '../services/greetings/endpoints/greeting_endpoint_v3.dart' as _i19;
 import '../services/health/endpoints/health_endpoint.dart' as _i20;
-import '../services/translations/endpoints/translation_endpoint.dart' as _i21;
+import '../services/status/endpoints/status_endpoint.dart' as _i21;
+import '../services/translations/endpoints/translation_endpoint.dart' as _i22;
 import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/send_notification_request.dart'
-    as _i22;
-import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
     as _i23;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
     as _i24;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
     as _i25;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
     as _i26;
-import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
     as _i27;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _i28;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i29;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -167,7 +168,13 @@ class Endpoints extends _i1.EndpointDispatch {
           'health',
           null,
         ),
-      'translation': _i21.TranslationEndpoint()
+      'status': _i21.StatusEndpoint()
+        ..initialize(
+          server,
+          'status',
+          null,
+        ),
+      'translation': _i22.TranslationEndpoint()
         ..initialize(
           server,
           'translation',
@@ -183,7 +190,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i22.SendNotificationRequest>(),
+              type: _i1.getType<_i23.SendNotificationRequest>(),
               nullable: false,
             ),
           },
@@ -359,7 +366,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'type': _i1.ParameterDescription(
               name: 'type',
-              type: _i1.getType<_i23.ChannelType>(),
+              type: _i1.getType<_i24.ChannelType>(),
               nullable: false,
             ),
             'description': _i1.ParameterDescription(
@@ -1541,7 +1548,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i24.ProfileUpdateRequest>(),
+              type: _i1.getType<_i25.ProfileUpdateRequest>(),
               nullable: false,
             ),
           },
@@ -1585,7 +1592,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'gender': _i1.ParameterDescription(
               name: 'gender',
-              type: _i1.getType<_i25.Gender?>(),
+              type: _i1.getType<_i26.Gender?>(),
               nullable: true,
             ),
           },
@@ -1695,12 +1702,12 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'preferredChannel': _i1.ParameterDescription(
               name: 'preferredChannel',
-              type: _i1.getType<_i26.VerificationChannel>(),
+              type: _i1.getType<_i27.VerificationChannel>(),
               nullable: false,
             ),
             'backupChannel': _i1.ParameterDescription(
               name: 'backupChannel',
-              type: _i1.getType<_i26.VerificationChannel?>(),
+              type: _i1.getType<_i27.VerificationChannel?>(),
               nullable: true,
             ),
             'phoneNumber': _i1.ParameterDescription(
@@ -2088,6 +2095,23 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['status'] = _i1.EndpointConnector(
+      name: 'status',
+      endpoint: endpoints['status']!,
+      methodConnectors: {
+        'getStatus': _i1.MethodConnector(
+          name: 'getStatus',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['status'] as _i21.StatusEndpoint).getStatus(
+                session,
+              ),
+        ),
+      },
+    );
     connectors['translation'] = _i1.EndpointConnector(
       name: 'translation',
       endpoint: endpoints['translation']!,
@@ -2110,7 +2134,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i21.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i22.TranslationEndpoint)
                   .getTranslations(
                     session,
                     locale: params['locale'],
@@ -2145,7 +2169,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i21.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i22.TranslationEndpoint)
                   .saveTranslations(
                     session,
                     params['locale'],
@@ -2161,7 +2185,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i21.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i22.TranslationEndpoint)
                   .getAvailableLocales(session),
         ),
         'reseedFromAssets': _i1.MethodConnector(
@@ -2177,7 +2201,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i21.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i22.TranslationEndpoint)
                   .reseedFromAssets(
                     session,
                     forceReseed: params['forceReseed'],
@@ -2185,9 +2209,9 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i27.Endpoints()
+    modules['serverpod_auth_idp'] = _i28.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i28.Endpoints()
+    modules['serverpod_auth_core'] = _i29.Endpoints()
       ..initializeEndpoints(server);
   }
 }

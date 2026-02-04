@@ -307,5 +307,37 @@
     "unauthorized": "No tienes autorización para realizar esta acción.",
     "notFound": "Recurso no encontrado.",
     "unknown": "Ocurrió un error desconocido."
+  },
+  "splash": {
+    "title": "Bienvenido a MasterFabric",
+    "subtitle": "Conectando al servidor...",
+    "connected": "Conectado al Servidor",
+    "serverInfo": "Información del Servidor",
+    "appName": "Aplicación",
+    "version": "Versión",
+    "environment": "Entorno",
+    "serverTime": "Hora del Servidor",
+    "serverStartTime": "Servidor Iniciado",
+    "uptime": "Tiempo de Actividad",
+    "status": "Estado",
+    "online": "En línea",
+    "offline": "Sin conexión",
+    "debugMode": "Modo Debug",
+    "maintenanceMode": "Mantenimiento",
+    "enabled": "Habilitado",
+    "disabled": "Deshabilitado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "continue": "Continuar",
+    "retry": "Reintentar Conexión",
+    "connectionFailed": "Conexión Fallida",
+    "connectionFailedDesc": "No se puede conectar al servidor. Por favor, verifica tu conexión de red.",
+    "loading": "Cargando información del servidor...",
+    "maintenance": {
+      "title": "Modo de Mantenimiento",
+      "message": "El servidor está actualmente en mantenimiento. Por favor, inténtalo de nuevo más tarde.",
+      "checkAgain": "Verificar de Nuevo",
+      "description": "Estamos realizando mantenimiento programado para mejorar tu experiencia. El servicio estará disponible en breve."
+    }
   }
 }

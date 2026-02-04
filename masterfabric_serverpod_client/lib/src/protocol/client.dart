@@ -64,9 +64,11 @@ import 'package:masterfabric_serverpod_client/src/protocol/services/greetings/mo
     as _i27;
 import 'package:masterfabric_serverpod_client/src/protocol/services/health/models/health_check_response.dart'
     as _i28;
-import 'package:masterfabric_serverpod_client/src/protocol/services/translations/models/translation_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/status/models/server_status.dart'
     as _i29;
-import 'protocol.dart' as _i30;
+import 'package:masterfabric_serverpod_client/src/protocol/services/translations/models/translation_response.dart'
+    as _i30;
+import 'protocol.dart' as _i31;
 
 /// Base class for MasterFabric endpoints with built-in middleware support
 ///
@@ -1772,6 +1774,59 @@ class EndpointHealth extends _i1.EndpointRef {
   );
 }
 
+/// Public status endpoint that returns server information.
+///
+/// This endpoint demonstrates the RBAC pattern with public methods.
+/// It uses [RbacEndpointMixin] but exposes a public method using [skipAuth].
+///
+/// ## Features:
+/// - Public endpoint (no authentication required)
+/// - Cached server info for performance
+/// - Returns version, environment, server time, server start time, uptime
+///
+/// ## Usage from client:
+/// ```dart
+/// final status = await client.status.getStatus();
+/// print('Server: ${status.appName} v${status.appVersion}');
+/// print('Environment: ${status.environment}');
+/// print('Uptime: ${status.uptime}');
+/// ```
+///
+/// ## Role Requirements:
+/// - `getStatus`: Requires 'public' role (unauthenticated access allowed)
+/// {@category Endpoint}
+class EndpointStatus extends EndpointMasterfabric {
+  EndpointStatus(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'status';
+
+  /// Get server status information.
+  ///
+  /// **Required Roles:** 'public' (unauthenticated access allowed)
+  ///
+  /// Returns [ServerStatus] containing:
+  /// - appName: Application name
+  /// - appVersion: Application version
+  /// - environment: Current environment (development/staging/production)
+  /// - serverTime: Current server timestamp
+  /// - serverStartTime: When the server was started
+  /// - uptime: Human-readable uptime string
+  /// - clientIp: Requesting client's IP address (if available)
+  /// - locale: Detected locale from request
+  /// - debugMode: Whether debug mode is enabled
+  /// - maintenanceMode: Whether maintenance mode is active
+  ///
+  /// This endpoint is publicly accessible without authentication.
+  /// Rate limited to 60 requests per minute.
+  _i2.Future<_i29.ServerStatus> getStatus() =>
+      caller.callServerEndpoint<_i29.ServerStatus>(
+        'status',
+        'getStatus',
+        {},
+      );
+}
+
 /// Endpoint for providing translations to clients
 ///
 /// This endpoint provides translations in slang-compatible JSON format.
@@ -1793,10 +1848,10 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse containing translations in slang JSON format
   ///
   /// Throws InternalServerError if translations cannot be loaded
-  _i2.Future<_i29.TranslationResponse> getTranslations({
+  _i2.Future<_i30.TranslationResponse> getTranslations({
     String? locale,
     String? namespace,
-  }) => caller.callServerEndpoint<_i29.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i30.TranslationResponse>(
     'translation',
     'getTranslations',
     {
@@ -1816,12 +1871,12 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse with saved translations
   ///
   /// Note: This should be protected by authentication/authorization in production
-  _i2.Future<_i29.TranslationResponse> saveTranslations(
+  _i2.Future<_i30.TranslationResponse> saveTranslations(
     String locale,
     Map<String, dynamic> translations, {
     String? namespace,
     required bool isActive,
-  }) => caller.callServerEndpoint<_i29.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i30.TranslationResponse>(
     'translation',
     'saveTranslations',
     {
@@ -1891,7 +1946,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i30.Protocol(),
+         _i31.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -1919,6 +1974,7 @@ class Client extends _i1.ServerpodClientShared {
     greetingV2 = EndpointGreetingV2(this);
     greetingV3 = EndpointGreetingV3(this);
     health = EndpointHealth(this);
+    status = EndpointStatus(this);
     translation = EndpointTranslation(this);
     modules = Modules(this);
   }
@@ -1961,6 +2017,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointHealth health;
 
+  late final EndpointStatus status;
+
   late final EndpointTranslation translation;
 
   late final Modules modules;
@@ -1986,6 +2044,7 @@ class Client extends _i1.ServerpodClientShared {
     'greetingV2': greetingV2,
     'greetingV3': greetingV3,
     'health': health,
+    'status': status,
     'translation': translation,
   };
 

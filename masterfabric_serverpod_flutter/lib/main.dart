@@ -5,6 +5,7 @@ import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
 import 'screens/home_screen.dart';
 import 'screens/sign_in_screen.dart';
+import 'screens/splash_screen.dart';
 import 'services/app_config_service.dart';
 import 'services/translation_service.dart';
 import 'services/health_service.dart';
@@ -99,11 +100,13 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: SignInScreen(
-        child: HomeScreen(
-          onSignOut: () async {
-            await client.auth.signOutDevice();
-          },
+      home: SplashScreen(
+        child: SignInScreen(
+          child: HomeScreen(
+            onSignOut: () async {
+              await client.auth.signOutDevice();
+            },
+          ),
         ),
       ),
     );

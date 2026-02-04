@@ -64,8 +64,10 @@ import 'package:masterfabric_serverpod_server/src/generated/services/greetings/m
     as _i27;
 import 'package:masterfabric_serverpod_server/src/generated/services/health/models/health_check_response.dart'
     as _i28;
-import 'package:masterfabric_serverpod_server/src/generated/services/translations/models/translation_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/status/models/server_status.dart'
     as _i29;
+import 'package:masterfabric_serverpod_server/src/generated/services/translations/models/translation_response.dart'
+    as _i30;
 import 'package:masterfabric_serverpod_server/src/generated/protocol.dart';
 import 'package:masterfabric_serverpod_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -211,6 +213,8 @@ class TestEndpoints {
 
   late final _HealthEndpoint health;
 
+  late final _StatusEndpoint status;
+
   late final _TranslationEndpoint translation;
 }
 
@@ -294,6 +298,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     health = _HealthEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    status = _StatusEndpoint(
       endpoints,
       serializationManager,
     );
@@ -3413,6 +3421,47 @@ class _HealthEndpoint {
   }
 }
 
+class _StatusEndpoint {
+  _StatusEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i29.ServerStatus> getStatus(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'status',
+            method: 'getStatus',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'status',
+          methodName: 'getStatus',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i29.ServerStatus>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _TranslationEndpoint {
   _TranslationEndpoint(
     this._endpointDispatch,
@@ -3423,7 +3472,7 @@ class _TranslationEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i29.TranslationResponse> getTranslations(
+  _i3.Future<_i30.TranslationResponse> getTranslations(
     _i1.TestSessionBuilder sessionBuilder, {
     String? locale,
     String? namespace,
@@ -3450,7 +3499,7 @@ class _TranslationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i29.TranslationResponse>);
+                as _i3.Future<_i30.TranslationResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3458,7 +3507,7 @@ class _TranslationEndpoint {
     });
   }
 
-  _i3.Future<_i29.TranslationResponse> saveTranslations(
+  _i3.Future<_i30.TranslationResponse> saveTranslations(
     _i1.TestSessionBuilder sessionBuilder,
     String locale,
     Map<String, dynamic> translations, {
@@ -3489,7 +3538,7 @@ class _TranslationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i29.TranslationResponse>);
+                as _i3.Future<_i30.TranslationResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
