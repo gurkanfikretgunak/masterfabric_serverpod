@@ -60,14 +60,22 @@ import 'package:masterfabric_serverpod_server/src/generated/services/auth/verifi
     as _i25;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/user_verification_preferences.dart'
     as _i26;
-import 'package:masterfabric_serverpod_server/src/generated/services/greetings/models/greeting_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/currency/models/currency_conversion_response.dart'
     as _i27;
-import 'package:masterfabric_serverpod_server/src/generated/services/health/models/health_check_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/currency/models/exchange_rate_response.dart'
     as _i28;
-import 'package:masterfabric_serverpod_server/src/generated/services/status/models/server_status.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/currency/models/supported_currencies_response.dart'
     as _i29;
-import 'package:masterfabric_serverpod_server/src/generated/services/translations/models/translation_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/currency/models/currency_format_response.dart'
     as _i30;
+import 'package:masterfabric_serverpod_server/src/generated/services/greetings/models/greeting_response.dart'
+    as _i31;
+import 'package:masterfabric_serverpod_server/src/generated/services/health/models/health_check_response.dart'
+    as _i32;
+import 'package:masterfabric_serverpod_server/src/generated/services/status/models/server_status.dart'
+    as _i33;
+import 'package:masterfabric_serverpod_server/src/generated/services/translations/models/translation_response.dart'
+    as _i34;
 import 'package:masterfabric_serverpod_server/src/generated/protocol.dart';
 import 'package:masterfabric_serverpod_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -205,6 +213,8 @@ class TestEndpoints {
 
   late final _VerificationPreferencesEndpoint verificationPreferences;
 
+  late final _CurrencyEndpoint currency;
+
   late final _GreetingEndpoint greeting;
 
   late final _GreetingV2Endpoint greetingV2;
@@ -282,6 +292,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     verificationPreferences = _VerificationPreferencesEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    currency = _CurrencyEndpoint(
       endpoints,
       serializationManager,
     );
@@ -2978,6 +2992,154 @@ class _VerificationPreferencesEndpoint {
   }
 }
 
+class _CurrencyEndpoint {
+  _CurrencyEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i27.CurrencyConversionResponse> convertCurrency(
+    _i1.TestSessionBuilder sessionBuilder,
+    String fromCurrency,
+    String toCurrency,
+    double amount,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'currency',
+            method: 'convertCurrency',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'currency',
+          methodName: 'convertCurrency',
+          parameters: _i1.testObjectToJson({
+            'fromCurrency': fromCurrency,
+            'toCurrency': toCurrency,
+            'amount': amount,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i27.CurrencyConversionResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i28.ExchangeRateResponse> getExchangeRate(
+    _i1.TestSessionBuilder sessionBuilder,
+    String baseCurrency,
+    String targetCurrency,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'currency',
+            method: 'getExchangeRate',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'currency',
+          methodName: 'getExchangeRate',
+          parameters: _i1.testObjectToJson({
+            'baseCurrency': baseCurrency,
+            'targetCurrency': targetCurrency,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i28.ExchangeRateResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i29.SupportedCurrenciesResponse> getSupportedCurrencies(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'currency',
+            method: 'getSupportedCurrencies',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'currency',
+          methodName: 'getSupportedCurrencies',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i29.SupportedCurrenciesResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i30.CurrencyFormatResponse> formatCurrency(
+    _i1.TestSessionBuilder sessionBuilder,
+    String currency,
+    double amount,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'currency',
+            method: 'formatCurrency',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'currency',
+          methodName: 'formatCurrency',
+          parameters: _i1.testObjectToJson({
+            'currency': currency,
+            'amount': amount,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i30.CurrencyFormatResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _GreetingEndpoint {
   _GreetingEndpoint(
     this._endpointDispatch,
@@ -2988,7 +3150,7 @@ class _GreetingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i27.GreetingResponse> hello(
+  _i3.Future<_i31.GreetingResponse> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -3011,7 +3173,7 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.GreetingResponse>);
+                as _i3.Future<_i31.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3030,7 +3192,7 @@ class _GreetingV2Endpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i27.GreetingResponse> hello(
+  _i3.Future<_i31.GreetingResponse> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -3053,7 +3215,7 @@ class _GreetingV2Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.GreetingResponse>);
+                as _i3.Future<_i31.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3061,7 +3223,7 @@ class _GreetingV2Endpoint {
     });
   }
 
-  _i3.Future<_i27.GreetingResponse> helloPublic(
+  _i3.Future<_i31.GreetingResponse> helloPublic(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -3084,7 +3246,7 @@ class _GreetingV2Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.GreetingResponse>);
+                as _i3.Future<_i31.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3092,7 +3254,7 @@ class _GreetingV2Endpoint {
     });
   }
 
-  _i3.Future<_i27.GreetingResponse> helloStrict(
+  _i3.Future<_i31.GreetingResponse> helloStrict(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -3115,7 +3277,7 @@ class _GreetingV2Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.GreetingResponse>);
+                as _i3.Future<_i31.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3134,7 +3296,7 @@ class _GreetingV3Endpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i27.GreetingResponse> hello(
+  _i3.Future<_i31.GreetingResponse> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -3157,7 +3319,7 @@ class _GreetingV3Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.GreetingResponse>);
+                as _i3.Future<_i31.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3165,7 +3327,7 @@ class _GreetingV3Endpoint {
     });
   }
 
-  _i3.Future<_i27.GreetingResponse> goodbye(
+  _i3.Future<_i31.GreetingResponse> goodbye(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -3188,7 +3350,7 @@ class _GreetingV3Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.GreetingResponse>);
+                as _i3.Future<_i31.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3196,7 +3358,7 @@ class _GreetingV3Endpoint {
     });
   }
 
-  _i3.Future<_i27.GreetingResponse> adminHello(
+  _i3.Future<_i31.GreetingResponse> adminHello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -3219,7 +3381,7 @@ class _GreetingV3Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.GreetingResponse>);
+                as _i3.Future<_i31.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3258,7 +3420,7 @@ class _GreetingV3Endpoint {
     });
   }
 
-  _i3.Future<_i27.GreetingResponse> moderatorHello(
+  _i3.Future<_i31.GreetingResponse> moderatorHello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -3281,7 +3443,7 @@ class _GreetingV3Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.GreetingResponse>);
+                as _i3.Future<_i31.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3289,7 +3451,7 @@ class _GreetingV3Endpoint {
     });
   }
 
-  _i3.Future<_i27.GreetingResponse> publicHello(
+  _i3.Future<_i31.GreetingResponse> publicHello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -3312,7 +3474,7 @@ class _GreetingV3Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.GreetingResponse>);
+                as _i3.Future<_i31.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3320,7 +3482,7 @@ class _GreetingV3Endpoint {
     });
   }
 
-  _i3.Future<_i27.GreetingResponse> strictHello(
+  _i3.Future<_i31.GreetingResponse> strictHello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -3343,7 +3505,7 @@ class _GreetingV3Endpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i27.GreetingResponse>);
+                as _i3.Future<_i31.GreetingResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3362,7 +3524,7 @@ class _HealthEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i28.HealthCheckResponse> check(
+  _i3.Future<_i32.HealthCheckResponse> check(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -3384,7 +3546,7 @@ class _HealthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i28.HealthCheckResponse>);
+                as _i3.Future<_i32.HealthCheckResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3431,7 +3593,7 @@ class _StatusEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i29.ServerStatus> getStatus(
+  _i3.Future<_i33.ServerStatus> getStatus(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -3453,7 +3615,7 @@ class _StatusEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i29.ServerStatus>);
+                as _i3.Future<_i33.ServerStatus>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3472,7 +3634,7 @@ class _TranslationEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i30.TranslationResponse> getTranslations(
+  _i3.Future<_i34.TranslationResponse> getTranslations(
     _i1.TestSessionBuilder sessionBuilder, {
     String? locale,
     String? namespace,
@@ -3499,7 +3661,7 @@ class _TranslationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i30.TranslationResponse>);
+                as _i3.Future<_i34.TranslationResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3507,7 +3669,7 @@ class _TranslationEndpoint {
     });
   }
 
-  _i3.Future<_i30.TranslationResponse> saveTranslations(
+  _i3.Future<_i34.TranslationResponse> saveTranslations(
     _i1.TestSessionBuilder sessionBuilder,
     String locale,
     Map<String, dynamic> translations, {
@@ -3538,7 +3700,7 @@ class _TranslationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i30.TranslationResponse>);
+                as _i3.Future<_i34.TranslationResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

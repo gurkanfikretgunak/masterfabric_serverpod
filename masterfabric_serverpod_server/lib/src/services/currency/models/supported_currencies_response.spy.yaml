@@ -1,0 +1,7 @@
+### Supported currencies response
+class: SupportedCurrenciesResponse
+fields:
+  success: bool
+  currencies: List<String>
+  count: int
+  timestamp: DateTime

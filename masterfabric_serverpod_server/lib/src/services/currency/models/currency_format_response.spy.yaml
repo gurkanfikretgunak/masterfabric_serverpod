@@ -1,0 +1,9 @@
+### Currency format response
+class: CurrencyFormatResponse
+fields:
+  success: bool
+  currency: String
+  amount: double
+  formatted: String
+  symbol: String?
+  timestamp: DateTime

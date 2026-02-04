@@ -109,6 +109,18 @@ integrations:
     otpTemplateName: "verification_code"  # Pre-approved OTP template name
     otpTemplateLanguage: "en"  # Template language code
     apiVersion: "v18.0"  # Meta Graph API version
+  
+  # OpenAI API integration for AI-powered features
+  openai:
+    enabled: false  # Set to true when OpenAI API is configured
+    apiKey: ""  # OpenAI API key from https://platform.openai.com/api-keys (store in passwords.yaml for production)
+    organizationId: ""  # Optional: OpenAI organization ID
+    baseUrl: ""  # Optional: Custom base URL (defaults to https://api.openai.com/v1)
+    defaultModel: "gpt-3.5-turbo"  # Default model for chat completions
+
+# Currency exchange rate service configuration
+currency:
+  apiKey: "<YOUR_API_KEY>"  # ExchangeRate-API.com API key (store in passwords.yaml for production)
 
 # Email validation configuration
 emailValidation:

@@ -1,0 +1,7 @@
+### Exchange rate cache model for storing fetched rates
+class: ExchangeRateCache
+fields:
+  baseCurrency: String
+  rates: Map<String, double>
+  timestamp: DateTime
+  source: String

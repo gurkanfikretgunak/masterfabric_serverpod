@@ -90,6 +90,11 @@ verificationPreferences:
   - sendPhoneVerificationCode:
   - verifyPhoneNumber:
   - getTelegramBotInfo:
+currency:
+  - convertCurrency:
+  - getExchangeRate:
+  - getSupportedCurrencies:
+  - formatCurrency:
 greeting:
   - hello:
 greetingV2:

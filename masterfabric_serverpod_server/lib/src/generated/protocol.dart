@@ -85,23 +85,28 @@ import 'services/auth/verification/user_verification_preferences.dart' as _i60;
 import 'services/auth/verification/verification_channel.dart' as _i61;
 import 'services/auth/verification/verification_code.dart' as _i62;
 import 'services/auth/verification/verification_response.dart' as _i63;
-import 'services/greetings/models/greeting.dart' as _i64;
-import 'services/greetings/models/greeting_response.dart' as _i65;
-import 'services/health/models/health_check_response.dart' as _i66;
-import 'services/health/models/service_health_info.dart' as _i67;
-import 'services/status/models/server_status.dart' as _i68;
-import 'services/translations/models/translation_entry.dart' as _i69;
-import 'services/translations/models/translation_response.dart' as _i70;
+import 'services/currency/models/currency_conversion_response.dart' as _i64;
+import 'services/currency/models/currency_format_response.dart' as _i65;
+import 'services/currency/models/exchange_rate_cache.dart' as _i66;
+import 'services/currency/models/exchange_rate_response.dart' as _i67;
+import 'services/currency/models/supported_currencies_response.dart' as _i68;
+import 'services/greetings/models/greeting.dart' as _i69;
+import 'services/greetings/models/greeting_response.dart' as _i70;
+import 'services/health/models/health_check_response.dart' as _i71;
+import 'services/health/models/service_health_info.dart' as _i72;
+import 'services/status/models/server_status.dart' as _i73;
+import 'services/translations/models/translation_entry.dart' as _i74;
+import 'services/translations/models/translation_response.dart' as _i75;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/role.dart'
-    as _i71;
+    as _i76;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/permission.dart'
-    as _i72;
+    as _i77;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/session/session_info_response.dart'
-    as _i73;
+    as _i78;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
-    as _i74;
+    as _i79;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
-    as _i75;
+    as _i80;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -161,6 +166,11 @@ export 'services/auth/verification/user_verification_preferences.dart';
 export 'services/auth/verification/verification_channel.dart';
 export 'services/auth/verification/verification_code.dart';
 export 'services/auth/verification/verification_response.dart';
+export 'services/currency/models/currency_conversion_response.dart';
+export 'services/currency/models/currency_format_response.dart';
+export 'services/currency/models/exchange_rate_cache.dart';
+export 'services/currency/models/exchange_rate_response.dart';
+export 'services/currency/models/supported_currencies_response.dart';
 export 'services/greetings/models/greeting.dart';
 export 'services/greetings/models/greeting_response.dart';
 export 'services/health/models/health_check_response.dart';
@@ -1137,26 +1147,41 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i63.VerificationResponse) {
       return _i63.VerificationResponse.fromJson(data) as T;
     }
-    if (t == _i64.Greeting) {
-      return _i64.Greeting.fromJson(data) as T;
+    if (t == _i64.CurrencyConversionResponse) {
+      return _i64.CurrencyConversionResponse.fromJson(data) as T;
     }
-    if (t == _i65.GreetingResponse) {
-      return _i65.GreetingResponse.fromJson(data) as T;
+    if (t == _i65.CurrencyFormatResponse) {
+      return _i65.CurrencyFormatResponse.fromJson(data) as T;
     }
-    if (t == _i66.HealthCheckResponse) {
-      return _i66.HealthCheckResponse.fromJson(data) as T;
+    if (t == _i66.ExchangeRateCache) {
+      return _i66.ExchangeRateCache.fromJson(data) as T;
     }
-    if (t == _i67.ServiceHealthInfo) {
-      return _i67.ServiceHealthInfo.fromJson(data) as T;
+    if (t == _i67.ExchangeRateResponse) {
+      return _i67.ExchangeRateResponse.fromJson(data) as T;
     }
-    if (t == _i68.ServerStatus) {
-      return _i68.ServerStatus.fromJson(data) as T;
+    if (t == _i68.SupportedCurrenciesResponse) {
+      return _i68.SupportedCurrenciesResponse.fromJson(data) as T;
     }
-    if (t == _i69.TranslationEntry) {
-      return _i69.TranslationEntry.fromJson(data) as T;
+    if (t == _i69.Greeting) {
+      return _i69.Greeting.fromJson(data) as T;
     }
-    if (t == _i70.TranslationResponse) {
-      return _i70.TranslationResponse.fromJson(data) as T;
+    if (t == _i70.GreetingResponse) {
+      return _i70.GreetingResponse.fromJson(data) as T;
+    }
+    if (t == _i71.HealthCheckResponse) {
+      return _i71.HealthCheckResponse.fromJson(data) as T;
+    }
+    if (t == _i72.ServiceHealthInfo) {
+      return _i72.ServiceHealthInfo.fromJson(data) as T;
+    }
+    if (t == _i73.ServerStatus) {
+      return _i73.ServerStatus.fromJson(data) as T;
+    }
+    if (t == _i74.TranslationEntry) {
+      return _i74.TranslationEntry.fromJson(data) as T;
+    }
+    if (t == _i75.TranslationResponse) {
+      return _i75.TranslationResponse.fromJson(data) as T;
     }
     if (t == _i1.getType<_i5.AppConfig?>()) {
       return (data != null ? _i5.AppConfig.fromJson(data) : null) as T;
@@ -1380,27 +1405,50 @@ class Protocol extends _i1.SerializationManagerServer {
       return (data != null ? _i63.VerificationResponse.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i64.Greeting?>()) {
-      return (data != null ? _i64.Greeting.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i65.GreetingResponse?>()) {
-      return (data != null ? _i65.GreetingResponse.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i66.HealthCheckResponse?>()) {
-      return (data != null ? _i66.HealthCheckResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i64.CurrencyConversionResponse?>()) {
+      return (data != null
+              ? _i64.CurrencyConversionResponse.fromJson(data)
+              : null)
           as T;
     }
-    if (t == _i1.getType<_i67.ServiceHealthInfo?>()) {
-      return (data != null ? _i67.ServiceHealthInfo.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i65.CurrencyFormatResponse?>()) {
+      return (data != null ? _i65.CurrencyFormatResponse.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i68.ServerStatus?>()) {
-      return (data != null ? _i68.ServerStatus.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i66.ExchangeRateCache?>()) {
+      return (data != null ? _i66.ExchangeRateCache.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i69.TranslationEntry?>()) {
-      return (data != null ? _i69.TranslationEntry.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i67.ExchangeRateResponse?>()) {
+      return (data != null ? _i67.ExchangeRateResponse.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i70.TranslationResponse?>()) {
-      return (data != null ? _i70.TranslationResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i68.SupportedCurrenciesResponse?>()) {
+      return (data != null
+              ? _i68.SupportedCurrenciesResponse.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _i1.getType<_i69.Greeting?>()) {
+      return (data != null ? _i69.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i70.GreetingResponse?>()) {
+      return (data != null ? _i70.GreetingResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i71.HealthCheckResponse?>()) {
+      return (data != null ? _i71.HealthCheckResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i72.ServiceHealthInfo?>()) {
+      return (data != null ? _i72.ServiceHealthInfo.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i73.ServerStatus?>()) {
+      return (data != null ? _i73.ServerStatus.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i74.TranslationEntry?>()) {
+      return (data != null ? _i74.TranslationEntry.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i75.TranslationResponse?>()) {
+      return (data != null ? _i75.TranslationResponse.fromJson(data) : null)
           as T;
     }
     if (t == List<String>) {
@@ -1430,9 +1478,15 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           as T;
     }
-    if (t == List<_i67.ServiceHealthInfo>) {
+    if (t == Map<String, double>) {
+      return (data as Map).map(
+            (k, v) => MapEntry(deserialize<String>(k), deserialize<double>(v)),
+          )
+          as T;
+    }
+    if (t == List<_i72.ServiceHealthInfo>) {
       return (data as List)
-              .map((e) => deserialize<_i67.ServiceHealthInfo>(e))
+              .map((e) => deserialize<_i72.ServiceHealthInfo>(e))
               .toList()
           as T;
     }
@@ -1445,32 +1499,32 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == List<_i71.Role>) {
-      return (data as List).map((e) => deserialize<_i71.Role>(e)).toList() as T;
+    if (t == List<_i76.Role>) {
+      return (data as List).map((e) => deserialize<_i76.Role>(e)).toList() as T;
     }
-    if (t == List<_i72.Permission>) {
-      return (data as List).map((e) => deserialize<_i72.Permission>(e)).toList()
+    if (t == List<_i77.Permission>) {
+      return (data as List).map((e) => deserialize<_i77.Permission>(e)).toList()
           as T;
     }
     if (t == Set<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
     }
-    if (t == List<_i73.SessionInfoResponse>) {
+    if (t == List<_i78.SessionInfoResponse>) {
       return (data as List)
-              .map((e) => deserialize<_i73.SessionInfoResponse>(e))
+              .map((e) => deserialize<_i78.SessionInfoResponse>(e))
               .toList()
           as T;
     }
-    if (t == List<_i74.Gender>) {
-      return (data as List).map((e) => deserialize<_i74.Gender>(e)).toList()
+    if (t == List<_i79.Gender>) {
+      return (data as List).map((e) => deserialize<_i79.Gender>(e)).toList()
           as T;
     }
     if (t == List<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toList() as T;
     }
-    if (t == List<_i75.VerificationChannel>) {
+    if (t == List<_i80.VerificationChannel>) {
       return (data as List)
-              .map((e) => deserialize<_i75.VerificationChannel>(e))
+              .map((e) => deserialize<_i80.VerificationChannel>(e))
               .toList()
           as T;
     }
@@ -1553,13 +1607,18 @@ class Protocol extends _i1.SerializationManagerServer {
       _i61.VerificationChannel => 'VerificationChannel',
       _i62.VerificationCode => 'VerificationCode',
       _i63.VerificationResponse => 'VerificationResponse',
-      _i64.Greeting => 'Greeting',
-      _i65.GreetingResponse => 'GreetingResponse',
-      _i66.HealthCheckResponse => 'HealthCheckResponse',
-      _i67.ServiceHealthInfo => 'ServiceHealthInfo',
-      _i68.ServerStatus => 'ServerStatus',
-      _i69.TranslationEntry => 'TranslationEntry',
-      _i70.TranslationResponse => 'TranslationResponse',
+      _i64.CurrencyConversionResponse => 'CurrencyConversionResponse',
+      _i65.CurrencyFormatResponse => 'CurrencyFormatResponse',
+      _i66.ExchangeRateCache => 'ExchangeRateCache',
+      _i67.ExchangeRateResponse => 'ExchangeRateResponse',
+      _i68.SupportedCurrenciesResponse => 'SupportedCurrenciesResponse',
+      _i69.Greeting => 'Greeting',
+      _i70.GreetingResponse => 'GreetingResponse',
+      _i71.HealthCheckResponse => 'HealthCheckResponse',
+      _i72.ServiceHealthInfo => 'ServiceHealthInfo',
+      _i73.ServerStatus => 'ServerStatus',
+      _i74.TranslationEntry => 'TranslationEntry',
+      _i75.TranslationResponse => 'TranslationResponse',
       _ => null,
     };
   }
@@ -1695,19 +1754,29 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'VerificationCode';
       case _i63.VerificationResponse():
         return 'VerificationResponse';
-      case _i64.Greeting():
+      case _i64.CurrencyConversionResponse():
+        return 'CurrencyConversionResponse';
+      case _i65.CurrencyFormatResponse():
+        return 'CurrencyFormatResponse';
+      case _i66.ExchangeRateCache():
+        return 'ExchangeRateCache';
+      case _i67.ExchangeRateResponse():
+        return 'ExchangeRateResponse';
+      case _i68.SupportedCurrenciesResponse():
+        return 'SupportedCurrenciesResponse';
+      case _i69.Greeting():
         return 'Greeting';
-      case _i65.GreetingResponse():
+      case _i70.GreetingResponse():
         return 'GreetingResponse';
-      case _i66.HealthCheckResponse():
+      case _i71.HealthCheckResponse():
         return 'HealthCheckResponse';
-      case _i67.ServiceHealthInfo():
+      case _i72.ServiceHealthInfo():
         return 'ServiceHealthInfo';
-      case _i68.ServerStatus():
+      case _i73.ServerStatus():
         return 'ServerStatus';
-      case _i69.TranslationEntry():
+      case _i74.TranslationEntry():
         return 'TranslationEntry';
-      case _i70.TranslationResponse():
+      case _i75.TranslationResponse():
         return 'TranslationResponse';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -1908,26 +1977,41 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'VerificationResponse') {
       return deserialize<_i63.VerificationResponse>(data['data']);
     }
+    if (dataClassName == 'CurrencyConversionResponse') {
+      return deserialize<_i64.CurrencyConversionResponse>(data['data']);
+    }
+    if (dataClassName == 'CurrencyFormatResponse') {
+      return deserialize<_i65.CurrencyFormatResponse>(data['data']);
+    }
+    if (dataClassName == 'ExchangeRateCache') {
+      return deserialize<_i66.ExchangeRateCache>(data['data']);
+    }
+    if (dataClassName == 'ExchangeRateResponse') {
+      return deserialize<_i67.ExchangeRateResponse>(data['data']);
+    }
+    if (dataClassName == 'SupportedCurrenciesResponse') {
+      return deserialize<_i68.SupportedCurrenciesResponse>(data['data']);
+    }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i64.Greeting>(data['data']);
+      return deserialize<_i69.Greeting>(data['data']);
     }
     if (dataClassName == 'GreetingResponse') {
-      return deserialize<_i65.GreetingResponse>(data['data']);
+      return deserialize<_i70.GreetingResponse>(data['data']);
     }
     if (dataClassName == 'HealthCheckResponse') {
-      return deserialize<_i66.HealthCheckResponse>(data['data']);
+      return deserialize<_i71.HealthCheckResponse>(data['data']);
     }
     if (dataClassName == 'ServiceHealthInfo') {
-      return deserialize<_i67.ServiceHealthInfo>(data['data']);
+      return deserialize<_i72.ServiceHealthInfo>(data['data']);
     }
     if (dataClassName == 'ServerStatus') {
-      return deserialize<_i68.ServerStatus>(data['data']);
+      return deserialize<_i73.ServerStatus>(data['data']);
     }
     if (dataClassName == 'TranslationEntry') {
-      return deserialize<_i69.TranslationEntry>(data['data']);
+      return deserialize<_i74.TranslationEntry>(data['data']);
     }
     if (dataClassName == 'TranslationResponse') {
-      return deserialize<_i70.TranslationResponse>(data['data']);
+      return deserialize<_i75.TranslationResponse>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -1983,8 +2067,8 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i60.UserVerificationPreferences.t;
       case _i62.VerificationCode:
         return _i62.VerificationCode.t;
-      case _i69.TranslationEntry:
-        return _i69.TranslationEntry.t;
+      case _i74.TranslationEntry:
+        return _i74.TranslationEntry.t;
     }
     return null;
   }

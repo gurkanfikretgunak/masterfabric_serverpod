@@ -29,26 +29,27 @@ import '../services/auth/user/user_management_endpoint.dart' as _i14;
 import '../services/auth/user/user_profile_endpoint.dart' as _i15;
 import '../services/auth/verification/verification_preferences_endpoint.dart'
     as _i16;
-import '../services/greetings/endpoints/greeting_endpoint.dart' as _i17;
-import '../services/greetings/endpoints/greeting_endpoint_v2.dart' as _i18;
-import '../services/greetings/endpoints/greeting_endpoint_v3.dart' as _i19;
-import '../services/health/endpoints/health_endpoint.dart' as _i20;
-import '../services/status/endpoints/status_endpoint.dart' as _i21;
-import '../services/translations/endpoints/translation_endpoint.dart' as _i22;
+import '../services/currency/endpoints/currency_endpoint.dart' as _i17;
+import '../services/greetings/endpoints/greeting_endpoint.dart' as _i18;
+import '../services/greetings/endpoints/greeting_endpoint_v2.dart' as _i19;
+import '../services/greetings/endpoints/greeting_endpoint_v3.dart' as _i20;
+import '../services/health/endpoints/health_endpoint.dart' as _i21;
+import '../services/status/endpoints/status_endpoint.dart' as _i22;
+import '../services/translations/endpoints/translation_endpoint.dart' as _i23;
 import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/send_notification_request.dart'
-    as _i23;
-import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
     as _i24;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
     as _i25;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
     as _i26;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
     as _i27;
-import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
     as _i28;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _i29;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i30;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -144,37 +145,43 @@ class Endpoints extends _i1.EndpointDispatch {
           'verificationPreferences',
           null,
         ),
-      'greeting': _i17.GreetingEndpoint()
+      'currency': _i17.CurrencyEndpoint()
+        ..initialize(
+          server,
+          'currency',
+          null,
+        ),
+      'greeting': _i18.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
           null,
         ),
-      'greetingV2': _i18.GreetingV2Endpoint()
+      'greetingV2': _i19.GreetingV2Endpoint()
         ..initialize(
           server,
           'greetingV2',
           null,
         ),
-      'greetingV3': _i19.GreetingV3Endpoint()
+      'greetingV3': _i20.GreetingV3Endpoint()
         ..initialize(
           server,
           'greetingV3',
           null,
         ),
-      'health': _i20.HealthEndpoint()
+      'health': _i21.HealthEndpoint()
         ..initialize(
           server,
           'health',
           null,
         ),
-      'status': _i21.StatusEndpoint()
+      'status': _i22.StatusEndpoint()
         ..initialize(
           server,
           'status',
           null,
         ),
-      'translation': _i22.TranslationEndpoint()
+      'translation': _i23.TranslationEndpoint()
         ..initialize(
           server,
           'translation',
@@ -190,7 +197,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i23.SendNotificationRequest>(),
+              type: _i1.getType<_i24.SendNotificationRequest>(),
               nullable: false,
             ),
           },
@@ -366,7 +373,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'type': _i1.ParameterDescription(
               name: 'type',
-              type: _i1.getType<_i24.ChannelType>(),
+              type: _i1.getType<_i25.ChannelType>(),
               nullable: false,
             ),
             'description': _i1.ParameterDescription(
@@ -1548,7 +1555,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i25.ProfileUpdateRequest>(),
+              type: _i1.getType<_i26.ProfileUpdateRequest>(),
               nullable: false,
             ),
           },
@@ -1592,7 +1599,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'gender': _i1.ParameterDescription(
               name: 'gender',
-              type: _i1.getType<_i26.Gender?>(),
+              type: _i1.getType<_i27.Gender?>(),
               nullable: true,
             ),
           },
@@ -1702,12 +1709,12 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'preferredChannel': _i1.ParameterDescription(
               name: 'preferredChannel',
-              type: _i1.getType<_i27.VerificationChannel>(),
+              type: _i1.getType<_i28.VerificationChannel>(),
               nullable: false,
             ),
             'backupChannel': _i1.ParameterDescription(
               name: 'backupChannel',
-              type: _i1.getType<_i27.VerificationChannel?>(),
+              type: _i1.getType<_i28.VerificationChannel?>(),
               nullable: true,
             ),
             'phoneNumber': _i1.ParameterDescription(
@@ -1843,6 +1850,103 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['currency'] = _i1.EndpointConnector(
+      name: 'currency',
+      endpoint: endpoints['currency']!,
+      methodConnectors: {
+        'convertCurrency': _i1.MethodConnector(
+          name: 'convertCurrency',
+          params: {
+            'fromCurrency': _i1.ParameterDescription(
+              name: 'fromCurrency',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'toCurrency': _i1.ParameterDescription(
+              name: 'toCurrency',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'amount': _i1.ParameterDescription(
+              name: 'amount',
+              type: _i1.getType<double>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['currency'] as _i17.CurrencyEndpoint)
+                  .convertCurrency(
+                    session,
+                    params['fromCurrency'],
+                    params['toCurrency'],
+                    params['amount'],
+                  ),
+        ),
+        'getExchangeRate': _i1.MethodConnector(
+          name: 'getExchangeRate',
+          params: {
+            'baseCurrency': _i1.ParameterDescription(
+              name: 'baseCurrency',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'targetCurrency': _i1.ParameterDescription(
+              name: 'targetCurrency',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['currency'] as _i17.CurrencyEndpoint)
+                  .getExchangeRate(
+                    session,
+                    params['baseCurrency'],
+                    params['targetCurrency'],
+                  ),
+        ),
+        'getSupportedCurrencies': _i1.MethodConnector(
+          name: 'getSupportedCurrencies',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['currency'] as _i17.CurrencyEndpoint)
+                  .getSupportedCurrencies(session),
+        ),
+        'formatCurrency': _i1.MethodConnector(
+          name: 'formatCurrency',
+          params: {
+            'currency': _i1.ParameterDescription(
+              name: 'currency',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'amount': _i1.ParameterDescription(
+              name: 'amount',
+              type: _i1.getType<double>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['currency'] as _i17.CurrencyEndpoint)
+                  .formatCurrency(
+                    session,
+                    params['currency'],
+                    params['amount'],
+                  ),
+        ),
+      },
+    );
     connectors['greeting'] = _i1.EndpointConnector(
       name: 'greeting',
       endpoint: endpoints['greeting']!,
@@ -1860,7 +1964,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i17.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i18.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),
@@ -1885,7 +1989,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['greetingV2'] as _i18.GreetingV2Endpoint).hello(
+                  (endpoints['greetingV2'] as _i19.GreetingV2Endpoint).hello(
                     session,
                     params['name'],
                   ),
@@ -1903,7 +2007,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greetingV2'] as _i18.GreetingV2Endpoint)
+              ) async => (endpoints['greetingV2'] as _i19.GreetingV2Endpoint)
                   .helloPublic(
                     session,
                     params['name'],
@@ -1922,7 +2026,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greetingV2'] as _i18.GreetingV2Endpoint)
+              ) async => (endpoints['greetingV2'] as _i19.GreetingV2Endpoint)
                   .helloStrict(
                     session,
                     params['name'],
@@ -1948,7 +2052,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['greetingV3'] as _i19.GreetingV3Endpoint).hello(
+                  (endpoints['greetingV3'] as _i20.GreetingV3Endpoint).hello(
                     session,
                     params['name'],
                   ),
@@ -1967,7 +2071,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['greetingV3'] as _i19.GreetingV3Endpoint).goodbye(
+                  (endpoints['greetingV3'] as _i20.GreetingV3Endpoint).goodbye(
                     session,
                     params['name'],
                   ),
@@ -1985,7 +2089,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greetingV3'] as _i19.GreetingV3Endpoint)
+              ) async => (endpoints['greetingV3'] as _i20.GreetingV3Endpoint)
                   .adminHello(
                     session,
                     params['name'],
@@ -2004,7 +2108,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greetingV3'] as _i19.GreetingV3Endpoint)
+              ) async => (endpoints['greetingV3'] as _i20.GreetingV3Endpoint)
                   .deleteGreeting(
                     session,
                     params['greetingId'],
@@ -2023,7 +2127,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greetingV3'] as _i19.GreetingV3Endpoint)
+              ) async => (endpoints['greetingV3'] as _i20.GreetingV3Endpoint)
                   .moderatorHello(
                     session,
                     params['name'],
@@ -2042,7 +2146,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greetingV3'] as _i19.GreetingV3Endpoint)
+              ) async => (endpoints['greetingV3'] as _i20.GreetingV3Endpoint)
                   .publicHello(
                     session,
                     params['name'],
@@ -2061,7 +2165,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greetingV3'] as _i19.GreetingV3Endpoint)
+              ) async => (endpoints['greetingV3'] as _i20.GreetingV3Endpoint)
                   .strictHello(
                     session,
                     params['name'],
@@ -2081,7 +2185,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['health'] as _i20.HealthEndpoint).check(session),
+                  (endpoints['health'] as _i21.HealthEndpoint).check(session),
         ),
         'ping': _i1.MethodConnector(
           name: 'ping',
@@ -2091,7 +2195,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['health'] as _i20.HealthEndpoint).ping(session),
+                  (endpoints['health'] as _i21.HealthEndpoint).ping(session),
         ),
       },
     );
@@ -2106,7 +2210,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['status'] as _i21.StatusEndpoint).getStatus(
+              ) async => (endpoints['status'] as _i22.StatusEndpoint).getStatus(
                 session,
               ),
         ),
@@ -2134,7 +2238,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i22.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i23.TranslationEndpoint)
                   .getTranslations(
                     session,
                     locale: params['locale'],
@@ -2169,7 +2273,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i22.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i23.TranslationEndpoint)
                   .saveTranslations(
                     session,
                     params['locale'],
@@ -2185,7 +2289,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i22.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i23.TranslationEndpoint)
                   .getAvailableLocales(session),
         ),
         'reseedFromAssets': _i1.MethodConnector(
@@ -2201,7 +2305,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i22.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i23.TranslationEndpoint)
                   .reseedFromAssets(
                     session,
                     forceReseed: params['forceReseed'],
@@ -2209,9 +2313,9 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i28.Endpoints()
+    modules['serverpod_auth_idp'] = _i29.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i29.Endpoints()
+    modules['serverpod_auth_core'] = _i30.Endpoints()
       ..initializeEndpoints(server);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:serverpod/serverpod.dart';
+import '../../utils/client_ip_helper.dart';
 
 /// Context object that carries request data through the middleware chain
 ///
@@ -168,14 +169,19 @@ class MiddlewareContext {
   /// 2. X-Forwarded-For (proxy)
   /// 3. X-Real-IP (nginx)
   /// 4. Remote address from connection
+  ///
+  /// **Note:** Client IP should only be used internally (logging, rate limiting)
+  /// and should NOT be exposed in API responses.
   String? extractClientIp() {
-    // Try to get from method call context if available
-    // Note: This is a simplified version. In production, you'd need
-    // to access the underlying HTTP request headers.
-    
-    // For now, return a placeholder that can be enhanced
-    // when integrated with the actual request handling
-    return _clientIp ?? 'unknown';
+    // If already extracted and stored, return it
+    if (_clientIp != null) {
+      return _clientIp;
+    }
+
+    // Extract using helper
+    final ip = ClientIpHelper.extract(session);
+    _clientIp = ip;
+    return ip ?? 'unknown';
   }
 
   @override

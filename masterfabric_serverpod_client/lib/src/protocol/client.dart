@@ -60,15 +60,23 @@ import 'package:masterfabric_serverpod_client/src/protocol/services/auth/verific
     as _i25;
 import 'package:masterfabric_serverpod_client/src/protocol/services/auth/verification/user_verification_preferences.dart'
     as _i26;
-import 'package:masterfabric_serverpod_client/src/protocol/services/greetings/models/greeting_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/currency/models/currency_conversion_response.dart'
     as _i27;
-import 'package:masterfabric_serverpod_client/src/protocol/services/health/models/health_check_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/currency/models/exchange_rate_response.dart'
     as _i28;
-import 'package:masterfabric_serverpod_client/src/protocol/services/status/models/server_status.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/currency/models/supported_currencies_response.dart'
     as _i29;
-import 'package:masterfabric_serverpod_client/src/protocol/services/translations/models/translation_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/currency/models/currency_format_response.dart'
     as _i30;
-import 'protocol.dart' as _i31;
+import 'package:masterfabric_serverpod_client/src/protocol/services/greetings/models/greeting_response.dart'
+    as _i31;
+import 'package:masterfabric_serverpod_client/src/protocol/services/health/models/health_check_response.dart'
+    as _i32;
+import 'package:masterfabric_serverpod_client/src/protocol/services/status/models/server_status.dart'
+    as _i33;
+import 'package:masterfabric_serverpod_client/src/protocol/services/translations/models/translation_response.dart'
+    as _i34;
+import 'protocol.dart' as _i35;
 
 /// Base class for MasterFabric endpoints with built-in middleware support
 ///
@@ -1537,6 +1545,137 @@ class EndpointVerificationPreferences extends EndpointMasterfabric {
       );
 }
 
+/// Currency endpoint for money and currency operations.
+///
+/// Provides endpoints for:
+/// - Currency conversion
+/// - Exchange rate retrieval
+/// - Supported currencies list
+/// - Currency formatting
+///
+/// ## Features:
+/// - Public endpoint (no authentication required)
+/// - Cached exchange rates for performance
+/// - Rate limited to prevent abuse
+///
+/// ## Usage from client:
+/// ```dart
+/// // Convert currency
+/// final result = await client.currency.convertCurrency(
+///   fromCurrency: 'USD',
+///   toCurrency: 'EUR',
+///   amount: 100.0,
+/// );
+/// print('${result.amount} ${result.fromCurrency} = ${result.convertedAmount} ${result.toCurrency}');
+///
+/// // Get exchange rate
+/// final rate = await client.currency.getExchangeRate(
+///   baseCurrency: 'USD',
+///   targetCurrency: 'EUR',
+/// );
+/// print('1 ${rate.baseCurrency} = ${rate.rate} ${rate.targetCurrency}');
+///
+/// // Get supported currencies
+/// final currencies = await client.currency.getSupportedCurrencies();
+/// print('Supported currencies: ${currencies.currencies.join(", ")}');
+/// ```
+///
+/// ## Role Requirements:
+/// - All methods: Requires 'public' role (unauthenticated access allowed)
+/// {@category Endpoint}
+class EndpointCurrency extends EndpointMasterfabric {
+  EndpointCurrency(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'currency';
+
+  /// Convert currency from one to another.
+  ///
+  /// **Required Roles:** 'public' (unauthenticated access allowed)
+  ///
+  /// [session] - Serverpod session
+  /// [fromCurrency] - Source currency code (ISO 4217, e.g., 'USD', 'EUR')
+  /// [toCurrency] - Target currency code (ISO 4217, e.g., 'USD', 'EUR')
+  /// [amount] - Amount to convert
+  ///
+  /// Returns [CurrencyConversionResponse] with converted amount and exchange rate.
+  ///
+  /// Rate limited to 60 requests per minute.
+  _i2.Future<_i27.CurrencyConversionResponse> convertCurrency(
+    String fromCurrency,
+    String toCurrency,
+    double amount,
+  ) => caller.callServerEndpoint<_i27.CurrencyConversionResponse>(
+    'currency',
+    'convertCurrency',
+    {
+      'fromCurrency': fromCurrency,
+      'toCurrency': toCurrency,
+      'amount': amount,
+    },
+  );
+
+  /// Get exchange rate between two currencies.
+  ///
+  /// **Required Roles:** 'public' (unauthenticated access allowed)
+  ///
+  /// [session] - Serverpod session
+  /// [baseCurrency] - Base currency code (ISO 4217)
+  /// [targetCurrency] - Target currency code (ISO 4217)
+  ///
+  /// Returns [ExchangeRateResponse] with the current exchange rate.
+  ///
+  /// Rate limited to 60 requests per minute.
+  _i2.Future<_i28.ExchangeRateResponse> getExchangeRate(
+    String baseCurrency,
+    String targetCurrency,
+  ) => caller.callServerEndpoint<_i28.ExchangeRateResponse>(
+    'currency',
+    'getExchangeRate',
+    {
+      'baseCurrency': baseCurrency,
+      'targetCurrency': targetCurrency,
+    },
+  );
+
+  /// Get list of supported currencies.
+  ///
+  /// **Required Roles:** 'public' (unauthenticated access allowed)
+  ///
+  /// Returns [SupportedCurrenciesResponse] with all supported currency codes.
+  ///
+  /// Rate limited to 30 requests per minute.
+  _i2.Future<_i29.SupportedCurrenciesResponse> getSupportedCurrencies() =>
+      caller.callServerEndpoint<_i29.SupportedCurrenciesResponse>(
+        'currency',
+        'getSupportedCurrencies',
+        {},
+      );
+
+  /// Format currency amount with proper symbol and formatting.
+  ///
+  /// **Required Roles:** 'public' (unauthenticated access allowed)
+  ///
+  /// [session] - Serverpod session
+  /// [currency] - Currency code (ISO 4217)
+  /// [amount] - Amount to format
+  ///
+  /// Returns [CurrencyFormatResponse] with formatted string and symbol.
+  ///
+  /// Rate limited to 60 requests per minute.
+  _i2.Future<_i30.CurrencyFormatResponse> formatCurrency(
+    String currency,
+    double amount,
+  ) => caller.callServerEndpoint<_i30.CurrencyFormatResponse>(
+    'currency',
+    'formatCurrency',
+    {
+      'currency': currency,
+      'amount': amount,
+    },
+  );
+}
+
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 ///
@@ -1556,8 +1695,8 @@ class EndpointGreeting extends _i1.EndpointRef {
   /// Rate limited to 20 requests per minute.
   /// Returns rate limit info (remaining, limit, reset time) in response.
   /// Throws RateLimitException with details if limit is exceeded.
-  _i2.Future<_i27.GreetingResponse> hello(String name) =>
-      caller.callServerEndpoint<_i27.GreetingResponse>(
+  _i2.Future<_i31.GreetingResponse> hello(String name) =>
+      caller.callServerEndpoint<_i31.GreetingResponse>(
         'greeting',
         'hello',
         {'name': name},
@@ -1593,8 +1732,8 @@ class EndpointGreetingV2 extends EndpointMasterfabric {
   /// - Request/response logging
   /// - Metrics collection
   /// - Error handling
-  _i2.Future<_i27.GreetingResponse> hello(String name) =>
-      caller.callServerEndpoint<_i27.GreetingResponse>(
+  _i2.Future<_i31.GreetingResponse> hello(String name) =>
+      caller.callServerEndpoint<_i31.GreetingResponse>(
         'greetingV2',
         'hello',
         {'name': name},
@@ -1603,8 +1742,8 @@ class EndpointGreetingV2 extends EndpointMasterfabric {
   /// Example of a public method (no authentication required).
   ///
   /// Uses per-method configuration to skip auth middleware.
-  _i2.Future<_i27.GreetingResponse> helloPublic(String name) =>
-      caller.callServerEndpoint<_i27.GreetingResponse>(
+  _i2.Future<_i31.GreetingResponse> helloPublic(String name) =>
+      caller.callServerEndpoint<_i31.GreetingResponse>(
         'greetingV2',
         'helloPublic',
         {'name': name},
@@ -1613,8 +1752,8 @@ class EndpointGreetingV2 extends EndpointMasterfabric {
   /// Example of a method with strict rate limiting.
   ///
   /// Uses per-method configuration for stricter limits.
-  _i2.Future<_i27.GreetingResponse> helloStrict(String name) =>
-      caller.callServerEndpoint<_i27.GreetingResponse>(
+  _i2.Future<_i31.GreetingResponse> helloStrict(String name) =>
+      caller.callServerEndpoint<_i31.GreetingResponse>(
         'greetingV2',
         'helloStrict',
         {'name': name},
@@ -1666,8 +1805,8 @@ class EndpointGreetingV3 extends EndpointMasterfabric {
   ///
   /// This method demonstrates the basic RBAC pattern where
   /// only authenticated users with the 'user' role can access it.
-  _i2.Future<_i27.GreetingResponse> hello(String name) =>
-      caller.callServerEndpoint<_i27.GreetingResponse>(
+  _i2.Future<_i31.GreetingResponse> hello(String name) =>
+      caller.callServerEndpoint<_i31.GreetingResponse>(
         'greetingV3',
         'hello',
         {'name': name},
@@ -1676,8 +1815,8 @@ class EndpointGreetingV3 extends EndpointMasterfabric {
   /// Returns a farewell message: "Goodbye {name}".
   ///
   /// **Required Roles:** 'user'
-  _i2.Future<_i27.GreetingResponse> goodbye(String name) =>
-      caller.callServerEndpoint<_i27.GreetingResponse>(
+  _i2.Future<_i31.GreetingResponse> goodbye(String name) =>
+      caller.callServerEndpoint<_i31.GreetingResponse>(
         'greetingV3',
         'goodbye',
         {'name': name},
@@ -1689,8 +1828,8 @@ class EndpointGreetingV3 extends EndpointMasterfabric {
   ///
   /// This demonstrates the OR pattern where having ANY of the
   /// specified roles grants access to the method.
-  _i2.Future<_i27.GreetingResponse> adminHello(String name) =>
-      caller.callServerEndpoint<_i27.GreetingResponse>(
+  _i2.Future<_i31.GreetingResponse> adminHello(String name) =>
+      caller.callServerEndpoint<_i31.GreetingResponse>(
         'greetingV3',
         'adminHello',
         {'name': name},
@@ -1714,8 +1853,8 @@ class EndpointGreetingV3 extends EndpointMasterfabric {
   /// **Required Roles:** 'moderator' OR 'admin' (either role grants access)
   ///
   /// Demonstrates allowing multiple roles where having ANY one is sufficient.
-  _i2.Future<_i27.GreetingResponse> moderatorHello(String name) =>
-      caller.callServerEndpoint<_i27.GreetingResponse>(
+  _i2.Future<_i31.GreetingResponse> moderatorHello(String name) =>
+      caller.callServerEndpoint<_i31.GreetingResponse>(
         'greetingV3',
         'moderatorHello',
         {'name': name},
@@ -1727,8 +1866,8 @@ class EndpointGreetingV3 extends EndpointMasterfabric {
   ///
   /// This demonstrates how to bypass authentication for specific methods
   /// using the [skipAuth] configuration.
-  _i2.Future<_i27.GreetingResponse> publicHello(String name) =>
-      caller.callServerEndpoint<_i27.GreetingResponse>(
+  _i2.Future<_i31.GreetingResponse> publicHello(String name) =>
+      caller.callServerEndpoint<_i31.GreetingResponse>(
         'greetingV3',
         'publicHello',
         {'name': name},
@@ -1740,8 +1879,8 @@ class EndpointGreetingV3 extends EndpointMasterfabric {
   /// **Rate Limit:** 5 requests per minute
   ///
   /// Demonstrates combining RBAC with custom rate limiting.
-  _i2.Future<_i27.GreetingResponse> strictHello(String name) =>
-      caller.callServerEndpoint<_i27.GreetingResponse>(
+  _i2.Future<_i31.GreetingResponse> strictHello(String name) =>
+      caller.callServerEndpoint<_i31.GreetingResponse>(
         'greetingV3',
         'strictHello',
         {'name': name},
@@ -1759,8 +1898,8 @@ class EndpointHealth extends _i1.EndpointRef {
   /// Check health of ALL services
   ///
   /// Returns health status for all infrastructure and application services
-  _i2.Future<_i28.HealthCheckResponse> check() =>
-      caller.callServerEndpoint<_i28.HealthCheckResponse>(
+  _i2.Future<_i32.HealthCheckResponse> check() =>
+      caller.callServerEndpoint<_i32.HealthCheckResponse>(
         'health',
         'check',
         {},
@@ -1812,15 +1951,15 @@ class EndpointStatus extends EndpointMasterfabric {
   /// - serverTime: Current server timestamp
   /// - serverStartTime: When the server was started
   /// - uptime: Human-readable uptime string
-  /// - clientIp: Requesting client's IP address (if available)
+  /// - clientIp: Requesting client's IP address
   /// - locale: Detected locale from request
   /// - debugMode: Whether debug mode is enabled
   /// - maintenanceMode: Whether maintenance mode is active
   ///
   /// This endpoint is publicly accessible without authentication.
   /// Rate limited to 60 requests per minute.
-  _i2.Future<_i29.ServerStatus> getStatus() =>
-      caller.callServerEndpoint<_i29.ServerStatus>(
+  _i2.Future<_i33.ServerStatus> getStatus() =>
+      caller.callServerEndpoint<_i33.ServerStatus>(
         'status',
         'getStatus',
         {},
@@ -1848,10 +1987,10 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse containing translations in slang JSON format
   ///
   /// Throws InternalServerError if translations cannot be loaded
-  _i2.Future<_i30.TranslationResponse> getTranslations({
+  _i2.Future<_i34.TranslationResponse> getTranslations({
     String? locale,
     String? namespace,
-  }) => caller.callServerEndpoint<_i30.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i34.TranslationResponse>(
     'translation',
     'getTranslations',
     {
@@ -1871,12 +2010,12 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse with saved translations
   ///
   /// Note: This should be protected by authentication/authorization in production
-  _i2.Future<_i30.TranslationResponse> saveTranslations(
+  _i2.Future<_i34.TranslationResponse> saveTranslations(
     String locale,
     Map<String, dynamic> translations, {
     String? namespace,
     required bool isActive,
-  }) => caller.callServerEndpoint<_i30.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i34.TranslationResponse>(
     'translation',
     'saveTranslations',
     {
@@ -1946,7 +2085,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i31.Protocol(),
+         _i35.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -1970,6 +2109,7 @@ class Client extends _i1.ServerpodClientShared {
     userManagement = EndpointUserManagement(this);
     userProfile = EndpointUserProfile(this);
     verificationPreferences = EndpointVerificationPreferences(this);
+    currency = EndpointCurrency(this);
     greeting = EndpointGreeting(this);
     greetingV2 = EndpointGreetingV2(this);
     greetingV3 = EndpointGreetingV3(this);
@@ -2009,6 +2149,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointVerificationPreferences verificationPreferences;
 
+  late final EndpointCurrency currency;
+
   late final EndpointGreeting greeting;
 
   late final EndpointGreetingV2 greetingV2;
@@ -2040,6 +2182,7 @@ class Client extends _i1.ServerpodClientShared {
     'userManagement': userManagement,
     'userProfile': userProfile,
     'verificationPreferences': verificationPreferences,
+    'currency': currency,
     'greeting': greeting,
     'greetingV2': greetingV2,
     'greetingV3': greetingV3,

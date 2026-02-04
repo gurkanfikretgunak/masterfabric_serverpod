@@ -12,6 +12,7 @@ import 'settings_screen.dart';
 import 'notifications/notification_center_screen.dart';
 import 'greeting_v2_screen.dart';
 import 'greeting_v3_screen.dart';
+import 'currency_converter_screen.dart';
 
 /// Home screen after authentication
 class HomeScreen extends StatefulWidget {
@@ -164,6 +165,14 @@ class _HomeScreenState extends State<HomeScreen> {
         title: tr('devTools.profile.title'),
         description: tr('devTools.profile.description'),
         onTap: () => _navigateToProfile(context),
+      ),
+      _buildToolCard(
+        context,
+        icon: LucideIcons.dollarSign,
+        title: 'Currency Converter',
+        description: 'Convert currencies with real-time exchange rates',
+        onTap: () => _navigateToCurrencyConverter(context),
+        color: Colors.green,
       ),
     ];
   }
@@ -481,6 +490,13 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const SettingsScreen()),
+    );
+  }
+
+  void _navigateToCurrencyConverter(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CurrencyConverterScreen()),
     );
   }
 }

@@ -1,0 +1,10 @@
+### Currency conversion response
+class: CurrencyConversionResponse
+fields:
+  success: bool
+  fromCurrency: String
+  toCurrency: String
+  amount: double
+  convertedAmount: double
+  exchangeRate: double
+  timestamp: DateTime

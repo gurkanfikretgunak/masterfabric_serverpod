@@ -3,6 +3,7 @@ import 'email_integration.dart';
 import 'firebase_integration.dart';
 import 'sentry_integration.dart';
 import 'mixpanel_integration.dart';
+import 'openai_integration.dart';
 import 'telegram_integration.dart';
 import 'whatsapp_integration.dart';
 
@@ -130,6 +131,25 @@ class IntegrationManager {
         _integrations.add(whatsapp);
       }
     }
+
+    // Initialize OpenAI
+    if (integrationsConfig.containsKey('openai')) {
+      final openaiConfig = integrationsConfig['openai'] as Map<String, dynamic>;
+      
+      final openai = OpenAIIntegration(
+        enabled: openaiConfig['enabled'] as bool? ?? false,
+        apiKey: openaiConfig['apiKey'] as String?,
+        organizationId: openaiConfig['organizationId'] as String?,
+        baseUrl: openaiConfig['baseUrl'] as String?,
+        defaultModel: openaiConfig['defaultModel'] as String?,
+        additionalConfig: openaiConfig,
+      );
+      
+      if (openai.enabled) {
+        await openai.initialize();
+        _integrations.add(openai);
+      }
+    }
   }
 
   /// Get an integration by name
@@ -164,6 +184,9 @@ class IntegrationManager {
 
   /// Get WhatsApp integration
   WhatsAppIntegration? get whatsapp => getIntegration<WhatsAppIntegration>('whatsapp');
+
+  /// Get OpenAI integration
+  OpenAIIntegration? get openai => getIntegration<OpenAIIntegration>('openai');
 
   /// Get all integrations
   List<BaseIntegration> getAllIntegrations() {

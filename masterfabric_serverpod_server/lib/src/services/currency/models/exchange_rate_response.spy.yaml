@@ -1,0 +1,8 @@
+### Exchange rate response
+class: ExchangeRateResponse
+fields:
+  success: bool
+  baseCurrency: String
+  targetCurrency: String
+  rate: double
+  timestamp: DateTime

@@ -3,6 +3,7 @@ import '../../../generated/protocol.dart';
 import '../../../core/middleware/base/masterfabric_endpoint.dart';
 import '../../../core/middleware/base/middleware_config.dart';
 import '../../../core/rate_limit/services/rate_limit_service.dart';
+import '../../../core/utils/client_ip_helper.dart';
 import '../../app_config/services/app_config_service.dart';
 
 /// Server start time - captured when the server first initializes.
@@ -85,7 +86,7 @@ class StatusEndpoint extends MasterfabricEndpoint with RbacEndpointMixin {
   /// - serverTime: Current server timestamp
   /// - serverStartTime: When the server was started
   /// - uptime: Human-readable uptime string
-  /// - clientIp: Requesting client's IP address (if available)
+  /// - clientIp: Requesting client's IP address
   /// - locale: Detected locale from request
   /// - debugMode: Whether debug mode is enabled
   /// - maintenanceMode: Whether maintenance mode is active
@@ -120,7 +121,7 @@ class StatusEndpoint extends MasterfabricEndpoint with RbacEndpointMixin {
           cachedSettings = await _loadAndCacheSettings(session);
         }
 
-        // Extract client IP from session (best effort)
+        // Extract client IP from session
         final clientIp = _extractClientIp(session);
 
         // Extract locale from session (best effort)
@@ -249,20 +250,12 @@ class StatusEndpoint extends MasterfabricEndpoint with RbacEndpointMixin {
   /// Extract client IP from session
   ///
   /// Tries to extract IP from:
-  /// 1. X-Forwarded-For header (when behind proxy)
-  /// 2. X-Real-IP header (nginx)
-  /// 3. Remote address from connection
+  /// 1. CF-Connecting-IP header (Cloudflare)
+  /// 2. X-Forwarded-For header (when behind proxy)
+  /// 3. X-Real-IP header (nginx)
+  /// 4. Remote address from connection (Serverpod's built-in)
   String? _extractClientIp(Session session) {
-    try {
-      // For HTTP requests, try to get from headers
-      // Note: Serverpod abstracts this, so we do our best
-
-      // In a real implementation, you'd access the underlying HTTP request
-      // For now, return the session's remote address if available
-      return null; // Will be enhanced when HTTP context is available
-    } catch (e) {
-      return null;
-    }
+    return ClientIpHelper.extract(session);
   }
 
   /// Extract locale from session
