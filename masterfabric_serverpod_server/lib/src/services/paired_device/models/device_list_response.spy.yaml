@@ -1,0 +1,7 @@
+### Device list response model
+class: DeviceListResponse
+fields:
+  success: bool
+  devices: List<PairedDevice>
+  totalCount: int
+  activeCount: int

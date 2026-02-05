@@ -72,11 +72,21 @@ import 'package:masterfabric_serverpod_client/src/protocol/services/greetings/mo
     as _i31;
 import 'package:masterfabric_serverpod_client/src/protocol/services/health/models/health_check_response.dart'
     as _i32;
-import 'package:masterfabric_serverpod_client/src/protocol/services/status/models/server_status.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/paired_device/models/device_pairing_response.dart'
     as _i33;
-import 'package:masterfabric_serverpod_client/src/protocol/services/translations/models/translation_response.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/paired_device/models/device_pairing_request.dart'
     as _i34;
-import 'protocol.dart' as _i35;
+import 'package:masterfabric_serverpod_client/src/protocol/services/paired_device/models/device_list_response.dart'
+    as _i35;
+import 'package:masterfabric_serverpod_client/src/protocol/services/paired_device/models/paired_device.dart'
+    as _i36;
+import 'package:masterfabric_serverpod_client/src/protocol/services/paired_device/models/device_mode.dart'
+    as _i37;
+import 'package:masterfabric_serverpod_client/src/protocol/services/status/models/server_status.dart'
+    as _i38;
+import 'package:masterfabric_serverpod_client/src/protocol/services/translations/models/translation_response.dart'
+    as _i39;
+import 'protocol.dart' as _i40;
 
 /// Base class for MasterFabric endpoints with built-in middleware support
 ///
@@ -1913,6 +1923,186 @@ class EndpointHealth extends _i1.EndpointRef {
   );
 }
 
+/// Paired device endpoint for device pairing and management.
+///
+/// Provides endpoints for:
+/// - Device pairing/registration
+/// - Device verification
+/// - Device listing and management
+/// - Multi-device vs single-device mode management
+///
+/// ## Features:
+/// - Multi-device and single-device sign-in modes
+/// - Device verification with codes
+/// - Extended device tracking (IP, user agent, fingerprint)
+/// - Rate limiting for pairing operations
+///
+/// ## Usage from client:
+/// ```dart
+/// // Pair a new device
+/// final result = await client.pairedDevice.pairDevice(
+///   DevicePairingRequest(
+///     deviceId: 'device-123',
+///     deviceName: 'iPhone 14',
+///     platform: 'ios',
+///   ),
+/// );
+///
+/// // Verify device pairing
+/// await client.pairedDevice.verifyDevicePairing(
+///   'device-123',
+///   '123456',
+/// );
+///
+/// // Get all devices
+/// final devices = await client.pairedDevice.getMyDevices();
+/// ```
+/// {@category Endpoint}
+class EndpointPairedDevice extends EndpointMasterfabric {
+  EndpointPairedDevice(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'pairedDevice';
+
+  /// Pair a new device
+  ///
+  /// **Required:** Authentication
+  ///
+  /// [session] - Serverpod session
+  /// [request] - Device pairing request
+  ///
+  /// Returns [DevicePairingResponse] with pairing result and optional verification code.
+  ///
+  /// Rate limited to 5 requests per hour per user.
+  _i2.Future<_i33.DevicePairingResponse> pairDevice(
+    _i34.DevicePairingRequest request,
+  ) => caller.callServerEndpoint<_i33.DevicePairingResponse>(
+    'pairedDevice',
+    'pairDevice',
+    {'request': request},
+  );
+
+  /// Verify device pairing with verification code
+  ///
+  /// **Required:** Authentication
+  ///
+  /// [session] - Serverpod session
+  /// [deviceId] - Device ID to verify
+  /// [verificationCode] - Verification code
+  ///
+  /// Returns [DevicePairingResponse] with verified device.
+  ///
+  /// Rate limited to 10 requests per hour per user.
+  _i2.Future<_i33.DevicePairingResponse> verifyDevicePairing(
+    String deviceId,
+    String verificationCode,
+  ) => caller.callServerEndpoint<_i33.DevicePairingResponse>(
+    'pairedDevice',
+    'verifyDevicePairing',
+    {
+      'deviceId': deviceId,
+      'verificationCode': verificationCode,
+    },
+  );
+
+  /// Get all devices for the current user
+  ///
+  /// **Required:** Authentication
+  ///
+  /// [session] - Serverpod session
+  ///
+  /// Returns [DeviceListResponse] with all paired devices.
+  _i2.Future<_i35.DeviceListResponse> getMyDevices() =>
+      caller.callServerEndpoint<_i35.DeviceListResponse>(
+        'pairedDevice',
+        'getMyDevices',
+        {},
+      );
+
+  /// Get a specific device by ID
+  ///
+  /// **Required:** Authentication
+  ///
+  /// [session] - Serverpod session
+  /// [deviceId] - Device database ID
+  ///
+  /// Returns [PairedDevice] if found and belongs to user.
+  _i2.Future<_i36.PairedDevice> getDevice(int deviceId) =>
+      caller.callServerEndpoint<_i36.PairedDevice>(
+        'pairedDevice',
+        'getDevice',
+        {'deviceId': deviceId},
+      );
+
+  /// Update device information
+  ///
+  /// **Required:** Authentication
+  ///
+  /// [session] - Serverpod session
+  /// [deviceId] - Device database ID
+  /// [deviceName] - New device name (optional)
+  /// [deviceMode] - New device mode (optional)
+  ///
+  /// Returns updated [PairedDevice].
+  _i2.Future<_i36.PairedDevice> updateDevice(
+    int deviceId, {
+    String? deviceName,
+    _i37.DeviceMode? deviceMode,
+  }) => caller.callServerEndpoint<_i36.PairedDevice>(
+    'pairedDevice',
+    'updateDevice',
+    {
+      'deviceId': deviceId,
+      'deviceName': deviceName,
+      'deviceMode': deviceMode,
+    },
+  );
+
+  /// Revoke/unpair a device
+  ///
+  /// **Required:** Authentication
+  ///
+  /// [session] - Serverpod session
+  /// [deviceId] - Device database ID
+  ///
+  /// Throws NotFoundError if device not found.
+  _i2.Future<void> revokeDevice(int deviceId) =>
+      caller.callServerEndpoint<void>(
+        'pairedDevice',
+        'revokeDevice',
+        {'deviceId': deviceId},
+      );
+
+  /// Revoke all devices for the current user
+  ///
+  /// **Required:** Authentication
+  ///
+  /// [session] - Serverpod session
+  _i2.Future<void> revokeAllDevices() => caller.callServerEndpoint<void>(
+    'pairedDevice',
+    'revokeAllDevices',
+    {},
+  );
+
+  /// Set system-wide device mode for user
+  ///
+  /// Updates all devices to use the specified mode.
+  /// In single-device mode, only the most recent device remains active.
+  ///
+  /// **Required:** Authentication
+  ///
+  /// [session] - Serverpod session
+  /// [mode] - Device mode to set
+  ///
+  /// Returns number of devices updated.
+  _i2.Future<int> setDeviceMode(_i37.DeviceMode mode) =>
+      caller.callServerEndpoint<int>(
+        'pairedDevice',
+        'setDeviceMode',
+        {'mode': mode},
+      );
+}
+
 /// Public status endpoint that returns server information.
 ///
 /// This endpoint demonstrates the RBAC pattern with public methods.
@@ -1958,8 +2148,8 @@ class EndpointStatus extends EndpointMasterfabric {
   ///
   /// This endpoint is publicly accessible without authentication.
   /// Rate limited to 60 requests per minute.
-  _i2.Future<_i33.ServerStatus> getStatus() =>
-      caller.callServerEndpoint<_i33.ServerStatus>(
+  _i2.Future<_i38.ServerStatus> getStatus() =>
+      caller.callServerEndpoint<_i38.ServerStatus>(
         'status',
         'getStatus',
         {},
@@ -1987,10 +2177,10 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse containing translations in slang JSON format
   ///
   /// Throws InternalServerError if translations cannot be loaded
-  _i2.Future<_i34.TranslationResponse> getTranslations({
+  _i2.Future<_i39.TranslationResponse> getTranslations({
     String? locale,
     String? namespace,
-  }) => caller.callServerEndpoint<_i34.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i39.TranslationResponse>(
     'translation',
     'getTranslations',
     {
@@ -2010,12 +2200,12 @@ class EndpointTranslation extends _i1.EndpointRef {
   /// Returns TranslationResponse with saved translations
   ///
   /// Note: This should be protected by authentication/authorization in production
-  _i2.Future<_i34.TranslationResponse> saveTranslations(
+  _i2.Future<_i39.TranslationResponse> saveTranslations(
     String locale,
     Map<String, dynamic> translations, {
     String? namespace,
     required bool isActive,
-  }) => caller.callServerEndpoint<_i34.TranslationResponse>(
+  }) => caller.callServerEndpoint<_i39.TranslationResponse>(
     'translation',
     'saveTranslations',
     {
@@ -2085,7 +2275,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i35.Protocol(),
+         _i40.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -2114,6 +2304,7 @@ class Client extends _i1.ServerpodClientShared {
     greetingV2 = EndpointGreetingV2(this);
     greetingV3 = EndpointGreetingV3(this);
     health = EndpointHealth(this);
+    pairedDevice = EndpointPairedDevice(this);
     status = EndpointStatus(this);
     translation = EndpointTranslation(this);
     modules = Modules(this);
@@ -2159,6 +2350,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointHealth health;
 
+  late final EndpointPairedDevice pairedDevice;
+
   late final EndpointStatus status;
 
   late final EndpointTranslation translation;
@@ -2187,6 +2380,7 @@ class Client extends _i1.ServerpodClientShared {
     'greetingV2': greetingV2,
     'greetingV3': greetingV3,
     'health': health,
+    'pairedDevice': pairedDevice,
     'status': status,
     'translation': translation,
   };

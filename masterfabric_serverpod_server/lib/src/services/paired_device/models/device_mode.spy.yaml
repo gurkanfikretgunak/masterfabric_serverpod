@@ -1,0 +1,5 @@
+### Device mode enum
+enum: DeviceMode
+values:
+  - multiDevice
+  - singleDevice

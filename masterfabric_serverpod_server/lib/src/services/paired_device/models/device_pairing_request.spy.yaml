@@ -1,0 +1,8 @@
+### Device pairing request model
+class: DevicePairingRequest
+fields:
+  deviceId: String
+  deviceName: String
+  platform: String
+  deviceFingerprint: String?
+  userAgent: String?

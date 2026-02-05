@@ -6,8 +6,8 @@
       "type": "createTable",
       "createTable": {
         "__className__": "serverpod.TableDefinition",
-        "name": "user_verification_preferences",
-        "dartName": "UserVerificationPreferences",
+        "name": "paired_devices",
+        "dartName": "PairedDevice",
         "module": "masterfabric_serverpod",
         "schema": "public",
         "columns": [
@@ -16,7 +16,7 @@
             "name": "id",
             "columnType": 6,
             "isNullable": false,
-            "columnDefault": "nextval('user_verification_preferences_id_seq'::regclass)",
+            "columnDefault": "nextval('paired_devices_id_seq'::regclass)",
             "dartType": "int?"
           },
           {
@@ -28,66 +28,94 @@
           },
           {
             "__className__": "serverpod.ColumnDefinition",
-            "name": "preferredChannel",
+            "name": "deviceId",
             "columnType": 0,
             "isNullable": false,
-            "dartType": "protocol:VerificationChannel"
+            "dartType": "String"
           },
           {
             "__className__": "serverpod.ColumnDefinition",
-            "name": "phoneNumber",
+            "name": "deviceName",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "platform",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "deviceFingerprint",
             "columnType": 0,
             "isNullable": true,
             "dartType": "String?"
           },
           {
             "__className__": "serverpod.ColumnDefinition",
-            "name": "telegramChatId",
+            "name": "ipAddress",
             "columnType": 0,
             "isNullable": true,
             "dartType": "String?"
           },
           {
             "__className__": "serverpod.ColumnDefinition",
-            "name": "whatsappVerified",
-            "columnType": 1,
-            "isNullable": false,
-            "dartType": "bool"
-          },
-          {
-            "__className__": "serverpod.ColumnDefinition",
-            "name": "telegramLinked",
-            "columnType": 1,
-            "isNullable": false,
-            "dartType": "bool"
-          },
-          {
-            "__className__": "serverpod.ColumnDefinition",
-            "name": "backupChannel",
+            "name": "userAgent",
             "columnType": 0,
             "isNullable": true,
-            "dartType": "protocol:VerificationChannel?"
+            "dartType": "String?"
           },
           {
             "__className__": "serverpod.ColumnDefinition",
-            "name": "createdAt",
+            "name": "isActive",
+            "columnType": 1,
+            "isNullable": false,
+            "dartType": "bool"
+          },
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "isTrusted",
+            "columnType": 1,
+            "isNullable": false,
+            "dartType": "bool"
+          },
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "deviceMode",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "protocol:DeviceMode"
+          },
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "lastSeenAt",
             "columnType": 4,
             "isNullable": false,
             "dartType": "DateTime"
           },
           {
             "__className__": "serverpod.ColumnDefinition",
-            "name": "updatedAt",
+            "name": "pairedAt",
             "columnType": 4,
             "isNullable": false,
             "dartType": "DateTime"
+          },
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "metadata",
+            "columnType": 0,
+            "isNullable": true,
+            "dartType": "String?"
           }
         ],
         "foreignKeys": [],
         "indexes": [
           {
             "__className__": "serverpod.IndexDefinition",
-            "indexName": "user_verification_preferences_pkey",
+            "indexName": "paired_devices_pkey",
             "elements": [
               {
                 "__className__": "serverpod.IndexElementDefinition",
@@ -98,48 +126,6 @@
             "type": "btree",
             "isUnique": true,
             "isPrimary": true
-          },
-          {
-            "__className__": "serverpod.IndexDefinition",
-            "indexName": "user_verification_prefs_user_idx",
-            "elements": [
-              {
-                "__className__": "serverpod.IndexElementDefinition",
-                "type": 0,
-                "definition": "userId"
-              }
-            ],
-            "type": "btree",
-            "isUnique": true,
-            "isPrimary": false
-          },
-          {
-            "__className__": "serverpod.IndexDefinition",
-            "indexName": "user_verification_prefs_phone_idx",
-            "elements": [
-              {
-                "__className__": "serverpod.IndexElementDefinition",
-                "type": 0,
-                "definition": "phoneNumber"
-              }
-            ],
-            "type": "btree",
-            "isUnique": false,
-            "isPrimary": false
-          },
-          {
-            "__className__": "serverpod.IndexDefinition",
-            "indexName": "user_verification_prefs_telegram_idx",
-            "elements": [
-              {
-                "__className__": "serverpod.IndexElementDefinition",
-                "type": 0,
-                "definition": "telegramChatId"
-              }
-            ],
-            "type": "btree",
-            "isUnique": false,
-            "isPrimary": false
           }
         ],
         "managed": true

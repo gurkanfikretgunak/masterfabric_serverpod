@@ -56,6 +56,26 @@ CREATE TABLE "auth_audit_log" (
 );
 
 --
+-- Class PairedDevice as table paired_devices
+--
+CREATE TABLE "paired_devices" (
+    "id" bigserial PRIMARY KEY,
+    "userId" text NOT NULL,
+    "deviceId" text NOT NULL,
+    "deviceName" text NOT NULL,
+    "platform" text NOT NULL,
+    "deviceFingerprint" text,
+    "ipAddress" text,
+    "userAgent" text,
+    "isActive" boolean NOT NULL,
+    "isTrusted" boolean NOT NULL,
+    "deviceMode" text NOT NULL,
+    "lastSeenAt" timestamp without time zone NOT NULL,
+    "pairedAt" timestamp without time zone NOT NULL,
+    "metadata" text
+);
+
+--
 -- Class Permission as table permission
 --
 CREATE TABLE "permission" (
@@ -756,9 +776,9 @@ ALTER TABLE ONLY "serverpod_auth_core_session"
 -- MIGRATION VERSION FOR masterfabric_serverpod
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('masterfabric_serverpod', '20260201122232207', now())
+    VALUES ('masterfabric_serverpod', '20260205123502503', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20260201122232207', "timestamp" = now();
+    DO UPDATE SET "version" = '20260205123502503', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

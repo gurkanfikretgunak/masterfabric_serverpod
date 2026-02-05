@@ -34,22 +34,28 @@ import '../services/greetings/endpoints/greeting_endpoint.dart' as _i18;
 import '../services/greetings/endpoints/greeting_endpoint_v2.dart' as _i19;
 import '../services/greetings/endpoints/greeting_endpoint_v3.dart' as _i20;
 import '../services/health/endpoints/health_endpoint.dart' as _i21;
-import '../services/status/endpoints/status_endpoint.dart' as _i22;
-import '../services/translations/endpoints/translation_endpoint.dart' as _i23;
+import '../services/paired_device/endpoints/paired_device_endpoint.dart'
+    as _i22;
+import '../services/status/endpoints/status_endpoint.dart' as _i23;
+import '../services/translations/endpoints/translation_endpoint.dart' as _i24;
 import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/send_notification_request.dart'
-    as _i24;
-import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
     as _i25;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
     as _i26;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
     as _i27;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
     as _i28;
-import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
     as _i29;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/paired_device/models/device_pairing_request.dart'
     as _i30;
+import 'package:masterfabric_serverpod_server/src/generated/services/paired_device/models/device_mode.dart'
+    as _i31;
+import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+    as _i32;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i33;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -175,13 +181,19 @@ class Endpoints extends _i1.EndpointDispatch {
           'health',
           null,
         ),
-      'status': _i22.StatusEndpoint()
+      'pairedDevice': _i22.PairedDeviceEndpoint()
+        ..initialize(
+          server,
+          'pairedDevice',
+          null,
+        ),
+      'status': _i23.StatusEndpoint()
         ..initialize(
           server,
           'status',
           null,
         ),
-      'translation': _i23.TranslationEndpoint()
+      'translation': _i24.TranslationEndpoint()
         ..initialize(
           server,
           'translation',
@@ -197,7 +209,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i24.SendNotificationRequest>(),
+              type: _i1.getType<_i25.SendNotificationRequest>(),
               nullable: false,
             ),
           },
@@ -373,7 +385,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'type': _i1.ParameterDescription(
               name: 'type',
-              type: _i1.getType<_i25.ChannelType>(),
+              type: _i1.getType<_i26.ChannelType>(),
               nullable: false,
             ),
             'description': _i1.ParameterDescription(
@@ -1555,7 +1567,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i26.ProfileUpdateRequest>(),
+              type: _i1.getType<_i27.ProfileUpdateRequest>(),
               nullable: false,
             ),
           },
@@ -1599,7 +1611,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'gender': _i1.ParameterDescription(
               name: 'gender',
-              type: _i1.getType<_i27.Gender?>(),
+              type: _i1.getType<_i28.Gender?>(),
               nullable: true,
             ),
           },
@@ -1709,12 +1721,12 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'preferredChannel': _i1.ParameterDescription(
               name: 'preferredChannel',
-              type: _i1.getType<_i28.VerificationChannel>(),
+              type: _i1.getType<_i29.VerificationChannel>(),
               nullable: false,
             ),
             'backupChannel': _i1.ParameterDescription(
               name: 'backupChannel',
-              type: _i1.getType<_i28.VerificationChannel?>(),
+              type: _i1.getType<_i29.VerificationChannel?>(),
               nullable: true,
             ),
             'phoneNumber': _i1.ParameterDescription(
@@ -2199,6 +2211,172 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['pairedDevice'] = _i1.EndpointConnector(
+      name: 'pairedDevice',
+      endpoint: endpoints['pairedDevice']!,
+      methodConnectors: {
+        'pairDevice': _i1.MethodConnector(
+          name: 'pairDevice',
+          params: {
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i30.DevicePairingRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['pairedDevice'] as _i22.PairedDeviceEndpoint)
+                      .pairDevice(
+                        session,
+                        params['request'],
+                      ),
+        ),
+        'verifyDevicePairing': _i1.MethodConnector(
+          name: 'verifyDevicePairing',
+          params: {
+            'deviceId': _i1.ParameterDescription(
+              name: 'deviceId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'verificationCode': _i1.ParameterDescription(
+              name: 'verificationCode',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['pairedDevice'] as _i22.PairedDeviceEndpoint)
+                      .verifyDevicePairing(
+                        session,
+                        params['deviceId'],
+                        params['verificationCode'],
+                      ),
+        ),
+        'getMyDevices': _i1.MethodConnector(
+          name: 'getMyDevices',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['pairedDevice'] as _i22.PairedDeviceEndpoint)
+                      .getMyDevices(session),
+        ),
+        'getDevice': _i1.MethodConnector(
+          name: 'getDevice',
+          params: {
+            'deviceId': _i1.ParameterDescription(
+              name: 'deviceId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['pairedDevice'] as _i22.PairedDeviceEndpoint)
+                      .getDevice(
+                        session,
+                        params['deviceId'],
+                      ),
+        ),
+        'updateDevice': _i1.MethodConnector(
+          name: 'updateDevice',
+          params: {
+            'deviceId': _i1.ParameterDescription(
+              name: 'deviceId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'deviceName': _i1.ParameterDescription(
+              name: 'deviceName',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'deviceMode': _i1.ParameterDescription(
+              name: 'deviceMode',
+              type: _i1.getType<_i31.DeviceMode?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['pairedDevice'] as _i22.PairedDeviceEndpoint)
+                      .updateDevice(
+                        session,
+                        params['deviceId'],
+                        deviceName: params['deviceName'],
+                        deviceMode: params['deviceMode'],
+                      ),
+        ),
+        'revokeDevice': _i1.MethodConnector(
+          name: 'revokeDevice',
+          params: {
+            'deviceId': _i1.ParameterDescription(
+              name: 'deviceId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['pairedDevice'] as _i22.PairedDeviceEndpoint)
+                      .revokeDevice(
+                        session,
+                        params['deviceId'],
+                      ),
+        ),
+        'revokeAllDevices': _i1.MethodConnector(
+          name: 'revokeAllDevices',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['pairedDevice'] as _i22.PairedDeviceEndpoint)
+                      .revokeAllDevices(session),
+        ),
+        'setDeviceMode': _i1.MethodConnector(
+          name: 'setDeviceMode',
+          params: {
+            'mode': _i1.ParameterDescription(
+              name: 'mode',
+              type: _i1.getType<_i31.DeviceMode>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['pairedDevice'] as _i22.PairedDeviceEndpoint)
+                      .setDeviceMode(
+                        session,
+                        params['mode'],
+                      ),
+        ),
+      },
+    );
     connectors['status'] = _i1.EndpointConnector(
       name: 'status',
       endpoint: endpoints['status']!,
@@ -2210,7 +2388,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['status'] as _i22.StatusEndpoint).getStatus(
+              ) async => (endpoints['status'] as _i23.StatusEndpoint).getStatus(
                 session,
               ),
         ),
@@ -2238,7 +2416,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i23.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i24.TranslationEndpoint)
                   .getTranslations(
                     session,
                     locale: params['locale'],
@@ -2273,7 +2451,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i23.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i24.TranslationEndpoint)
                   .saveTranslations(
                     session,
                     params['locale'],
@@ -2289,7 +2467,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i23.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i24.TranslationEndpoint)
                   .getAvailableLocales(session),
         ),
         'reseedFromAssets': _i1.MethodConnector(
@@ -2305,7 +2483,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['translation'] as _i23.TranslationEndpoint)
+              ) async => (endpoints['translation'] as _i24.TranslationEndpoint)
                   .reseedFromAssets(
                     session,
                     forceReseed: params['forceReseed'],
@@ -2313,9 +2491,9 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i29.Endpoints()
+    modules['serverpod_auth_idp'] = _i32.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i30.Endpoints()
+    modules['serverpod_auth_core'] = _i33.Endpoints()
       ..initializeEndpoints(server);
   }
 }

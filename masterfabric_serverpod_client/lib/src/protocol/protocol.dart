@@ -89,23 +89,28 @@ import 'services/greetings/models/greeting.dart' as _i66;
 import 'services/greetings/models/greeting_response.dart' as _i67;
 import 'services/health/models/health_check_response.dart' as _i68;
 import 'services/health/models/service_health_info.dart' as _i69;
-import 'services/status/models/server_status.dart' as _i70;
-import 'services/translations/models/translation_entry.dart' as _i71;
-import 'services/translations/models/translation_response.dart' as _i72;
+import 'services/paired_device/models/device_list_response.dart' as _i70;
+import 'services/paired_device/models/device_mode.dart' as _i71;
+import 'services/paired_device/models/device_pairing_request.dart' as _i72;
+import 'services/paired_device/models/device_pairing_response.dart' as _i73;
+import 'services/paired_device/models/paired_device.dart' as _i74;
+import 'services/status/models/server_status.dart' as _i75;
+import 'services/translations/models/translation_entry.dart' as _i76;
+import 'services/translations/models/translation_response.dart' as _i77;
 import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/role.dart'
-    as _i73;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/permission.dart'
-    as _i74;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/session/session_info_response.dart'
-    as _i75;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/gender.dart'
-    as _i76;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/verification/verification_channel.dart'
-    as _i77;
-import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
     as _i78;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/permission.dart'
     as _i79;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/session/session_info_response.dart'
+    as _i80;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/gender.dart'
+    as _i81;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/verification/verification_channel.dart'
+    as _i82;
+import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
+    as _i83;
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+    as _i84;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -174,6 +179,11 @@ export 'services/greetings/models/greeting.dart';
 export 'services/greetings/models/greeting_response.dart';
 export 'services/health/models/health_check_response.dart';
 export 'services/health/models/service_health_info.dart';
+export 'services/paired_device/models/device_list_response.dart';
+export 'services/paired_device/models/device_mode.dart';
+export 'services/paired_device/models/device_pairing_request.dart';
+export 'services/paired_device/models/device_pairing_response.dart';
+export 'services/paired_device/models/paired_device.dart';
 export 'services/status/models/server_status.dart';
 export 'services/translations/models/translation_entry.dart';
 export 'services/translations/models/translation_response.dart';
@@ -417,14 +427,29 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i69.ServiceHealthInfo) {
       return _i69.ServiceHealthInfo.fromJson(data) as T;
     }
-    if (t == _i70.ServerStatus) {
-      return _i70.ServerStatus.fromJson(data) as T;
+    if (t == _i70.DeviceListResponse) {
+      return _i70.DeviceListResponse.fromJson(data) as T;
     }
-    if (t == _i71.TranslationEntry) {
-      return _i71.TranslationEntry.fromJson(data) as T;
+    if (t == _i71.DeviceMode) {
+      return _i71.DeviceMode.fromJson(data) as T;
     }
-    if (t == _i72.TranslationResponse) {
-      return _i72.TranslationResponse.fromJson(data) as T;
+    if (t == _i72.DevicePairingRequest) {
+      return _i72.DevicePairingRequest.fromJson(data) as T;
+    }
+    if (t == _i73.DevicePairingResponse) {
+      return _i73.DevicePairingResponse.fromJson(data) as T;
+    }
+    if (t == _i74.PairedDevice) {
+      return _i74.PairedDevice.fromJson(data) as T;
+    }
+    if (t == _i75.ServerStatus) {
+      return _i75.ServerStatus.fromJson(data) as T;
+    }
+    if (t == _i76.TranslationEntry) {
+      return _i76.TranslationEntry.fromJson(data) as T;
+    }
+    if (t == _i77.TranslationResponse) {
+      return _i77.TranslationResponse.fromJson(data) as T;
     }
     if (t == _i1.getType<_i2.AppConfig?>()) {
       return (data != null ? _i2.AppConfig.fromJson(data) : null) as T;
@@ -684,14 +709,32 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i1.getType<_i69.ServiceHealthInfo?>()) {
       return (data != null ? _i69.ServiceHealthInfo.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i70.ServerStatus?>()) {
-      return (data != null ? _i70.ServerStatus.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i70.DeviceListResponse?>()) {
+      return (data != null ? _i70.DeviceListResponse.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i71.TranslationEntry?>()) {
-      return (data != null ? _i71.TranslationEntry.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i71.DeviceMode?>()) {
+      return (data != null ? _i71.DeviceMode.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i72.TranslationResponse?>()) {
-      return (data != null ? _i72.TranslationResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i72.DevicePairingRequest?>()) {
+      return (data != null ? _i72.DevicePairingRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i73.DevicePairingResponse?>()) {
+      return (data != null ? _i73.DevicePairingResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i74.PairedDevice?>()) {
+      return (data != null ? _i74.PairedDevice.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i75.ServerStatus?>()) {
+      return (data != null ? _i75.ServerStatus.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i76.TranslationEntry?>()) {
+      return (data != null ? _i76.TranslationEntry.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i77.TranslationResponse?>()) {
+      return (data != null ? _i77.TranslationResponse.fromJson(data) : null)
           as T;
     }
     if (t == List<String>) {
@@ -733,6 +776,12 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           as T;
     }
+    if (t == List<_i74.PairedDevice>) {
+      return (data as List)
+              .map((e) => deserialize<_i74.PairedDevice>(e))
+              .toList()
+          as T;
+    }
     if (t == Map<String, dynamic>) {
       return (data as Map).map(
             (k, v) => MapEntry(deserialize<String>(k), deserialize<dynamic>(v)),
@@ -742,32 +791,32 @@ class Protocol extends _i1.SerializationManager {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == List<_i73.Role>) {
-      return (data as List).map((e) => deserialize<_i73.Role>(e)).toList() as T;
+    if (t == List<_i78.Role>) {
+      return (data as List).map((e) => deserialize<_i78.Role>(e)).toList() as T;
     }
-    if (t == List<_i74.Permission>) {
-      return (data as List).map((e) => deserialize<_i74.Permission>(e)).toList()
+    if (t == List<_i79.Permission>) {
+      return (data as List).map((e) => deserialize<_i79.Permission>(e)).toList()
           as T;
     }
     if (t == Set<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
     }
-    if (t == List<_i75.SessionInfoResponse>) {
+    if (t == List<_i80.SessionInfoResponse>) {
       return (data as List)
-              .map((e) => deserialize<_i75.SessionInfoResponse>(e))
+              .map((e) => deserialize<_i80.SessionInfoResponse>(e))
               .toList()
           as T;
     }
-    if (t == List<_i76.Gender>) {
-      return (data as List).map((e) => deserialize<_i76.Gender>(e)).toList()
+    if (t == List<_i81.Gender>) {
+      return (data as List).map((e) => deserialize<_i81.Gender>(e)).toList()
           as T;
     }
     if (t == List<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toList() as T;
     }
-    if (t == List<_i77.VerificationChannel>) {
+    if (t == List<_i82.VerificationChannel>) {
       return (data as List)
-              .map((e) => deserialize<_i77.VerificationChannel>(e))
+              .map((e) => deserialize<_i82.VerificationChannel>(e))
               .toList()
           as T;
     }
@@ -778,10 +827,10 @@ class Protocol extends _i1.SerializationManager {
           as T;
     }
     try {
-      return _i78.Protocol().deserialize<T>(data, t);
+      return _i83.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     try {
-      return _i79.Protocol().deserialize<T>(data, t);
+      return _i84.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     return super.deserialize<T>(data, t);
   }
@@ -856,9 +905,14 @@ class Protocol extends _i1.SerializationManager {
       _i67.GreetingResponse => 'GreetingResponse',
       _i68.HealthCheckResponse => 'HealthCheckResponse',
       _i69.ServiceHealthInfo => 'ServiceHealthInfo',
-      _i70.ServerStatus => 'ServerStatus',
-      _i71.TranslationEntry => 'TranslationEntry',
-      _i72.TranslationResponse => 'TranslationResponse',
+      _i70.DeviceListResponse => 'DeviceListResponse',
+      _i71.DeviceMode => 'DeviceMode',
+      _i72.DevicePairingRequest => 'DevicePairingRequest',
+      _i73.DevicePairingResponse => 'DevicePairingResponse',
+      _i74.PairedDevice => 'PairedDevice',
+      _i75.ServerStatus => 'ServerStatus',
+      _i76.TranslationEntry => 'TranslationEntry',
+      _i77.TranslationResponse => 'TranslationResponse',
       _ => null,
     };
   }
@@ -1012,18 +1066,28 @@ class Protocol extends _i1.SerializationManager {
         return 'HealthCheckResponse';
       case _i69.ServiceHealthInfo():
         return 'ServiceHealthInfo';
-      case _i70.ServerStatus():
+      case _i70.DeviceListResponse():
+        return 'DeviceListResponse';
+      case _i71.DeviceMode():
+        return 'DeviceMode';
+      case _i72.DevicePairingRequest():
+        return 'DevicePairingRequest';
+      case _i73.DevicePairingResponse():
+        return 'DevicePairingResponse';
+      case _i74.PairedDevice():
+        return 'PairedDevice';
+      case _i75.ServerStatus():
         return 'ServerStatus';
-      case _i71.TranslationEntry():
+      case _i76.TranslationEntry():
         return 'TranslationEntry';
-      case _i72.TranslationResponse():
+      case _i77.TranslationResponse():
         return 'TranslationResponse';
     }
-    className = _i78.Protocol().getClassNameForObject(data);
+    className = _i83.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_idp.$className';
     }
-    className = _i79.Protocol().getClassNameForObject(data);
+    className = _i84.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_core.$className';
     }
@@ -1240,22 +1304,37 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'ServiceHealthInfo') {
       return deserialize<_i69.ServiceHealthInfo>(data['data']);
     }
+    if (dataClassName == 'DeviceListResponse') {
+      return deserialize<_i70.DeviceListResponse>(data['data']);
+    }
+    if (dataClassName == 'DeviceMode') {
+      return deserialize<_i71.DeviceMode>(data['data']);
+    }
+    if (dataClassName == 'DevicePairingRequest') {
+      return deserialize<_i72.DevicePairingRequest>(data['data']);
+    }
+    if (dataClassName == 'DevicePairingResponse') {
+      return deserialize<_i73.DevicePairingResponse>(data['data']);
+    }
+    if (dataClassName == 'PairedDevice') {
+      return deserialize<_i74.PairedDevice>(data['data']);
+    }
     if (dataClassName == 'ServerStatus') {
-      return deserialize<_i70.ServerStatus>(data['data']);
+      return deserialize<_i75.ServerStatus>(data['data']);
     }
     if (dataClassName == 'TranslationEntry') {
-      return deserialize<_i71.TranslationEntry>(data['data']);
+      return deserialize<_i76.TranslationEntry>(data['data']);
     }
     if (dataClassName == 'TranslationResponse') {
-      return deserialize<_i72.TranslationResponse>(data['data']);
+      return deserialize<_i77.TranslationResponse>(data['data']);
     }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);
-      return _i78.Protocol().deserializeByClassName(data);
+      return _i83.Protocol().deserializeByClassName(data);
     }
     if (dataClassName.startsWith('serverpod_auth_core.')) {
       data['className'] = dataClassName.substring(20);
-      return _i79.Protocol().deserializeByClassName(data);
+      return _i84.Protocol().deserializeByClassName(data);
     }
     return super.deserializeByClassName(data);
   }
@@ -1270,10 +1349,10 @@ class Protocol extends _i1.SerializationManager {
       return null;
     }
     try {
-      return _i78.Protocol().mapRecordToJson(record);
+      return _i83.Protocol().mapRecordToJson(record);
     } catch (_) {}
     try {
-      return _i79.Protocol().mapRecordToJson(record);
+      return _i84.Protocol().mapRecordToJson(record);
     } catch (_) {}
     throw Exception('Unsupported record type ${record.runtimeType}');
   }

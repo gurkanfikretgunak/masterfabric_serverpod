@@ -94,19 +94,24 @@ import 'services/greetings/models/greeting.dart' as _i69;
 import 'services/greetings/models/greeting_response.dart' as _i70;
 import 'services/health/models/health_check_response.dart' as _i71;
 import 'services/health/models/service_health_info.dart' as _i72;
-import 'services/status/models/server_status.dart' as _i73;
-import 'services/translations/models/translation_entry.dart' as _i74;
-import 'services/translations/models/translation_response.dart' as _i75;
+import 'services/paired_device/models/device_list_response.dart' as _i73;
+import 'services/paired_device/models/device_mode.dart' as _i74;
+import 'services/paired_device/models/device_pairing_request.dart' as _i75;
+import 'services/paired_device/models/device_pairing_response.dart' as _i76;
+import 'services/paired_device/models/paired_device.dart' as _i77;
+import 'services/status/models/server_status.dart' as _i78;
+import 'services/translations/models/translation_entry.dart' as _i79;
+import 'services/translations/models/translation_response.dart' as _i80;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/role.dart'
-    as _i76;
+    as _i81;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/permission.dart'
-    as _i77;
+    as _i82;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/session/session_info_response.dart'
-    as _i78;
+    as _i83;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
-    as _i79;
+    as _i84;
 import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
-    as _i80;
+    as _i85;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -175,6 +180,11 @@ export 'services/greetings/models/greeting.dart';
 export 'services/greetings/models/greeting_response.dart';
 export 'services/health/models/health_check_response.dart';
 export 'services/health/models/service_health_info.dart';
+export 'services/paired_device/models/device_list_response.dart';
+export 'services/paired_device/models/device_mode.dart';
+export 'services/paired_device/models/device_pairing_request.dart';
+export 'services/paired_device/models/device_pairing_response.dart';
+export 'services/paired_device/models/paired_device.dart';
 export 'services/status/models/server_status.dart';
 export 'services/translations/models/translation_entry.dart';
 export 'services/translations/models/translation_response.dart';
@@ -309,6 +319,116 @@ class Protocol extends _i1.SerializationManagerServer {
       indexes: [
         _i2.IndexDefinition(
           indexName: 'auth_audit_log_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'paired_devices',
+      dartName: 'PairedDevice',
+      schema: 'public',
+      module: 'masterfabric_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'paired_devices_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'deviceId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'deviceName',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'platform',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'deviceFingerprint',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'ipAddress',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userAgent',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'isActive',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'isTrusted',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'deviceMode',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'protocol:DeviceMode',
+        ),
+        _i2.ColumnDefinition(
+          name: 'lastSeenAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'pairedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'metadata',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'paired_devices_pkey',
           tableSpace: null,
           elements: [
             _i2.IndexElementDefinition(
@@ -1174,14 +1294,29 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i72.ServiceHealthInfo) {
       return _i72.ServiceHealthInfo.fromJson(data) as T;
     }
-    if (t == _i73.ServerStatus) {
-      return _i73.ServerStatus.fromJson(data) as T;
+    if (t == _i73.DeviceListResponse) {
+      return _i73.DeviceListResponse.fromJson(data) as T;
     }
-    if (t == _i74.TranslationEntry) {
-      return _i74.TranslationEntry.fromJson(data) as T;
+    if (t == _i74.DeviceMode) {
+      return _i74.DeviceMode.fromJson(data) as T;
     }
-    if (t == _i75.TranslationResponse) {
-      return _i75.TranslationResponse.fromJson(data) as T;
+    if (t == _i75.DevicePairingRequest) {
+      return _i75.DevicePairingRequest.fromJson(data) as T;
+    }
+    if (t == _i76.DevicePairingResponse) {
+      return _i76.DevicePairingResponse.fromJson(data) as T;
+    }
+    if (t == _i77.PairedDevice) {
+      return _i77.PairedDevice.fromJson(data) as T;
+    }
+    if (t == _i78.ServerStatus) {
+      return _i78.ServerStatus.fromJson(data) as T;
+    }
+    if (t == _i79.TranslationEntry) {
+      return _i79.TranslationEntry.fromJson(data) as T;
+    }
+    if (t == _i80.TranslationResponse) {
+      return _i80.TranslationResponse.fromJson(data) as T;
     }
     if (t == _i1.getType<_i5.AppConfig?>()) {
       return (data != null ? _i5.AppConfig.fromJson(data) : null) as T;
@@ -1441,14 +1576,32 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i72.ServiceHealthInfo?>()) {
       return (data != null ? _i72.ServiceHealthInfo.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i73.ServerStatus?>()) {
-      return (data != null ? _i73.ServerStatus.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i73.DeviceListResponse?>()) {
+      return (data != null ? _i73.DeviceListResponse.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i74.TranslationEntry?>()) {
-      return (data != null ? _i74.TranslationEntry.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i74.DeviceMode?>()) {
+      return (data != null ? _i74.DeviceMode.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i75.TranslationResponse?>()) {
-      return (data != null ? _i75.TranslationResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i75.DevicePairingRequest?>()) {
+      return (data != null ? _i75.DevicePairingRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i76.DevicePairingResponse?>()) {
+      return (data != null ? _i76.DevicePairingResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i77.PairedDevice?>()) {
+      return (data != null ? _i77.PairedDevice.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i78.ServerStatus?>()) {
+      return (data != null ? _i78.ServerStatus.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i79.TranslationEntry?>()) {
+      return (data != null ? _i79.TranslationEntry.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i80.TranslationResponse?>()) {
+      return (data != null ? _i80.TranslationResponse.fromJson(data) : null)
           as T;
     }
     if (t == List<String>) {
@@ -1490,6 +1643,12 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           as T;
     }
+    if (t == List<_i77.PairedDevice>) {
+      return (data as List)
+              .map((e) => deserialize<_i77.PairedDevice>(e))
+              .toList()
+          as T;
+    }
     if (t == Map<String, dynamic>) {
       return (data as Map).map(
             (k, v) => MapEntry(deserialize<String>(k), deserialize<dynamic>(v)),
@@ -1499,32 +1658,32 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == List<_i76.Role>) {
-      return (data as List).map((e) => deserialize<_i76.Role>(e)).toList() as T;
+    if (t == List<_i81.Role>) {
+      return (data as List).map((e) => deserialize<_i81.Role>(e)).toList() as T;
     }
-    if (t == List<_i77.Permission>) {
-      return (data as List).map((e) => deserialize<_i77.Permission>(e)).toList()
+    if (t == List<_i82.Permission>) {
+      return (data as List).map((e) => deserialize<_i82.Permission>(e)).toList()
           as T;
     }
     if (t == Set<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
     }
-    if (t == List<_i78.SessionInfoResponse>) {
+    if (t == List<_i83.SessionInfoResponse>) {
       return (data as List)
-              .map((e) => deserialize<_i78.SessionInfoResponse>(e))
+              .map((e) => deserialize<_i83.SessionInfoResponse>(e))
               .toList()
           as T;
     }
-    if (t == List<_i79.Gender>) {
-      return (data as List).map((e) => deserialize<_i79.Gender>(e)).toList()
+    if (t == List<_i84.Gender>) {
+      return (data as List).map((e) => deserialize<_i84.Gender>(e)).toList()
           as T;
     }
     if (t == List<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toList() as T;
     }
-    if (t == List<_i80.VerificationChannel>) {
+    if (t == List<_i85.VerificationChannel>) {
       return (data as List)
-              .map((e) => deserialize<_i80.VerificationChannel>(e))
+              .map((e) => deserialize<_i85.VerificationChannel>(e))
               .toList()
           as T;
     }
@@ -1616,9 +1775,14 @@ class Protocol extends _i1.SerializationManagerServer {
       _i70.GreetingResponse => 'GreetingResponse',
       _i71.HealthCheckResponse => 'HealthCheckResponse',
       _i72.ServiceHealthInfo => 'ServiceHealthInfo',
-      _i73.ServerStatus => 'ServerStatus',
-      _i74.TranslationEntry => 'TranslationEntry',
-      _i75.TranslationResponse => 'TranslationResponse',
+      _i73.DeviceListResponse => 'DeviceListResponse',
+      _i74.DeviceMode => 'DeviceMode',
+      _i75.DevicePairingRequest => 'DevicePairingRequest',
+      _i76.DevicePairingResponse => 'DevicePairingResponse',
+      _i77.PairedDevice => 'PairedDevice',
+      _i78.ServerStatus => 'ServerStatus',
+      _i79.TranslationEntry => 'TranslationEntry',
+      _i80.TranslationResponse => 'TranslationResponse',
       _ => null,
     };
   }
@@ -1772,11 +1936,21 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'HealthCheckResponse';
       case _i72.ServiceHealthInfo():
         return 'ServiceHealthInfo';
-      case _i73.ServerStatus():
+      case _i73.DeviceListResponse():
+        return 'DeviceListResponse';
+      case _i74.DeviceMode():
+        return 'DeviceMode';
+      case _i75.DevicePairingRequest():
+        return 'DevicePairingRequest';
+      case _i76.DevicePairingResponse():
+        return 'DevicePairingResponse';
+      case _i77.PairedDevice():
+        return 'PairedDevice';
+      case _i78.ServerStatus():
         return 'ServerStatus';
-      case _i74.TranslationEntry():
+      case _i79.TranslationEntry():
         return 'TranslationEntry';
-      case _i75.TranslationResponse():
+      case _i80.TranslationResponse():
         return 'TranslationResponse';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -2004,14 +2178,29 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'ServiceHealthInfo') {
       return deserialize<_i72.ServiceHealthInfo>(data['data']);
     }
+    if (dataClassName == 'DeviceListResponse') {
+      return deserialize<_i73.DeviceListResponse>(data['data']);
+    }
+    if (dataClassName == 'DeviceMode') {
+      return deserialize<_i74.DeviceMode>(data['data']);
+    }
+    if (dataClassName == 'DevicePairingRequest') {
+      return deserialize<_i75.DevicePairingRequest>(data['data']);
+    }
+    if (dataClassName == 'DevicePairingResponse') {
+      return deserialize<_i76.DevicePairingResponse>(data['data']);
+    }
+    if (dataClassName == 'PairedDevice') {
+      return deserialize<_i77.PairedDevice>(data['data']);
+    }
     if (dataClassName == 'ServerStatus') {
-      return deserialize<_i73.ServerStatus>(data['data']);
+      return deserialize<_i78.ServerStatus>(data['data']);
     }
     if (dataClassName == 'TranslationEntry') {
-      return deserialize<_i74.TranslationEntry>(data['data']);
+      return deserialize<_i79.TranslationEntry>(data['data']);
     }
     if (dataClassName == 'TranslationResponse') {
-      return deserialize<_i75.TranslationResponse>(data['data']);
+      return deserialize<_i80.TranslationResponse>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -2067,8 +2256,10 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i60.UserVerificationPreferences.t;
       case _i62.VerificationCode:
         return _i62.VerificationCode.t;
-      case _i74.TranslationEntry:
-        return _i74.TranslationEntry.t;
+      case _i77.PairedDevice:
+        return _i77.PairedDevice.t;
+      case _i79.TranslationEntry:
+        return _i79.TranslationEntry.t;
     }
     return null;
   }

@@ -112,6 +112,15 @@ greetingV3:
 health:
   - check:
   - ping:
+pairedDevice:
+  - pairDevice:
+  - verifyDevicePairing:
+  - getMyDevices:
+  - getDevice:
+  - updateDevice:
+  - revokeDevice:
+  - revokeAllDevices:
+  - setDeviceMode:
 status:
   - getStatus:
 translation:

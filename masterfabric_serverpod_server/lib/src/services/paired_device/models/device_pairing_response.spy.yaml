@@ -1,0 +1,8 @@
+### Device pairing response model
+class: DevicePairingResponse
+fields:
+  success: bool
+  message: String
+  device: PairedDevice?
+  requiresVerification: bool
+  verificationCode: String?

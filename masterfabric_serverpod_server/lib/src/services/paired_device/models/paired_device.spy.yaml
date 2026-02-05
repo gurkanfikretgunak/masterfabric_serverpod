@@ -1,0 +1,18 @@
+### Paired device model - stores device pairing information
+class: PairedDevice
+table: paired_devices
+fields:
+  id: int?
+  userId: String
+  deviceId: String
+  deviceName: String
+  platform: String
+  deviceFingerprint: String?
+  ipAddress: String?
+  userAgent: String?
+  isActive: bool
+  isTrusted: bool
+  deviceMode: DeviceMode
+  lastSeenAt: DateTime
+  pairedAt: DateTime
+  metadata: String?

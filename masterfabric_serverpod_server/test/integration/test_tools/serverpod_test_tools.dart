@@ -72,10 +72,20 @@ import 'package:masterfabric_serverpod_server/src/generated/services/greetings/m
     as _i31;
 import 'package:masterfabric_serverpod_server/src/generated/services/health/models/health_check_response.dart'
     as _i32;
-import 'package:masterfabric_serverpod_server/src/generated/services/status/models/server_status.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/paired_device/models/device_pairing_response.dart'
     as _i33;
-import 'package:masterfabric_serverpod_server/src/generated/services/translations/models/translation_response.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/paired_device/models/device_pairing_request.dart'
     as _i34;
+import 'package:masterfabric_serverpod_server/src/generated/services/paired_device/models/device_list_response.dart'
+    as _i35;
+import 'package:masterfabric_serverpod_server/src/generated/services/paired_device/models/paired_device.dart'
+    as _i36;
+import 'package:masterfabric_serverpod_server/src/generated/services/paired_device/models/device_mode.dart'
+    as _i37;
+import 'package:masterfabric_serverpod_server/src/generated/services/status/models/server_status.dart'
+    as _i38;
+import 'package:masterfabric_serverpod_server/src/generated/services/translations/models/translation_response.dart'
+    as _i39;
 import 'package:masterfabric_serverpod_server/src/generated/protocol.dart';
 import 'package:masterfabric_serverpod_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -223,6 +233,8 @@ class TestEndpoints {
 
   late final _HealthEndpoint health;
 
+  late final _PairedDeviceEndpoint pairedDevice;
+
   late final _StatusEndpoint status;
 
   late final _TranslationEndpoint translation;
@@ -312,6 +324,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     health = _HealthEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    pairedDevice = _PairedDeviceEndpoint(
       endpoints,
       serializationManager,
     );
@@ -3583,6 +3599,273 @@ class _HealthEndpoint {
   }
 }
 
+class _PairedDeviceEndpoint {
+  _PairedDeviceEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i33.DevicePairingResponse> pairDevice(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i34.DevicePairingRequest request,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'pairedDevice',
+            method: 'pairDevice',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pairedDevice',
+          methodName: 'pairDevice',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i33.DevicePairingResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i33.DevicePairingResponse> verifyDevicePairing(
+    _i1.TestSessionBuilder sessionBuilder,
+    String deviceId,
+    String verificationCode,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'pairedDevice',
+            method: 'verifyDevicePairing',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pairedDevice',
+          methodName: 'verifyDevicePairing',
+          parameters: _i1.testObjectToJson({
+            'deviceId': deviceId,
+            'verificationCode': verificationCode,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i33.DevicePairingResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i35.DeviceListResponse> getMyDevices(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'pairedDevice',
+            method: 'getMyDevices',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pairedDevice',
+          methodName: 'getMyDevices',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i35.DeviceListResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i36.PairedDevice> getDevice(
+    _i1.TestSessionBuilder sessionBuilder,
+    int deviceId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'pairedDevice',
+            method: 'getDevice',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pairedDevice',
+          methodName: 'getDevice',
+          parameters: _i1.testObjectToJson({'deviceId': deviceId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i36.PairedDevice>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i36.PairedDevice> updateDevice(
+    _i1.TestSessionBuilder sessionBuilder,
+    int deviceId, {
+    String? deviceName,
+    _i37.DeviceMode? deviceMode,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'pairedDevice',
+            method: 'updateDevice',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pairedDevice',
+          methodName: 'updateDevice',
+          parameters: _i1.testObjectToJson({
+            'deviceId': deviceId,
+            'deviceName': deviceName,
+            'deviceMode': deviceMode,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i36.PairedDevice>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<void> revokeDevice(
+    _i1.TestSessionBuilder sessionBuilder,
+    int deviceId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'pairedDevice',
+            method: 'revokeDevice',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pairedDevice',
+          methodName: 'revokeDevice',
+          parameters: _i1.testObjectToJson({'deviceId': deviceId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<void>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<void> revokeAllDevices(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'pairedDevice',
+            method: 'revokeAllDevices',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pairedDevice',
+          methodName: 'revokeAllDevices',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<void>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<int> setDeviceMode(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i37.DeviceMode mode,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'pairedDevice',
+            method: 'setDeviceMode',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pairedDevice',
+          methodName: 'setDeviceMode',
+          parameters: _i1.testObjectToJson({'mode': mode}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<int>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _StatusEndpoint {
   _StatusEndpoint(
     this._endpointDispatch,
@@ -3593,7 +3876,7 @@ class _StatusEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i33.ServerStatus> getStatus(
+  _i3.Future<_i38.ServerStatus> getStatus(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -3615,7 +3898,7 @@ class _StatusEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i33.ServerStatus>);
+                as _i3.Future<_i38.ServerStatus>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3634,7 +3917,7 @@ class _TranslationEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i34.TranslationResponse> getTranslations(
+  _i3.Future<_i39.TranslationResponse> getTranslations(
     _i1.TestSessionBuilder sessionBuilder, {
     String? locale,
     String? namespace,
@@ -3661,7 +3944,7 @@ class _TranslationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i34.TranslationResponse>);
+                as _i3.Future<_i39.TranslationResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3669,7 +3952,7 @@ class _TranslationEndpoint {
     });
   }
 
-  _i3.Future<_i34.TranslationResponse> saveTranslations(
+  _i3.Future<_i39.TranslationResponse> saveTranslations(
     _i1.TestSessionBuilder sessionBuilder,
     String locale,
     Map<String, dynamic> translations, {
@@ -3700,7 +3983,7 @@ class _TranslationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i34.TranslationResponse>);
+                as _i3.Future<_i39.TranslationResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

@@ -3,7 +3,7 @@ BEGIN;
 --
 -- ACTION CREATE TABLE
 --
-CREATE TABLE "user_verification_preferences" (
+CREATE TABLE IF NOT EXISTS "user_verification_preferences" (
     "id" bigserial PRIMARY KEY,
     "userId" text NOT NULL,
     "preferredChannel" text NOT NULL,
@@ -16,19 +16,39 @@ CREATE TABLE "user_verification_preferences" (
     "updatedAt" timestamp without time zone NOT NULL
 );
 
--- Indexes
-CREATE UNIQUE INDEX "user_verification_prefs_user_idx" ON "user_verification_preferences" USING btree ("userId");
-CREATE INDEX "user_verification_prefs_phone_idx" ON "user_verification_preferences" USING btree ("phoneNumber");
-CREATE INDEX "user_verification_prefs_telegram_idx" ON "user_verification_preferences" USING btree ("telegramChatId");
+-- Indexes for user_verification_preferences
+CREATE UNIQUE INDEX IF NOT EXISTS "user_verification_prefs_user_idx" ON "user_verification_preferences" USING btree ("userId");
+CREATE INDEX IF NOT EXISTS "user_verification_prefs_phone_idx" ON "user_verification_preferences" USING btree ("phoneNumber");
+CREATE INDEX IF NOT EXISTS "user_verification_prefs_telegram_idx" ON "user_verification_preferences" USING btree ("telegramChatId");
+
+--
+-- ACTION CREATE TABLE
+--
+CREATE TABLE IF NOT EXISTS "paired_devices" (
+    "id" bigserial PRIMARY KEY,
+    "userId" text NOT NULL,
+    "deviceId" text NOT NULL,
+    "deviceName" text NOT NULL,
+    "platform" text NOT NULL,
+    "deviceFingerprint" text,
+    "ipAddress" text,
+    "userAgent" text,
+    "isActive" boolean NOT NULL,
+    "isTrusted" boolean NOT NULL,
+    "deviceMode" text NOT NULL,
+    "lastSeenAt" timestamp without time zone NOT NULL,
+    "pairedAt" timestamp without time zone NOT NULL,
+    "metadata" text
+);
 
 
 --
 -- MIGRATION VERSION FOR masterfabric_serverpod
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('masterfabric_serverpod', '20260201122232207', now())
+    VALUES ('masterfabric_serverpod', '20260205123502503', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20260201122232207', "timestamp" = now();
+    DO UPDATE SET "version" = '20260205123502503', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod
