@@ -38,6 +38,7 @@ A production-ready full-stack Flutter application built with Serverpod, featurin
 | **Middleware System** | Automatic logging, rate limiting, auth, validation, metrics per endpoint |
 | **RBAC** | Role-Based Access Control with automatic role assignment on signup |
 | **Currency Converter** | Real-time currency conversion with ExchangeRate-API.com integration and caching |
+| **Paired Device Management** | Device pairing, multi-device/single-device sign-in modes, device verification |
 | **AI Integration** | OpenAI API integration for chat completions, embeddings, and image generation |
 | **Integrations** | Firebase, Sentry, Mixpanel, Telegram, WhatsApp, OpenAI (configurable) |
 
@@ -404,11 +405,12 @@ flowchart TD
     Start([Start]) --> Install[1. Install Dependencies]
     Install --> Docker[2. Start Docker<br/>PostgreSQL & Redis]
     Docker --> Generate[3. Generate Serverpod Code]
-    Generate --> Seed{4. Seed Config?}
+    Generate --> Migrate[4. Apply Migrations]
+    Migrate --> Seed{5. Seed Config?}
     Seed -->|Yes| SeedData[Seed App Config]
     Seed -->|No| StartServer
-    SeedData --> StartServer[5. Start Server]
-    StartServer --> RunFlutter[6. Run Flutter App]
+    SeedData --> StartServer[6. Start Server]
+    StartServer --> RunFlutter[7. Run Flutter App]
     RunFlutter --> Done([Ready!])
 ```
 
@@ -458,18 +460,34 @@ cd masterfabric_serverpod_server
 serverpod run seed-app-config
 ```
 
-### 5. Start the Server
+### 5. Apply Database Migrations
+
+Apply database migrations to create all required tables:
+
+```bash
+cd masterfabric_serverpod_server
+dart bin/main.dart --apply-migrations
+# Or use the start script which applies migrations automatically:
+serverpod run start
+```
+
+**Note:** Migrations are consolidated into a single migration file for simplicity. The migration creates all necessary tables including:
+- User verification preferences
+- Paired devices
+- All other core tables
+
+### 6. Start the Server
 
 Start the Serverpod server:
 
 ```bash
 cd masterfabric_serverpod_server
 dart bin/main.dart
-# Or use the start script which applies migrations:
+# Or use the start script (applies migrations automatically):
 serverpod run start
 ```
 
-### 6. Run the Flutter App
+### 7. Run the Flutter App
 
 In a new terminal:
 
@@ -525,6 +543,10 @@ lib/src/
 │   ├── health/              # Health check endpoints
 │   │   ├── endpoints/       # Health endpoint
 │   │   └── models/          # Health response models
+│   ├── paired_device/       # Paired device management service
+│   │   ├── endpoints/       # Device pairing endpoints
+│   │   ├── models/          # Device models
+│   │   └── services/        # Device management service
 │   ├── status/              # Server status endpoint
 │   │   ├── endpoints/       # Status endpoint
 │   │   └── models/          # ServerStatus model
@@ -565,6 +587,7 @@ module_name/
   - **Authentication**: Email/password with JWT tokens, 2FA
   - **Multi-Channel Verification**: Email, Telegram Bot API, WhatsApp Business API
   - **Currency Conversion**: Real-time exchange rates with ExchangeRate-API.com, automatic caching
+  - **Paired Device Management**: Device pairing, verification, multi-device/single-device modes
   - **AI Integration**: OpenAI API for chat completions, embeddings, image generation
   - **Integrations**: Firebase, Sentry, Mixpanel, Telegram, WhatsApp, OpenAI (configurable)
 
@@ -574,6 +597,7 @@ module_name/
   - `TranslationEndpoint`: Translation retrieval & management
   - `StatusEndpoint`: Public server status endpoint with uptime, environment, and maintenance mode
   - `CurrencyEndpoint`: Currency conversion, exchange rates, and formatting with real-time API integration
+  - `PairedDeviceEndpoint`: Device pairing, verification, and management with multi-device/single-device modes
 
 ### Client (`masterfabric_serverpod_client`)
 
@@ -1388,6 +1412,113 @@ currency/
 - Cached in both Redis (global) and local priority cache
 - Automatic fallback to cached rates if API fails
 - Cache-first approach to minimize API calls
+
+---
+
+### Paired Device Service
+
+Device pairing and management service with support for multi-device and single-device sign-in modes.
+
+**Features:**
+- ✅ Device pairing with verification codes
+- ✅ Multi-device mode: Allow multiple active devices simultaneously
+- ✅ Single-device mode: Only one active device at a time, auto-revoke others
+- ✅ Extended device tracking (IP address, user agent, device fingerprint)
+- ✅ Device management (list, update, revoke devices)
+- ✅ Rate limiting for pairing operations
+- ✅ Configuration-driven behavior
+
+**Server Configuration (config/development.yaml):**
+
+```yaml
+pairedDevice:
+  enabled: true
+  defaultMode: multiDevice  # multiDevice or singleDevice
+  requireVerification: true  # Require verification code for new devices
+  maxDevicesPerUser: 10  # Maximum paired devices per user
+  deviceFingerprinting:
+    enabled: true  # Enable device fingerprinting
+    algorithm: sha256  # Hash algorithm
+  autoRevokeInactiveDays: 90  # Auto-revoke devices inactive for X days
+  rateLimiting:
+    enabled: true
+    pairMaxPerHour: 5  # Max pairing attempts per hour
+    verifyMaxPerHour: 10  # Max verification attempts per hour
+```
+
+**API Endpoints:**
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `pairedDevice.pairDevice` | POST | Yes | Pair a new device |
+| `pairedDevice.verifyDevicePairing` | POST | Yes | Verify device pairing with code |
+| `pairedDevice.getMyDevices` | POST | Yes | List all paired devices |
+| `pairedDevice.getDevice` | POST | Yes | Get specific device details |
+| `pairedDevice.updateDevice` | POST | Yes | Update device information |
+| `pairedDevice.revokeDevice` | POST | Yes | Unpair/revoke a device |
+| `pairedDevice.revokeAllDevices` | POST | Yes | Revoke all devices |
+| `pairedDevice.setDeviceMode` | POST | Yes | Set system-wide device mode |
+
+**Server Usage:**
+
+```dart
+// Pair a new device
+final result = await client.pairedDevice.pairDevice(
+  DevicePairingRequest(
+    deviceId: 'device-123',
+    deviceName: 'iPhone 14',
+    platform: 'ios',
+    deviceFingerprint: 'fingerprint-hash',
+  ),
+);
+// Returns: DevicePairingResponse with device info and optional verification code
+
+// Verify device pairing
+await client.pairedDevice.verifyDevicePairing(
+  'device-123',
+  '123456',  // verification code
+);
+
+// Get all devices
+final devices = await client.pairedDevice.getMyDevices();
+// Returns: DeviceListResponse with all paired devices
+
+// Set device mode (multi-device or single-device)
+await client.pairedDevice.setDeviceMode(DeviceMode.singleDevice);
+```
+
+**Service Architecture:**
+
+```
+paired_device/
+├── paired_device.dart                    # Barrel export
+├── endpoints/
+│   └── paired_device_endpoint.dart       # API endpoints
+├── models/
+│   ├── paired_device.spy.yaml            # Device database model
+│   ├── device_mode.spy.yaml              # Enum: multiDevice, singleDevice
+│   ├── device_pairing_request.spy.yaml   # Pairing request model
+│   ├── device_pairing_response.spy.yaml  # Pairing response model
+│   └── device_list_response.spy.yaml    # Device list response model
+└── services/
+    └── paired_device_service.dart        # Device management logic
+```
+
+**Device Modes:**
+
+- **Multi-Device Mode**: Users can sign in on multiple devices simultaneously (like Gmail)
+- **Single-Device Mode**: Only one active device at a time; signing in on a new device automatically revokes others
+
+**Device Information Tracked:**
+
+- Device ID (unique identifier)
+- Device name (user-friendly)
+- Platform (iOS, Android, Web, Desktop)
+- Device fingerprint (hashed for security)
+- IP address (last known)
+- User agent (browser/client info)
+- Last seen timestamp
+- Pairing timestamp
 
 ---
 

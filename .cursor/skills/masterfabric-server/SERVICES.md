@@ -8,8 +8,10 @@
 | `health` | `/health/check` | No | Server health monitoring |
 | `translation` | `/translation/*` | No | i18n translations |
 | `appConfig` | `/appConfig/getConfig` | No | Remote configuration |
+| `currency` | `/currency/*` | No | Currency conversion and exchange rates |
 | `emailIdp` | `/emailIdp/*` | No | Email authentication |
 | `passwordManagement` | `/passwordManagement/*` | Mixed | Password validation/reset |
+| `pairedDevice` | `/pairedDevice/*` | Yes | Device pairing and management |
 | `userProfile` | `/userProfile/*` | Yes | User profile management |
 | `sessionManagement` | `/sessionManagement/*` | Yes | Session management |
 | `rbac` | `/rbac/*` | Yes | Role-based access control |
@@ -59,6 +61,10 @@ stream.listen((notification) {
 | Greeting | 20 | 1 min | `greeting` |
 | Auth (login) | 5 | 1 min | `auth:login` |
 | Password reset | 3 | 15 min | `auth:reset` |
+| Currency | 60 | 1 min | `currency_*` |
+| Paired Device (pair) | 5 | 1 hour | `paired_device_pair` |
+| Paired Device (verify) | 10 | 1 hour | `paired_device_verify` |
+| Paired Device (general) | 60 | 1 min | `paired_device` |
 | General API | 100 | 1 min | `api` |
 | Notification send | 100 | 1 min | `notification_send` |
 | Notification read | 300 | 1 min | `notification_read` |
@@ -69,6 +75,8 @@ stream.listen((notification) {
 serverpod_auth_core_user      # Users
 serverpod_auth_core_session   # Sessions
 translation_entries           # i18n entries
+paired_devices                # Paired device information
+user_verification_preferences # Verification channel preferences
 ```
 
 ## Environment Variables
