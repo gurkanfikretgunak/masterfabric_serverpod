@@ -121,8 +121,8 @@ class StatusEndpoint extends MasterfabricEndpoint with RbacEndpointMixin {
           cachedSettings = await _loadAndCacheSettings(session);
         }
 
-        // Extract client IP from session
-        final clientIp = _extractClientIp(session);
+        // Extract client IP from session (with Cloudflare fallback)
+        final clientIp = await _extractClientIp(session);
 
         // Extract locale from session (best effort)
         final locale = _extractLocale(session);
@@ -247,15 +247,16 @@ class StatusEndpoint extends MasterfabricEndpoint with RbacEndpointMixin {
     return 'development';
   }
 
-  /// Extract client IP from session
+  /// Extract client IP from session with Cloudflare fallback
   ///
   /// Tries to extract IP from:
   /// 1. CF-Connecting-IP header (Cloudflare)
   /// 2. X-Forwarded-For header (when behind proxy)
   /// 3. X-Real-IP header (nginx)
   /// 4. Remote address from connection (Serverpod's built-in)
-  String? _extractClientIp(Session session) {
-    return ClientIpHelper.extract(session);
+  /// 5. Cloudflare trace endpoint (if header IP is localhost/invalid)
+  Future<String?> _extractClientIp(Session session) async {
+    return await ClientIpHelper.extractWithFallback(session);
   }
 
   /// Extract locale from session

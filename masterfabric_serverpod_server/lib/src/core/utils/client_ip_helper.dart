@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:serverpod/serverpod.dart';
 
 /// Utility for extracting client IP address from Serverpod sessions.
@@ -6,6 +8,18 @@ import 'package:serverpod/serverpod.dart';
 /// in services (e.g., rate limiting, logging, analytics) but should NOT
 /// be exposed in public API responses for privacy/security reasons.
 class ClientIpHelper {
+  /// Cloudflare trace endpoint for IP detection
+  static const String _cloudflareTraceUrl = 'https://www.cloudflare.com/cdn-cgi/trace';
+  
+  /// Cache TTL for Cloudflare IP lookup (5 minutes)
+  static const Duration _cloudflareIpCacheTtl = Duration(minutes: 5);
+  
+  /// In-memory cache for Cloudflare IP (simple cache without SerializableModel)
+  static String? _cachedCloudflareIp;
+  static DateTime? _cloudflareIpCacheTime;
+  
+  /// HTTP client for Cloudflare requests
+  static HttpClient? _httpClient;
   /// Extract client IP from session with header priority.
   ///
   /// Priority order:
@@ -76,6 +90,129 @@ class ClientIpHelper {
       return null;
     } catch (e) {
       // Silently fail - IP extraction is best effort
+      return null;
+    }
+  }
+
+  /// Extract client IP with Cloudflare fallback.
+  ///
+  /// First tries header-based extraction, then falls back to Cloudflare's
+  /// trace endpoint if the IP is localhost or invalid.
+  ///
+  /// Priority order:
+  /// 1. Header-based extraction (CF-Connecting-IP, X-Forwarded-For, etc.)
+  /// 2. Cloudflare trace endpoint (if header IP is localhost/invalid)
+  ///
+  /// **Note:** This should only be used internally (logging, rate limiting, etc.)
+  /// and should NOT be exposed in API responses.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// Future<void> logRequest(Session session) async {
+  ///   final clientIp = await ClientIpHelper.extractWithFallback(session);
+  ///   session.log('Request from IP: $clientIp');
+  /// }
+  /// ```
+  static Future<String?> extractWithFallback(Session session) async {
+    // First try header-based extraction
+    final headerIp = extract(session);
+    
+    // Check if IP is valid and not localhost
+    if (headerIp != null && _isValidPublicIp(headerIp)) {
+      return headerIp;
+    }
+    
+    // If header IP is localhost or invalid, try Cloudflare
+    try {
+      final cloudflareIp = await _getCloudflareIp(session);
+      if (cloudflareIp != null && _isValidPublicIp(cloudflareIp)) {
+        return cloudflareIp;
+      }
+    } catch (e) {
+      // Silently fail - fallback is best effort
+    }
+    
+    // Return header IP even if localhost (better than null)
+    return headerIp;
+  }
+
+  /// Check if IP is a valid public IP (not localhost).
+  static bool _isValidPublicIp(String ip) {
+    if (ip.isEmpty) return false;
+    
+    // Check for localhost variants
+    final localhostPatterns = [
+      '127.0.0.1',
+      'localhost',
+      '::1',
+      '::ffff:127.0.0.1',
+      '::ffff:7f00:1',  // IPv6-mapped IPv4 localhost
+      '0.0.0.0',
+      '::',
+    ];
+    
+    final normalizedIp = ip.toLowerCase().trim();
+    if (localhostPatterns.contains(normalizedIp)) {
+      return false;
+    }
+    
+    // Check for IPv6-mapped IPv4 localhost patterns
+    if (normalizedIp.startsWith('::ffff:7f00:') || 
+        normalizedIp.startsWith('::ffff:127.')) {
+      return false;
+    }
+    
+    // Check if it's a valid IP format
+    return isValidIp(ip);
+  }
+
+  /// Get IP from Cloudflare trace endpoint (with in-memory caching).
+  static Future<String?> _getCloudflareIp(Session session) async {
+    try {
+      // Check in-memory cache first
+      if (_cachedCloudflareIp != null && _cloudflareIpCacheTime != null) {
+        final age = DateTime.now().difference(_cloudflareIpCacheTime!);
+        if (age < _cloudflareIpCacheTtl) {
+          return _cachedCloudflareIp;
+        }
+      }
+      
+      // Initialize HTTP client if needed
+      _httpClient ??= HttpClient();
+      
+      // Fetch from Cloudflare
+      final uri = Uri.parse(_cloudflareTraceUrl);
+      final request = await _httpClient!.getUrl(uri);
+      request.headers.set('User-Agent', 'MasterFabric-Serverpod/1.0');
+      
+      final response = await request.close();
+      final responseBody = await response.transform(utf8.decoder).join();
+      
+      if (response.statusCode != 200) {
+        return null;
+      }
+      
+      // Parse trace response (key=value format)
+      final lines = responseBody.split('\n');
+      String? ip;
+      
+      for (final line in lines) {
+        if (line.startsWith('ip=')) {
+          ip = line.substring(3).trim();
+          break;
+        }
+      }
+      
+      // Cache the result in memory
+      if (ip != null && ip.isNotEmpty) {
+        _cachedCloudflareIp = ip;
+        _cloudflareIpCacheTime = DateTime.now();
+        return ip;
+      }
+      
+      return null;
+    } catch (e) {
+      // Silently fail - Cloudflare lookup is best effort
       return null;
     }
   }
