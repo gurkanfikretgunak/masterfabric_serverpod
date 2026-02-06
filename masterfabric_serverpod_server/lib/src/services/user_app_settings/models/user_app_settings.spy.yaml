@@ -1,0 +1,23 @@
+### User app settings model (stored per user in database)
+class: UserAppSettings
+table: user_app_settings
+fields:
+  id: int?
+  userId: String
+  # Notification settings
+  pushNotifications: bool
+  emailNotifications: bool
+  notificationSound: bool
+  # Privacy settings
+  analytics: bool
+  crashReports: bool
+  # Hard settings (require verification code to change)
+  twoFactorEnabled: bool
+  accountDeletionRequested: bool?
+  # Metadata
+  createdAt: DateTime
+  updatedAt: DateTime
+indexes:
+  user_app_settings_user_id_idx:
+    fields: userId
+    unique: true

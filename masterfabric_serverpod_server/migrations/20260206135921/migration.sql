@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS "user_verification_preferences" (
     "whatsappVerified" boolean NOT NULL,
     "telegramLinked" boolean NOT NULL,
     "backupChannel" text,
+    "locale" text,
     "createdAt" timestamp without time zone NOT NULL,
     "updatedAt" timestamp without time zone NOT NULL
 );
@@ -41,14 +42,33 @@ CREATE TABLE IF NOT EXISTS "paired_devices" (
     "metadata" text
 );
 
+--
+-- ACTION CREATE TABLE
+--
+CREATE TABLE IF NOT EXISTS "user_app_settings" (
+    "id" bigserial PRIMARY KEY,
+    "userId" text NOT NULL,
+    "pushNotifications" boolean NOT NULL,
+    "emailNotifications" boolean NOT NULL,
+    "notificationSound" boolean NOT NULL,
+    "analytics" boolean NOT NULL,
+    "crashReports" boolean NOT NULL,
+    "twoFactorEnabled" boolean NOT NULL,
+    "accountDeletionRequested" boolean,
+    "createdAt" timestamp without time zone NOT NULL,
+    "updatedAt" timestamp without time zone NOT NULL
+);
+
+-- Indexes
+CREATE UNIQUE INDEX IF NOT EXISTS "user_app_settings_user_id_idx" ON "user_app_settings" USING btree ("userId");
 
 --
 -- MIGRATION VERSION FOR masterfabric_serverpod
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('masterfabric_serverpod', '20260205123502503', now())
+    VALUES ('masterfabric_serverpod', '20260206135921', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20260205123502503', "timestamp" = now();
+    DO UPDATE SET "version" = '20260206135921', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

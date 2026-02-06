@@ -1,0 +1,6 @@
+### User app settings stream event
+class: UserAppSettingsEvent
+fields:
+  type: String  # 'updated', 'deleted'
+  settings: UserAppSettings?
+  timestamp: DateTime

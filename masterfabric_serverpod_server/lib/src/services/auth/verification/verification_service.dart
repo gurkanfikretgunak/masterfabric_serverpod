@@ -145,6 +145,7 @@ class VerificationService {
 
     // Determine the delivery channel
     VerificationChannel deliveryChannel = channel ?? VerificationChannel.email;
+    String? userLocale;
     
     // If no channel specified, try to get user's preferred channel
     if (channel == null && _channelRouter != null) {
@@ -155,6 +156,7 @@ class VerificationService {
       if (prefs != null) {
         phoneNumber ??= prefs.phoneNumber;
         telegramChatId ??= prefs.telegramChatId;
+        userLocale = prefs.locale;
       }
     }
 
@@ -203,6 +205,7 @@ class VerificationService {
           email: email,
           phoneNumber: phoneNumber,
           telegramChatId: telegramChatId,
+          locale: userLocale,
           expiresInMinutes: _config.expirationMinutes,
         );
         

@@ -71,6 +71,7 @@ class VerificationPreferencesEndpoint extends MasterfabricEndpoint {
   /// [preferredChannel] - Preferred channel for verification codes
   /// [backupChannel] - Optional backup channel
   /// [phoneNumber] - Phone number for Telegram/WhatsApp (E.164 format)
+  /// [locale] - Preferred locale for verification messages (e.g., 'en', 'tr', 'de', 'es')
   ///
   /// Returns the updated preferences
   Future<UserVerificationPreferences> updatePreferences(
@@ -78,6 +79,7 @@ class VerificationPreferencesEndpoint extends MasterfabricEndpoint {
     required VerificationChannel preferredChannel,
     VerificationChannel? backupChannel,
     String? phoneNumber,
+    String? locale,
   }) async {
     return executeWithMiddleware(
       session: session,
@@ -100,6 +102,14 @@ class VerificationPreferencesEndpoint extends MasterfabricEndpoint {
           }
         }
 
+        // Validate locale if provided
+        if (locale != null && locale.isNotEmpty) {
+          final validLocales = ['en', 'tr', 'de', 'es'];
+          if (!validLocales.contains(locale)) {
+            throw ValidationError('Invalid locale. Supported locales: ${validLocales.join(", ")}');
+          }
+        }
+
         final preferences = UserVerificationPreferences(
           id: existing?.id,
           userId: userId,
@@ -109,6 +119,7 @@ class VerificationPreferencesEndpoint extends MasterfabricEndpoint {
           telegramChatId: existing?.telegramChatId,
           telegramLinked: existing?.telegramLinked ?? false,
           whatsappVerified: existing?.whatsappVerified ?? false,
+          locale: locale ?? existing?.locale,
           createdAt: existing?.createdAt ?? DateTime.now(),
           updatedAt: DateTime.now(),
         );
@@ -191,6 +202,7 @@ class VerificationPreferencesEndpoint extends MasterfabricEndpoint {
           telegramChatId: chatId,
           telegramLinked: true,
           whatsappVerified: existing?.whatsappVerified ?? false,
+          locale: existing?.locale,
           createdAt: existing?.createdAt ?? DateTime.now(),
           updatedAt: DateTime.now(),
         );
@@ -315,6 +327,7 @@ class VerificationPreferencesEndpoint extends MasterfabricEndpoint {
           telegramChatId: existing?.telegramChatId,
           telegramLinked: existing?.telegramLinked ?? false,
           whatsappVerified: true,
+          locale: existing?.locale,
           createdAt: existing?.createdAt ?? DateTime.now(),
           updatedAt: DateTime.now(),
         );

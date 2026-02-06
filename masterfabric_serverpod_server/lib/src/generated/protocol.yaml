@@ -128,3 +128,10 @@ translation:
   - saveTranslations:
   - getAvailableLocales:
   - reseedFromAssets:
+userAppSettings:
+  - get:
+  - update:
+  - requestVerificationCode:
+  - delete:
+userAppSettingsStream:
+  - subscribe:

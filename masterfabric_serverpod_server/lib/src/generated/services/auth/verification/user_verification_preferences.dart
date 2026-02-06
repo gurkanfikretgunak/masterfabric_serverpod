@@ -25,6 +25,7 @@ abstract class UserVerificationPreferences
     required this.whatsappVerified,
     required this.telegramLinked,
     this.backupChannel,
+    this.locale,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -38,6 +39,7 @@ abstract class UserVerificationPreferences
     required bool whatsappVerified,
     required bool telegramLinked,
     _i2.VerificationChannel? backupChannel,
+    String? locale,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _UserVerificationPreferencesImpl;
@@ -60,6 +62,7 @@ abstract class UserVerificationPreferences
           : _i2.VerificationChannel.fromJson(
               (jsonSerialization['backupChannel'] as String),
             ),
+      locale: jsonSerialization['locale'] as String?,
       createdAt: _i1.DateTimeJsonExtension.fromJson(
         jsonSerialization['createdAt'],
       ),
@@ -97,6 +100,9 @@ abstract class UserVerificationPreferences
   /// Backup channel if primary fails
   _i2.VerificationChannel? backupChannel;
 
+  /// Preferred locale for verification messages (e.g., 'en', 'tr', 'de', 'es')
+  String? locale;
+
   /// Created timestamp
   DateTime createdAt;
 
@@ -118,6 +124,7 @@ abstract class UserVerificationPreferences
     bool? whatsappVerified,
     bool? telegramLinked,
     _i2.VerificationChannel? backupChannel,
+    String? locale,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -133,6 +140,7 @@ abstract class UserVerificationPreferences
       'whatsappVerified': whatsappVerified,
       'telegramLinked': telegramLinked,
       if (backupChannel != null) 'backupChannel': backupChannel?.toJson(),
+      if (locale != null) 'locale': locale,
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
     };
@@ -150,6 +158,7 @@ abstract class UserVerificationPreferences
       'whatsappVerified': whatsappVerified,
       'telegramLinked': telegramLinked,
       if (backupChannel != null) 'backupChannel': backupChannel?.toJson(),
+      if (locale != null) 'locale': locale,
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
     };
@@ -197,6 +206,7 @@ class _UserVerificationPreferencesImpl extends UserVerificationPreferences {
     required bool whatsappVerified,
     required bool telegramLinked,
     _i2.VerificationChannel? backupChannel,
+    String? locale,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) : super._(
@@ -208,6 +218,7 @@ class _UserVerificationPreferencesImpl extends UserVerificationPreferences {
          whatsappVerified: whatsappVerified,
          telegramLinked: telegramLinked,
          backupChannel: backupChannel,
+         locale: locale,
          createdAt: createdAt,
          updatedAt: updatedAt,
        );
@@ -225,6 +236,7 @@ class _UserVerificationPreferencesImpl extends UserVerificationPreferences {
     bool? whatsappVerified,
     bool? telegramLinked,
     Object? backupChannel = _Undefined,
+    Object? locale = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -241,6 +253,7 @@ class _UserVerificationPreferencesImpl extends UserVerificationPreferences {
       backupChannel: backupChannel is _i2.VerificationChannel?
           ? backupChannel
           : this.backupChannel,
+      locale: locale is String? ? locale : this.locale,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -286,6 +299,11 @@ class UserVerificationPreferencesUpdateTable
   _i1.ColumnValue<_i2.VerificationChannel, _i2.VerificationChannel>
   backupChannel(_i2.VerificationChannel? value) => _i1.ColumnValue(
     table.backupChannel,
+    value,
+  );
+
+  _i1.ColumnValue<String, String> locale(String? value) => _i1.ColumnValue(
+    table.locale,
     value,
   );
 
@@ -336,6 +354,10 @@ class UserVerificationPreferencesTable extends _i1.Table<int?> {
       this,
       _i1.EnumSerialization.byName,
     );
+    locale = _i1.ColumnString(
+      'locale',
+      this,
+    );
     createdAt = _i1.ColumnDateTime(
       'createdAt',
       this,
@@ -369,6 +391,9 @@ class UserVerificationPreferencesTable extends _i1.Table<int?> {
   /// Backup channel if primary fails
   late final _i1.ColumnEnum<_i2.VerificationChannel> backupChannel;
 
+  /// Preferred locale for verification messages (e.g., 'en', 'tr', 'de', 'es')
+  late final _i1.ColumnString locale;
+
   /// Created timestamp
   late final _i1.ColumnDateTime createdAt;
 
@@ -385,6 +410,7 @@ class UserVerificationPreferencesTable extends _i1.Table<int?> {
     whatsappVerified,
     telegramLinked,
     backupChannel,
+    locale,
     createdAt,
     updatedAt,
   ];

@@ -34,6 +34,7 @@ class VerificationChannelRouter {
   /// [email] - Email address (required for email channel)
   /// [phoneNumber] - Phone number (required for Telegram/WhatsApp/SMS)
   /// [telegramChatId] - Telegram chat ID (required for Telegram)
+  /// [locale] - Preferred locale for messages (e.g., 'en', 'tr')
   /// [expiresInMinutes] - Code expiration time
   ///
   /// Returns true if code was sent successfully
@@ -46,6 +47,7 @@ class VerificationChannelRouter {
     String? email,
     String? phoneNumber,
     String? telegramChatId,
+    String? locale,
     int expiresInMinutes = 5,
   }) async {
     final logger = CoreLogger(session);
@@ -64,6 +66,7 @@ class VerificationChannelRouter {
             email: email!,
             code: code,
             purpose: purpose,
+            locale: locale,
             expiresInMinutes: expiresInMinutes,
           );
 
@@ -108,6 +111,7 @@ class VerificationChannelRouter {
     required String email,
     required String code,
     required String purpose,
+    String? locale,
     required int expiresInMinutes,
   }) async {
     if (_emailService != null) {
@@ -117,6 +121,7 @@ class VerificationChannelRouter {
         to: email,
         code: code,
         purpose: purpose,
+        locale: locale,
         expiresInMinutes: expiresInMinutes,
       );
       return true;

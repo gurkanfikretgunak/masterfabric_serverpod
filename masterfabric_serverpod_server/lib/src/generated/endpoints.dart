@@ -38,24 +38,30 @@ import '../services/paired_device/endpoints/paired_device_endpoint.dart'
     as _i22;
 import '../services/status/endpoints/status_endpoint.dart' as _i23;
 import '../services/translations/endpoints/translation_endpoint.dart' as _i24;
-import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/send_notification_request.dart'
+import '../services/user_app_settings/endpoints/user_app_settings_endpoint.dart'
     as _i25;
-import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
+import '../services/user_app_settings/endpoints/user_app_settings_stream_endpoint.dart'
     as _i26;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/send_notification_request.dart'
     as _i27;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
+import 'package:masterfabric_serverpod_server/src/generated/core/real_time/notifications_center/models/channel_type.dart'
     as _i28;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/profile_update_request.dart'
     as _i29;
-import 'package:masterfabric_serverpod_server/src/generated/services/paired_device/models/device_pairing_request.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
     as _i30;
-import 'package:masterfabric_serverpod_server/src/generated/services/paired_device/models/device_mode.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
     as _i31;
-import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/paired_device/models/device_pairing_request.dart'
     as _i32;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/paired_device/models/device_mode.dart'
     as _i33;
+import 'package:masterfabric_serverpod_server/src/generated/services/user_app_settings/models/user_app_settings_update_request.dart'
+    as _i34;
+import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+    as _i35;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i36;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -199,6 +205,18 @@ class Endpoints extends _i1.EndpointDispatch {
           'translation',
           null,
         ),
+      'userAppSettings': _i25.UserAppSettingsEndpoint()
+        ..initialize(
+          server,
+          'userAppSettings',
+          null,
+        ),
+      'userAppSettingsStream': _i26.UserAppSettingsStreamEndpoint()
+        ..initialize(
+          server,
+          'userAppSettingsStream',
+          null,
+        ),
     };
     connectors['notification'] = _i1.EndpointConnector(
       name: 'notification',
@@ -209,7 +227,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i25.SendNotificationRequest>(),
+              type: _i1.getType<_i27.SendNotificationRequest>(),
               nullable: false,
             ),
           },
@@ -385,7 +403,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'type': _i1.ParameterDescription(
               name: 'type',
-              type: _i1.getType<_i26.ChannelType>(),
+              type: _i1.getType<_i28.ChannelType>(),
               nullable: false,
             ),
             'description': _i1.ParameterDescription(
@@ -1567,7 +1585,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i27.ProfileUpdateRequest>(),
+              type: _i1.getType<_i29.ProfileUpdateRequest>(),
               nullable: false,
             ),
           },
@@ -1611,7 +1629,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'gender': _i1.ParameterDescription(
               name: 'gender',
-              type: _i1.getType<_i28.Gender?>(),
+              type: _i1.getType<_i30.Gender?>(),
               nullable: true,
             ),
           },
@@ -1721,16 +1739,21 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'preferredChannel': _i1.ParameterDescription(
               name: 'preferredChannel',
-              type: _i1.getType<_i29.VerificationChannel>(),
+              type: _i1.getType<_i31.VerificationChannel>(),
               nullable: false,
             ),
             'backupChannel': _i1.ParameterDescription(
               name: 'backupChannel',
-              type: _i1.getType<_i29.VerificationChannel?>(),
+              type: _i1.getType<_i31.VerificationChannel?>(),
               nullable: true,
             ),
             'phoneNumber': _i1.ParameterDescription(
               name: 'phoneNumber',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'locale': _i1.ParameterDescription(
+              name: 'locale',
               type: _i1.getType<String?>(),
               nullable: true,
             ),
@@ -1747,6 +1770,7 @@ class Endpoints extends _i1.EndpointDispatch {
                         preferredChannel: params['preferredChannel'],
                         backupChannel: params['backupChannel'],
                         phoneNumber: params['phoneNumber'],
+                        locale: params['locale'],
                       ),
         ),
         'generateTelegramLinkCode': _i1.MethodConnector(
@@ -2220,7 +2244,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i30.DevicePairingRequest>(),
+              type: _i1.getType<_i32.DevicePairingRequest>(),
               nullable: false,
             ),
           },
@@ -2307,7 +2331,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'deviceMode': _i1.ParameterDescription(
               name: 'deviceMode',
-              type: _i1.getType<_i31.DeviceMode?>(),
+              type: _i1.getType<_i33.DeviceMode?>(),
               nullable: true,
             ),
           },
@@ -2360,7 +2384,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'mode': _i1.ParameterDescription(
               name: 'mode',
-              type: _i1.getType<_i31.DeviceMode>(),
+              type: _i1.getType<_i33.DeviceMode>(),
               nullable: false,
             ),
           },
@@ -2491,9 +2515,89 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i32.Endpoints()
+    connectors['userAppSettings'] = _i1.EndpointConnector(
+      name: 'userAppSettings',
+      endpoint: endpoints['userAppSettings']!,
+      methodConnectors: {
+        'get': _i1.MethodConnector(
+          name: 'get',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['userAppSettings'] as _i25.UserAppSettingsEndpoint)
+                      .get(session),
+        ),
+        'update': _i1.MethodConnector(
+          name: 'update',
+          params: {
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i34.UserAppSettingsUpdateRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['userAppSettings'] as _i25.UserAppSettingsEndpoint)
+                      .update(
+                        session,
+                        params['request'],
+                      ),
+        ),
+        'requestVerificationCode': _i1.MethodConnector(
+          name: 'requestVerificationCode',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['userAppSettings'] as _i25.UserAppSettingsEndpoint)
+                      .requestVerificationCode(session),
+        ),
+        'delete': _i1.MethodConnector(
+          name: 'delete',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['userAppSettings'] as _i25.UserAppSettingsEndpoint)
+                      .delete(session),
+        ),
+      },
+    );
+    connectors['userAppSettingsStream'] = _i1.EndpointConnector(
+      name: 'userAppSettingsStream',
+      endpoint: endpoints['userAppSettingsStream']!,
+      methodConnectors: {
+        'subscribe': _i1.MethodStreamConnector(
+          name: 'subscribe',
+          params: {},
+          streamParams: {},
+          returnType: _i1.MethodStreamReturnType.streamType,
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+                Map<String, Stream> streamParams,
+              ) =>
+                  (endpoints['userAppSettingsStream']
+                          as _i26.UserAppSettingsStreamEndpoint)
+                      .subscribe(session),
+        ),
+      },
+    );
+    modules['serverpod_auth_idp'] = _i35.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i33.Endpoints()
+    modules['serverpod_auth_core'] = _i36.Endpoints()
       ..initializeEndpoints(server);
   }
 }

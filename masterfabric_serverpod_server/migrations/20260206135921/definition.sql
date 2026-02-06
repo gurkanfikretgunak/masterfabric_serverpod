@@ -128,6 +128,26 @@ CREATE TABLE "two_factor_secret" (
 );
 
 --
+-- Class UserAppSettings as table user_app_settings
+--
+CREATE TABLE "user_app_settings" (
+    "id" bigserial PRIMARY KEY,
+    "userId" text NOT NULL,
+    "pushNotifications" boolean NOT NULL,
+    "emailNotifications" boolean NOT NULL,
+    "notificationSound" boolean NOT NULL,
+    "analytics" boolean NOT NULL,
+    "crashReports" boolean NOT NULL,
+    "twoFactorEnabled" boolean NOT NULL,
+    "accountDeletionRequested" boolean,
+    "createdAt" timestamp without time zone NOT NULL,
+    "updatedAt" timestamp without time zone NOT NULL
+);
+
+-- Indexes
+CREATE UNIQUE INDEX "user_app_settings_user_id_idx" ON "user_app_settings" USING btree ("userId");
+
+--
 -- Class UserProfileExtended as table user_profile_extended
 --
 CREATE TABLE "user_profile_extended" (
@@ -163,6 +183,7 @@ CREATE TABLE "user_verification_preferences" (
     "whatsappVerified" boolean NOT NULL,
     "telegramLinked" boolean NOT NULL,
     "backupChannel" text,
+    "locale" text,
     "createdAt" timestamp without time zone NOT NULL,
     "updatedAt" timestamp without time zone NOT NULL
 );
@@ -776,9 +797,9 @@ ALTER TABLE ONLY "serverpod_auth_core_session"
 -- MIGRATION VERSION FOR masterfabric_serverpod
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('masterfabric_serverpod', '20260205123502503', now())
+    VALUES ('masterfabric_serverpod', '20260206104555219', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20260205123502503', "timestamp" = now();
+    DO UPDATE SET "version" = '20260206104555219', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

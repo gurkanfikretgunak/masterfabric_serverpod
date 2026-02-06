@@ -224,12 +224,14 @@ The Team
   /// [to] - Recipient email address
   /// [code] - Verification code to send
   /// [purpose] - Purpose of verification (e.g., 'profile_update', 'login')
+  /// [locale] - Preferred locale for email content (e.g., 'en', 'tr')
   /// [expiresInMinutes] - Code expiration time
   Future<void> sendVerificationCode(
     Session session, {
     required String to,
     required String code,
     required String purpose,
+    String? locale,
     int expiresInMinutes = 5,
   }) async {
     final emailIntegration = _integrationManager?.getIntegration('email');
@@ -245,9 +247,9 @@ The Team
 
     final emailIntegrationTyped = emailIntegration as dynamic;
     
-    final subject = _getSubjectForPurpose(purpose);
-    final body = _buildGenericEmailBody(code, purpose, expiresInMinutes);
-    final htmlBody = _buildGenericEmailHtmlBody(code, purpose, expiresInMinutes);
+    final subject = _getSubjectForPurpose(purpose, locale);
+    final body = _buildGenericEmailBody(code, purpose, locale, expiresInMinutes);
+    final htmlBody = _buildGenericEmailHtmlBody(code, purpose, locale, expiresInMinutes);
 
     try {
       await emailIntegrationTyped.sendEmail(
@@ -277,44 +279,71 @@ The Team
   }
 
   /// Get email subject based on purpose
-  String _getSubjectForPurpose(String purpose) {
+  String _getSubjectForPurpose(String purpose, String? locale) {
+    // TODO: Use translation service based on locale
     switch (purpose) {
       case 'login':
-        return 'Your Login Verification Code';
+        return locale == 'tr' ? 'Giriş Doğrulama Kodunuz' : 'Your Login Verification Code';
       case 'profile_update':
-        return 'Verify Your Profile Update';
+        return locale == 'tr' ? 'Profil Güncellemenizi Doğrulayın' : 'Verify Your Profile Update';
       case 'password_reset':
-        return 'Reset Your Password';
+        return locale == 'tr' ? 'Şifrenizi Sıfırlayın' : 'Reset Your Password';
       case 'phone_verification':
-        return 'Verify Your Phone Number';
+        return locale == 'tr' ? 'Telefon Numaranızı Doğrulayın' : 'Verify Your Phone Number';
       case 'registration':
-        return 'Complete Your Registration';
+        return locale == 'tr' ? 'Kaydınızı Tamamlayın' : 'Complete Your Registration';
       default:
-        return 'Your Verification Code';
+        return locale == 'tr' ? 'Doğrulama Kodunuz' : 'Your Verification Code';
     }
   }
 
   /// Get human-readable purpose text
-  String _getPurposeText(String purpose) {
+  String _getPurposeText(String purpose, String? locale) {
+    // TODO: Use translation service based on locale
     switch (purpose) {
       case 'login':
-        return 'logging in';
+        return locale == 'tr' ? 'giriş yapma' : 'logging in';
       case 'profile_update':
-        return 'updating your profile';
+        return locale == 'tr' ? 'profilinizi güncelleme' : 'updating your profile';
       case 'password_reset':
-        return 'resetting your password';
+        return locale == 'tr' ? 'şifrenizi sıfırlama' : 'resetting your password';
       case 'phone_verification':
-        return 'verifying your phone number';
+        return locale == 'tr' ? 'telefon numaranızı doğrulama' : 'verifying your phone number';
       case 'registration':
-        return 'completing your registration';
+        return locale == 'tr' ? 'kaydınızı tamamlama' : 'completing your registration';
       default:
-        return 'your request';
+        return locale == 'tr' ? 'istek' : 'your request';
     }
   }
 
   /// Build plain text generic email body
-  String _buildGenericEmailBody(String code, String purpose, int expiresInMinutes) {
-    final purposeText = _getPurposeText(purpose);
+  String _buildGenericEmailBody(String code, String purpose, String? locale, int expiresInMinutes) {
+    final purposeText = _getPurposeText(purpose, locale);
+    final isTurkish = locale == 'tr';
+    
+    return isTurkish ? '''
+Merhaba,
+
+$purposeText için doğrulama kodunuz: $code
+
+Bu kod $expiresInMinutes dakika içinde geçersiz olacaktır.
+
+Bu kodu siz talep etmediyseniz, lütfen bu e-postayı görmezden gelin.
+
+Saygılarımızla,
+MasterFabric Ekibi
+''' : '''
+Hello,
+
+Your verification code for $purposeText is: $code
+
+This code will expire in $expiresInMinutes minutes.
+
+If you did not request this code, please ignore this email.
+
+Best regards,
+The MasterFabric Team
+''';
     return '''
 Hello,
 
@@ -330,8 +359,17 @@ The MasterFabric Team
   }
 
   /// Build HTML generic email body
-  String _buildGenericEmailHtmlBody(String code, String purpose, int expiresInMinutes) {
-    final purposeText = _getPurposeText(purpose);
+  String _buildGenericEmailHtmlBody(String code, String purpose, String? locale, int expiresInMinutes) {
+    final purposeText = _getPurposeText(purpose, locale);
+    final isTurkish = locale == 'tr';
+    
+    final headerText = isTurkish ? '🔐 Doğrulama Kodu' : '🔐 Verification Code';
+    final codeLabel = isTurkish ? 'için doğrulama kodunuz' : 'verification code for';
+    final expiresText = isTurkish ? 'Bu kod <strong>$expiresInMinutes dakika</strong> içinde geçersiz olacaktır.' : 'This code will expire in <strong>$expiresInMinutes minutes</strong>.';
+    final warningText = isTurkish ? '⚠️ Bu kodu kimseyle paylaşmayın.' : '⚠️ Do not share this code with anyone.';
+    final ignoreText = isTurkish ? 'Bu kodu siz talep etmediyseniz, lütfen bu e-postayı görmezden gelin.' : 'If you did not request this code, please ignore this email.';
+    final regardsText = isTurkish ? 'Saygılarımızla,<br>MasterFabric Ekibi' : 'Best regards,<br>The MasterFabric Team';
+    
     return '''
 <!DOCTYPE html>
 <html>
@@ -350,17 +388,17 @@ The MasterFabric Team
 <body>
   <div class="container">
     <div class="header">
-      <h2>🔐 Verification Code</h2>
+      <h2>$headerText</h2>
     </div>
-    <p>Your verification code for <strong>$purposeText</strong> is:</p>
+    <p>$codeLabel <strong>$purposeText</strong>:</p>
     <div class="code-box">
       <span class="code">$code</span>
     </div>
-    <p class="warning">⏱ This code will expire in <strong>$expiresInMinutes minutes</strong>.</p>
-    <p class="warning">⚠️ Do not share this code with anyone.</p>
+    <p class="warning">⏱ $expiresText</p>
+    <p class="warning">$warningText</p>
     <div class="footer">
-      <p>If you did not request this code, please ignore this email.</p>
-      <p>Best regards,<br>The MasterFabric Team</p>
+      <p>$ignoreText</p>
+      <p>$regardsText</p>
     </div>
   </div>
 </body>

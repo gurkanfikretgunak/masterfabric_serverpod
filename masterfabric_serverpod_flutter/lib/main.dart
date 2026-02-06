@@ -10,6 +10,7 @@ import 'services/app_config_service.dart';
 import 'services/translation_service.dart';
 import 'services/health_service.dart';
 import 'services/notification_service.dart';
+import 'services/user_app_settings_service.dart';
 
 /// Sets up a global client object that can be used to talk to the server from
 /// anywhere in our app. The client is generated from your server code
@@ -72,6 +73,18 @@ void main() async {
 
   // Initialize notification service
   NotificationService.instance.initialize(client);
+
+  // Initialize user app settings service
+  UserAppSettingsService.instance().initialize(client);
+  // Load settings and subscribe to updates (only if authenticated)
+  if (client.auth.isAuthenticated) {
+    try {
+      await UserAppSettingsService.instance().loadSettings();
+      await UserAppSettingsService.instance().subscribeToUpdates();
+    } catch (e) {
+      debugPrint('Warning: Failed to load user settings: $e');
+    }
+  }
 
   runApp(const MyApp());
 }

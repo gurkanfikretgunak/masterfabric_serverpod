@@ -86,6 +86,12 @@ import 'package:masterfabric_serverpod_server/src/generated/services/status/mode
     as _i38;
 import 'package:masterfabric_serverpod_server/src/generated/services/translations/models/translation_response.dart'
     as _i39;
+import 'package:masterfabric_serverpod_server/src/generated/services/user_app_settings/models/user_app_settings_response.dart'
+    as _i40;
+import 'package:masterfabric_serverpod_server/src/generated/services/user_app_settings/models/user_app_settings_update_request.dart'
+    as _i41;
+import 'package:masterfabric_serverpod_server/src/generated/services/user_app_settings/models/user_app_settings_event.dart'
+    as _i42;
 import 'package:masterfabric_serverpod_server/src/generated/protocol.dart';
 import 'package:masterfabric_serverpod_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -238,6 +244,10 @@ class TestEndpoints {
   late final _StatusEndpoint status;
 
   late final _TranslationEndpoint translation;
+
+  late final _UserAppSettingsEndpoint userAppSettings;
+
+  late final _UserAppSettingsStreamEndpoint userAppSettingsStream;
 }
 
 class _InternalTestEndpoints extends TestEndpoints
@@ -336,6 +346,14 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     translation = _TranslationEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    userAppSettings = _UserAppSettingsEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    userAppSettingsStream = _UserAppSettingsStreamEndpoint(
       endpoints,
       serializationManager,
     );
@@ -2784,6 +2802,7 @@ class _VerificationPreferencesEndpoint {
     required _i25.VerificationChannel preferredChannel,
     _i25.VerificationChannel? backupChannel,
     String? phoneNumber,
+    String? locale,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2800,6 +2819,7 @@ class _VerificationPreferencesEndpoint {
             'preferredChannel': preferredChannel,
             'backupChannel': backupChannel,
             'phoneNumber': phoneNumber,
+            'locale': locale,
           }),
           serializationManager: _serializationManager,
         );
@@ -4050,5 +4070,180 @@ class _TranslationEndpoint {
         await _localUniqueSession.close();
       }
     });
+  }
+}
+
+class _UserAppSettingsEndpoint {
+  _UserAppSettingsEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i40.UserAppSettingsResponse> get(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'userAppSettings',
+            method: 'get',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'userAppSettings',
+          methodName: 'get',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i40.UserAppSettingsResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i40.UserAppSettingsResponse> update(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i41.UserAppSettingsUpdateRequest request,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'userAppSettings',
+            method: 'update',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'userAppSettings',
+          methodName: 'update',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i40.UserAppSettingsResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i22.VerificationResponse> requestVerificationCode(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'userAppSettings',
+            method: 'requestVerificationCode',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'userAppSettings',
+          methodName: 'requestVerificationCode',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i22.VerificationResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i40.UserAppSettingsResponse> delete(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'userAppSettings',
+            method: 'delete',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'userAppSettings',
+          methodName: 'delete',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i40.UserAppSettingsResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _UserAppSettingsStreamEndpoint {
+  _UserAppSettingsStreamEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Stream<_i42.UserAppSettingsEvent> subscribe(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) {
+    var _localTestStreamManager =
+        _i1.TestStreamManager<_i42.UserAppSettingsEvent>();
+    _i1.callStreamFunctionAndHandleExceptions(
+      () async {
+        var _localUniqueSession =
+            (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+              endpoint: 'userAppSettingsStream',
+              method: 'subscribe',
+            );
+        var _localCallContext = await _endpointDispatch
+            .getMethodStreamCallContext(
+              createSessionCallback: (_) => _localUniqueSession,
+              endpointPath: 'userAppSettingsStream',
+              methodName: 'subscribe',
+              arguments: {},
+              requestedInputStreams: [],
+              serializationManager: _serializationManager,
+            );
+        await _localTestStreamManager.callStreamMethod(
+          _localCallContext,
+          _localUniqueSession,
+          {},
+        );
+      },
+      _localTestStreamManager.outputStreamController,
+    );
+    return _localTestStreamManager.outputStreamController.stream;
   }
 }

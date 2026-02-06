@@ -102,16 +102,22 @@ import 'services/paired_device/models/paired_device.dart' as _i77;
 import 'services/status/models/server_status.dart' as _i78;
 import 'services/translations/models/translation_entry.dart' as _i79;
 import 'services/translations/models/translation_response.dart' as _i80;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/role.dart'
-    as _i81;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/permission.dart'
-    as _i82;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/session/session_info_response.dart'
+import 'services/user_app_settings/models/user_app_settings.dart' as _i81;
+import 'services/user_app_settings/models/user_app_settings_event.dart' as _i82;
+import 'services/user_app_settings/models/user_app_settings_response.dart'
     as _i83;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
+import 'services/user_app_settings/models/user_app_settings_update_request.dart'
     as _i84;
-import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/role.dart'
     as _i85;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/rbac/permission.dart'
+    as _i86;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/session/session_info_response.dart'
+    as _i87;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/user/gender.dart'
+    as _i88;
+import 'package:masterfabric_serverpod_server/src/generated/services/auth/verification/verification_channel.dart'
+    as _i89;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -188,6 +194,10 @@ export 'services/paired_device/models/paired_device.dart';
 export 'services/status/models/server_status.dart';
 export 'services/translations/models/translation_entry.dart';
 export 'services/translations/models/translation_response.dart';
+export 'services/user_app_settings/models/user_app_settings.dart';
+export 'services/user_app_settings/models/user_app_settings_event.dart';
+export 'services/user_app_settings/models/user_app_settings_response.dart';
+export 'services/user_app_settings/models/user_app_settings_update_request.dart';
 
 class Protocol extends _i1.SerializationManagerServer {
   Protocol._();
@@ -716,6 +726,111 @@ class Protocol extends _i1.SerializationManagerServer {
       managed: true,
     ),
     _i2.TableDefinition(
+      name: 'user_app_settings',
+      dartName: 'UserAppSettings',
+      schema: 'public',
+      module: 'masterfabric_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'user_app_settings_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'pushNotifications',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'emailNotifications',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'notificationSound',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'analytics',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'crashReports',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'twoFactorEnabled',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'accountDeletionRequested',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: true,
+          dartType: 'bool?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'updatedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'user_app_settings_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'user_app_settings_user_id_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'userId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
       name: 'user_profile_extended',
       dartName: 'UserProfileExtended',
       schema: 'public',
@@ -889,6 +1004,12 @@ class Protocol extends _i1.SerializationManagerServer {
           columnType: _i2.ColumnType.text,
           isNullable: true,
           dartType: 'protocol:VerificationChannel?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'locale',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
         ),
         _i2.ColumnDefinition(
           name: 'createdAt',
@@ -1318,6 +1439,18 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i80.TranslationResponse) {
       return _i80.TranslationResponse.fromJson(data) as T;
     }
+    if (t == _i81.UserAppSettings) {
+      return _i81.UserAppSettings.fromJson(data) as T;
+    }
+    if (t == _i82.UserAppSettingsEvent) {
+      return _i82.UserAppSettingsEvent.fromJson(data) as T;
+    }
+    if (t == _i83.UserAppSettingsResponse) {
+      return _i83.UserAppSettingsResponse.fromJson(data) as T;
+    }
+    if (t == _i84.UserAppSettingsUpdateRequest) {
+      return _i84.UserAppSettingsUpdateRequest.fromJson(data) as T;
+    }
     if (t == _i1.getType<_i5.AppConfig?>()) {
       return (data != null ? _i5.AppConfig.fromJson(data) : null) as T;
     }
@@ -1604,6 +1737,23 @@ class Protocol extends _i1.SerializationManagerServer {
       return (data != null ? _i80.TranslationResponse.fromJson(data) : null)
           as T;
     }
+    if (t == _i1.getType<_i81.UserAppSettings?>()) {
+      return (data != null ? _i81.UserAppSettings.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i82.UserAppSettingsEvent?>()) {
+      return (data != null ? _i82.UserAppSettingsEvent.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i83.UserAppSettingsResponse?>()) {
+      return (data != null ? _i83.UserAppSettingsResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i84.UserAppSettingsUpdateRequest?>()) {
+      return (data != null
+              ? _i84.UserAppSettingsUpdateRequest.fromJson(data)
+              : null)
+          as T;
+    }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
@@ -1658,32 +1808,32 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == List<_i81.Role>) {
-      return (data as List).map((e) => deserialize<_i81.Role>(e)).toList() as T;
+    if (t == List<_i85.Role>) {
+      return (data as List).map((e) => deserialize<_i85.Role>(e)).toList() as T;
     }
-    if (t == List<_i82.Permission>) {
-      return (data as List).map((e) => deserialize<_i82.Permission>(e)).toList()
+    if (t == List<_i86.Permission>) {
+      return (data as List).map((e) => deserialize<_i86.Permission>(e)).toList()
           as T;
     }
     if (t == Set<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
     }
-    if (t == List<_i83.SessionInfoResponse>) {
+    if (t == List<_i87.SessionInfoResponse>) {
       return (data as List)
-              .map((e) => deserialize<_i83.SessionInfoResponse>(e))
+              .map((e) => deserialize<_i87.SessionInfoResponse>(e))
               .toList()
           as T;
     }
-    if (t == List<_i84.Gender>) {
-      return (data as List).map((e) => deserialize<_i84.Gender>(e)).toList()
+    if (t == List<_i88.Gender>) {
+      return (data as List).map((e) => deserialize<_i88.Gender>(e)).toList()
           as T;
     }
     if (t == List<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toList() as T;
     }
-    if (t == List<_i85.VerificationChannel>) {
+    if (t == List<_i89.VerificationChannel>) {
       return (data as List)
-              .map((e) => deserialize<_i85.VerificationChannel>(e))
+              .map((e) => deserialize<_i89.VerificationChannel>(e))
               .toList()
           as T;
     }
@@ -1783,6 +1933,10 @@ class Protocol extends _i1.SerializationManagerServer {
       _i78.ServerStatus => 'ServerStatus',
       _i79.TranslationEntry => 'TranslationEntry',
       _i80.TranslationResponse => 'TranslationResponse',
+      _i81.UserAppSettings => 'UserAppSettings',
+      _i82.UserAppSettingsEvent => 'UserAppSettingsEvent',
+      _i83.UserAppSettingsResponse => 'UserAppSettingsResponse',
+      _i84.UserAppSettingsUpdateRequest => 'UserAppSettingsUpdateRequest',
       _ => null,
     };
   }
@@ -1952,6 +2106,14 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'TranslationEntry';
       case _i80.TranslationResponse():
         return 'TranslationResponse';
+      case _i81.UserAppSettings():
+        return 'UserAppSettings';
+      case _i82.UserAppSettingsEvent():
+        return 'UserAppSettingsEvent';
+      case _i83.UserAppSettingsResponse():
+        return 'UserAppSettingsResponse';
+      case _i84.UserAppSettingsUpdateRequest():
+        return 'UserAppSettingsUpdateRequest';
     }
     className = _i2.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -2202,6 +2364,18 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'TranslationResponse') {
       return deserialize<_i80.TranslationResponse>(data['data']);
     }
+    if (dataClassName == 'UserAppSettings') {
+      return deserialize<_i81.UserAppSettings>(data['data']);
+    }
+    if (dataClassName == 'UserAppSettingsEvent') {
+      return deserialize<_i82.UserAppSettingsEvent>(data['data']);
+    }
+    if (dataClassName == 'UserAppSettingsResponse') {
+      return deserialize<_i83.UserAppSettingsResponse>(data['data']);
+    }
+    if (dataClassName == 'UserAppSettingsUpdateRequest') {
+      return deserialize<_i84.UserAppSettingsUpdateRequest>(data['data']);
+    }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
       return _i2.Protocol().deserializeByClassName(data);
@@ -2260,6 +2434,8 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i77.PairedDevice.t;
       case _i79.TranslationEntry:
         return _i79.TranslationEntry.t;
+      case _i81.UserAppSettings:
+        return _i81.UserAppSettings.t;
     }
     return null;
   }

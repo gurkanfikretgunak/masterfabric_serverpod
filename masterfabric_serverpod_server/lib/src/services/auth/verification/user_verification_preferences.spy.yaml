@@ -16,6 +16,8 @@ fields:
   telegramLinked: bool
   ### Backup channel if primary fails
   backupChannel: VerificationChannel?
+  ### Preferred locale for verification messages (e.g., 'en', 'tr', 'de', 'es')
+  locale: String?
   ### Created timestamp
   createdAt: DateTime
   ### Last updated timestamp

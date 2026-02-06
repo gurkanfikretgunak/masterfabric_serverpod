@@ -1,0 +1,14 @@
+### User app settings update request
+class: UserAppSettingsUpdateRequest
+fields:
+  # Notification settings
+  pushNotifications: bool?
+  emailNotifications: bool?
+  notificationSound: bool?
+  # Privacy settings
+  analytics: bool?
+  crashReports: bool?
+  # Hard settings (require verification code)
+  twoFactorEnabled: bool?
+  # Verification code (required for hard settings)
+  verificationCode: String?

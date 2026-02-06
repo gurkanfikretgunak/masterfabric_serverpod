@@ -1,0 +1,7 @@
+### User app settings response
+class: UserAppSettingsResponse
+fields:
+  success: bool
+  message: String
+  settings: UserAppSettings?
+  timestamp: DateTime

@@ -97,20 +97,26 @@ import 'services/paired_device/models/paired_device.dart' as _i74;
 import 'services/status/models/server_status.dart' as _i75;
 import 'services/translations/models/translation_entry.dart' as _i76;
 import 'services/translations/models/translation_response.dart' as _i77;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/role.dart'
-    as _i78;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/permission.dart'
-    as _i79;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/session/session_info_response.dart'
+import 'services/user_app_settings/models/user_app_settings.dart' as _i78;
+import 'services/user_app_settings/models/user_app_settings_event.dart' as _i79;
+import 'services/user_app_settings/models/user_app_settings_response.dart'
     as _i80;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/gender.dart'
+import 'services/user_app_settings/models/user_app_settings_update_request.dart'
     as _i81;
-import 'package:masterfabric_serverpod_client/src/protocol/services/auth/verification/verification_channel.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/role.dart'
     as _i82;
-import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/rbac/permission.dart'
     as _i83;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/session/session_info_response.dart'
     as _i84;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/user/gender.dart'
+    as _i85;
+import 'package:masterfabric_serverpod_client/src/protocol/services/auth/verification/verification_channel.dart'
+    as _i86;
+import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
+    as _i87;
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+    as _i88;
 export 'app_config/app_config.dart';
 export 'app_config/app_config_table.dart';
 export 'app_config/core/app_settings.dart';
@@ -187,6 +193,10 @@ export 'services/paired_device/models/paired_device.dart';
 export 'services/status/models/server_status.dart';
 export 'services/translations/models/translation_entry.dart';
 export 'services/translations/models/translation_response.dart';
+export 'services/user_app_settings/models/user_app_settings.dart';
+export 'services/user_app_settings/models/user_app_settings_event.dart';
+export 'services/user_app_settings/models/user_app_settings_response.dart';
+export 'services/user_app_settings/models/user_app_settings_update_request.dart';
 export 'client.dart';
 
 class Protocol extends _i1.SerializationManager {
@@ -450,6 +460,18 @@ class Protocol extends _i1.SerializationManager {
     }
     if (t == _i77.TranslationResponse) {
       return _i77.TranslationResponse.fromJson(data) as T;
+    }
+    if (t == _i78.UserAppSettings) {
+      return _i78.UserAppSettings.fromJson(data) as T;
+    }
+    if (t == _i79.UserAppSettingsEvent) {
+      return _i79.UserAppSettingsEvent.fromJson(data) as T;
+    }
+    if (t == _i80.UserAppSettingsResponse) {
+      return _i80.UserAppSettingsResponse.fromJson(data) as T;
+    }
+    if (t == _i81.UserAppSettingsUpdateRequest) {
+      return _i81.UserAppSettingsUpdateRequest.fromJson(data) as T;
     }
     if (t == _i1.getType<_i2.AppConfig?>()) {
       return (data != null ? _i2.AppConfig.fromJson(data) : null) as T;
@@ -737,6 +759,23 @@ class Protocol extends _i1.SerializationManager {
       return (data != null ? _i77.TranslationResponse.fromJson(data) : null)
           as T;
     }
+    if (t == _i1.getType<_i78.UserAppSettings?>()) {
+      return (data != null ? _i78.UserAppSettings.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i79.UserAppSettingsEvent?>()) {
+      return (data != null ? _i79.UserAppSettingsEvent.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i80.UserAppSettingsResponse?>()) {
+      return (data != null ? _i80.UserAppSettingsResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i81.UserAppSettingsUpdateRequest?>()) {
+      return (data != null
+              ? _i81.UserAppSettingsUpdateRequest.fromJson(data)
+              : null)
+          as T;
+    }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
@@ -791,32 +830,32 @@ class Protocol extends _i1.SerializationManager {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == List<_i78.Role>) {
-      return (data as List).map((e) => deserialize<_i78.Role>(e)).toList() as T;
+    if (t == List<_i82.Role>) {
+      return (data as List).map((e) => deserialize<_i82.Role>(e)).toList() as T;
     }
-    if (t == List<_i79.Permission>) {
-      return (data as List).map((e) => deserialize<_i79.Permission>(e)).toList()
+    if (t == List<_i83.Permission>) {
+      return (data as List).map((e) => deserialize<_i83.Permission>(e)).toList()
           as T;
     }
     if (t == Set<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toSet() as T;
     }
-    if (t == List<_i80.SessionInfoResponse>) {
+    if (t == List<_i84.SessionInfoResponse>) {
       return (data as List)
-              .map((e) => deserialize<_i80.SessionInfoResponse>(e))
+              .map((e) => deserialize<_i84.SessionInfoResponse>(e))
               .toList()
           as T;
     }
-    if (t == List<_i81.Gender>) {
-      return (data as List).map((e) => deserialize<_i81.Gender>(e)).toList()
+    if (t == List<_i85.Gender>) {
+      return (data as List).map((e) => deserialize<_i85.Gender>(e)).toList()
           as T;
     }
     if (t == List<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toList() as T;
     }
-    if (t == List<_i82.VerificationChannel>) {
+    if (t == List<_i86.VerificationChannel>) {
       return (data as List)
-              .map((e) => deserialize<_i82.VerificationChannel>(e))
+              .map((e) => deserialize<_i86.VerificationChannel>(e))
               .toList()
           as T;
     }
@@ -827,10 +866,10 @@ class Protocol extends _i1.SerializationManager {
           as T;
     }
     try {
-      return _i83.Protocol().deserialize<T>(data, t);
+      return _i87.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     try {
-      return _i84.Protocol().deserialize<T>(data, t);
+      return _i88.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     return super.deserialize<T>(data, t);
   }
@@ -913,6 +952,10 @@ class Protocol extends _i1.SerializationManager {
       _i75.ServerStatus => 'ServerStatus',
       _i76.TranslationEntry => 'TranslationEntry',
       _i77.TranslationResponse => 'TranslationResponse',
+      _i78.UserAppSettings => 'UserAppSettings',
+      _i79.UserAppSettingsEvent => 'UserAppSettingsEvent',
+      _i80.UserAppSettingsResponse => 'UserAppSettingsResponse',
+      _i81.UserAppSettingsUpdateRequest => 'UserAppSettingsUpdateRequest',
       _ => null,
     };
   }
@@ -1082,12 +1125,20 @@ class Protocol extends _i1.SerializationManager {
         return 'TranslationEntry';
       case _i77.TranslationResponse():
         return 'TranslationResponse';
+      case _i78.UserAppSettings():
+        return 'UserAppSettings';
+      case _i79.UserAppSettingsEvent():
+        return 'UserAppSettingsEvent';
+      case _i80.UserAppSettingsResponse():
+        return 'UserAppSettingsResponse';
+      case _i81.UserAppSettingsUpdateRequest():
+        return 'UserAppSettingsUpdateRequest';
     }
-    className = _i83.Protocol().getClassNameForObject(data);
+    className = _i87.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_idp.$className';
     }
-    className = _i84.Protocol().getClassNameForObject(data);
+    className = _i88.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_core.$className';
     }
@@ -1328,13 +1379,25 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'TranslationResponse') {
       return deserialize<_i77.TranslationResponse>(data['data']);
     }
+    if (dataClassName == 'UserAppSettings') {
+      return deserialize<_i78.UserAppSettings>(data['data']);
+    }
+    if (dataClassName == 'UserAppSettingsEvent') {
+      return deserialize<_i79.UserAppSettingsEvent>(data['data']);
+    }
+    if (dataClassName == 'UserAppSettingsResponse') {
+      return deserialize<_i80.UserAppSettingsResponse>(data['data']);
+    }
+    if (dataClassName == 'UserAppSettingsUpdateRequest') {
+      return deserialize<_i81.UserAppSettingsUpdateRequest>(data['data']);
+    }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);
-      return _i83.Protocol().deserializeByClassName(data);
+      return _i87.Protocol().deserializeByClassName(data);
     }
     if (dataClassName.startsWith('serverpod_auth_core.')) {
       data['className'] = dataClassName.substring(20);
-      return _i84.Protocol().deserializeByClassName(data);
+      return _i88.Protocol().deserializeByClassName(data);
     }
     return super.deserializeByClassName(data);
   }
@@ -1349,10 +1412,10 @@ class Protocol extends _i1.SerializationManager {
       return null;
     }
     try {
-      return _i83.Protocol().mapRecordToJson(record);
+      return _i87.Protocol().mapRecordToJson(record);
     } catch (_) {}
     try {
-      return _i84.Protocol().mapRecordToJson(record);
+      return _i88.Protocol().mapRecordToJson(record);
     } catch (_) {}
     throw Exception('Unsupported record type ${record.runtimeType}');
   }

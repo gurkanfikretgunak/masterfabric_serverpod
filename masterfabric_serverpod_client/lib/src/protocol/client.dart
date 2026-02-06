@@ -86,7 +86,13 @@ import 'package:masterfabric_serverpod_client/src/protocol/services/status/model
     as _i38;
 import 'package:masterfabric_serverpod_client/src/protocol/services/translations/models/translation_response.dart'
     as _i39;
-import 'protocol.dart' as _i40;
+import 'package:masterfabric_serverpod_client/src/protocol/services/user_app_settings/models/user_app_settings_response.dart'
+    as _i40;
+import 'package:masterfabric_serverpod_client/src/protocol/services/user_app_settings/models/user_app_settings_update_request.dart'
+    as _i41;
+import 'package:masterfabric_serverpod_client/src/protocol/services/user_app_settings/models/user_app_settings_event.dart'
+    as _i42;
+import 'protocol.dart' as _i43;
 
 /// Base class for MasterFabric endpoints with built-in middleware support
 ///
@@ -1465,12 +1471,14 @@ class EndpointVerificationPreferences extends EndpointMasterfabric {
   /// [preferredChannel] - Preferred channel for verification codes
   /// [backupChannel] - Optional backup channel
   /// [phoneNumber] - Phone number for Telegram/WhatsApp (E.164 format)
+  /// [locale] - Preferred locale for verification messages (e.g., 'en', 'tr', 'de', 'es')
   ///
   /// Returns the updated preferences
   _i2.Future<_i26.UserVerificationPreferences> updatePreferences({
     required _i25.VerificationChannel preferredChannel,
     _i25.VerificationChannel? backupChannel,
     String? phoneNumber,
+    String? locale,
   }) => caller.callServerEndpoint<_i26.UserVerificationPreferences>(
     'verificationPreferences',
     'updatePreferences',
@@ -1478,6 +1486,7 @@ class EndpointVerificationPreferences extends EndpointMasterfabric {
       'preferredChannel': preferredChannel,
       'backupChannel': backupChannel,
       'phoneNumber': phoneNumber,
+      'locale': locale,
     },
   );
 
@@ -2244,6 +2253,131 @@ class EndpointTranslation extends _i1.EndpointRef {
       );
 }
 
+/// User app settings endpoint with RBAC (Role-Based Access Control).
+///
+/// ## Role Requirements:
+/// - All methods: Requires 'user' role
+///
+/// ## Hard Settings (require verification code):
+/// - `twoFactorEnabled`: Requires verification code to enable/disable
+///
+/// Usage from client:
+/// ```dart
+/// // Get settings
+/// final response = await client.userAppSettings.get();
+///
+/// // Update settings
+/// final updateResponse = await client.userAppSettings.update(
+///   UserAppSettingsUpdateRequest(
+///     pushNotifications: true,
+///     emailNotifications: false,
+///   ),
+/// );
+///
+/// // Update hard setting (requires verification code)
+/// final hardUpdateResponse = await client.userAppSettings.update(
+///   UserAppSettingsUpdateRequest(
+///     twoFactorEnabled: true,
+///     verificationCode: '123456',
+///   ),
+/// );
+/// ```
+/// {@category Endpoint}
+class EndpointUserAppSettings extends EndpointMasterfabric {
+  EndpointUserAppSettings(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'userAppSettings';
+
+  /// Get current user's app settings.
+  ///
+  /// **Required Roles:** 'user'
+  ///
+  /// Returns user's app settings, creating default if not exists.
+  _i2.Future<_i40.UserAppSettingsResponse> get() =>
+      caller.callServerEndpoint<_i40.UserAppSettingsResponse>(
+        'userAppSettings',
+        'get',
+        {},
+      );
+
+  /// Update user's app settings.
+  ///
+  /// **Required Roles:** 'user'
+  ///
+  /// For hard settings (like twoFactorEnabled), a verification code is required.
+  ///
+  /// [request] - Update request with new values
+  ///
+  /// Returns updated settings
+  _i2.Future<_i40.UserAppSettingsResponse> update(
+    _i41.UserAppSettingsUpdateRequest request,
+  ) => caller.callServerEndpoint<_i40.UserAppSettingsResponse>(
+    'userAppSettings',
+    'update',
+    {'request': request},
+  );
+
+  /// Request verification code for updating hard settings.
+  ///
+  /// **Required Roles:** 'user'
+  ///
+  /// Returns VerificationResponse with status and expiration.
+  _i2.Future<_i22.VerificationResponse> requestVerificationCode() =>
+      caller.callServerEndpoint<_i22.VerificationResponse>(
+        'userAppSettings',
+        'requestVerificationCode',
+        {},
+      );
+
+  /// Delete user's app settings (for account deletion).
+  ///
+  /// **Required Roles:** 'user'
+  ///
+  /// This is a hard operation and should require additional verification.
+  _i2.Future<_i40.UserAppSettingsResponse> delete() =>
+      caller.callServerEndpoint<_i40.UserAppSettingsResponse>(
+        'userAppSettings',
+        'delete',
+        {},
+      );
+}
+
+/// Real-time user app settings streaming endpoint
+///
+/// Provides WebSocket-based streaming for real-time settings updates.
+/// Uses Serverpod's streaming methods for automatic connection management.
+///
+/// Clients can subscribe to receive settings updates in real-time.
+/// {@category Endpoint}
+class EndpointUserAppSettingsStream extends _i1.EndpointRef {
+  EndpointUserAppSettingsStream(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'userAppSettingsStream';
+
+  /// Subscribe to user's app settings updates
+  ///
+  /// This is the main streaming method. Clients call this to establish
+  /// a WebSocket connection and receive settings updates as they occur.
+  ///
+  /// [session] - Serverpod session (automatically managed)
+  ///
+  /// Returns a stream of settings events (updated, deleted).
+  /// The stream first yields the current settings, then continues
+  /// with real-time updates.
+  _i2.Stream<_i42.UserAppSettingsEvent> subscribe() =>
+      caller.callStreamingServerEndpoint<
+        _i2.Stream<_i42.UserAppSettingsEvent>,
+        _i42.UserAppSettingsEvent
+      >(
+        'userAppSettingsStream',
+        'subscribe',
+        {},
+        {},
+      );
+}
+
 class Modules {
   Modules(Client client) {
     serverpod_auth_idp = _i11.Caller(client);
@@ -2275,7 +2409,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i40.Protocol(),
+         _i43.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -2307,6 +2441,8 @@ class Client extends _i1.ServerpodClientShared {
     pairedDevice = EndpointPairedDevice(this);
     status = EndpointStatus(this);
     translation = EndpointTranslation(this);
+    userAppSettings = EndpointUserAppSettings(this);
+    userAppSettingsStream = EndpointUserAppSettingsStream(this);
     modules = Modules(this);
   }
 
@@ -2356,6 +2492,10 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointTranslation translation;
 
+  late final EndpointUserAppSettings userAppSettings;
+
+  late final EndpointUserAppSettingsStream userAppSettingsStream;
+
   late final Modules modules;
 
   @override
@@ -2383,6 +2523,8 @@ class Client extends _i1.ServerpodClientShared {
     'pairedDevice': pairedDevice,
     'status': status,
     'translation': translation,
+    'userAppSettings': userAppSettings,
+    'userAppSettingsStream': userAppSettingsStream,
   };
 
   @override

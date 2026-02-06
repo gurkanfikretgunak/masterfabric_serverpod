@@ -29,8 +29,17 @@ class _VerificationSettingsScreenState extends State<VerificationSettingsScreen>
 
   VerificationChannel? _selectedChannel;
   VerificationChannel? _selectedBackupChannel;
+  String? _selectedLocale;
   final _phoneController = TextEditingController();
   final _verificationCodeController = TextEditingController();
+  
+  // Available locales
+  final List<Map<String, String>> _availableLocales = [
+    {'code': 'en', 'name': 'English'},
+    {'code': 'tr', 'name': 'Türkçe'},
+    {'code': 'de', 'name': 'Deutsch'},
+    {'code': 'es', 'name': 'Español'},
+  ];
 
   // Telegram linking state
   bool _isLinkingTelegram = false;
@@ -42,7 +51,12 @@ class _VerificationSettingsScreenState extends State<VerificationSettingsScreen>
   @override
   void initState() {
     super.initState();
-    _loadData();
+    // Initialize loading state before checking service
+    _isLoading = true;
+    // Load data asynchronously - UI will show loading state until data is ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
   }
 
   @override
@@ -60,6 +74,7 @@ class _VerificationSettingsScreenState extends State<VerificationSettingsScreen>
 
     try {
       // Load available channels and user preferences in parallel
+      // (Service handles authentication internally)
       final results = await Future.wait([
         client.verificationPreferences.getAvailableChannels(),
         client.verificationPreferences.getPreferences(),
@@ -76,6 +91,7 @@ class _VerificationSettingsScreenState extends State<VerificationSettingsScreen>
         _telegramBotInfo = botInfo;
         _selectedChannel = preferences?.preferredChannel ?? VerificationChannel.email;
         _selectedBackupChannel = preferences?.backupChannel;
+        _selectedLocale = preferences?.locale ?? 'en';
         if (preferences?.phoneNumber != null) {
           _phoneController.text = preferences!.phoneNumber!;
         }
@@ -101,6 +117,7 @@ class _VerificationSettingsScreenState extends State<VerificationSettingsScreen>
         preferredChannel: _selectedChannel!,
         backupChannel: _selectedBackupChannel,
         phoneNumber: _phoneController.text.isNotEmpty ? _phoneController.text : null,
+        locale: _selectedLocale,
       );
 
       setState(() {
@@ -397,12 +414,50 @@ class _VerificationSettingsScreenState extends State<VerificationSettingsScreen>
   }
 
   Widget _buildBody() {
+    // Show loading state first - don't render UI until data is loaded
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.grey.shade200, width: 1),
+              ),
+              child: Icon(
+                LucideIcons.shield,
+                size: 48,
+                color: Colors.blue.shade600,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Loading Verification Settings',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade800,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Please wait while we fetch your preferences...',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 32),
+            const CircularProgressIndicator(),
+          ],
+        ),
       );
     }
 
+    // Show error state if loading failed
     if (_error != null) {
       return Center(
         child: Padding(
@@ -410,10 +465,22 @@ class _VerificationSettingsScreenState extends State<VerificationSettingsScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(LucideIcons.circleAlert, size: 48, color: Colors.red.shade300),
-              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.red.shade200, width: 1),
+                ),
+                child: Icon(
+                  LucideIcons.circleAlert,
+                  size: 48,
+                  color: Colors.red.shade300,
+                ),
+              ),
+              const SizedBox(height: 24),
               Text(
-                'Failed to load settings',
+                'Failed to Load Settings',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -431,12 +498,19 @@ class _VerificationSettingsScreenState extends State<VerificationSettingsScreen>
                 onPressed: _loadData,
                 icon: const Icon(LucideIcons.refreshCw),
                 label: const Text('Retry'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade600,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
               ),
             ],
           ),
         ),
       );
     }
+
+    // Only render the settings UI once data is successfully loaded
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -464,6 +538,10 @@ class _VerificationSettingsScreenState extends State<VerificationSettingsScreen>
               _buildWhatsAppCard(),
               const SizedBox(height: 20),
             ],
+
+          // Locale Card
+          _buildLocaleCard(),
+          const SizedBox(height: 20),
 
           // Backup Channel Card
           _buildBackupChannelCard(),
@@ -1006,6 +1084,65 @@ class _VerificationSettingsScreenState extends State<VerificationSettingsScreen>
             onChanged: (value) {
               setState(() {
                 _selectedBackupChannel = value;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocaleCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(LucideIcons.languages, color: Colors.purple.shade600),
+              const SizedBox(width: 8),
+              const Text(
+                'Language Preference',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Select your preferred language for verification messages',
+            style: TextStyle(
+              color: Colors.grey.shade600,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: 16),
+          DropdownButtonFormField<String>(
+            value: _selectedLocale ?? 'en',
+            decoration: InputDecoration(
+              labelText: 'Language',
+              prefixIcon: const Icon(LucideIcons.globe),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            items: _availableLocales.map((locale) {
+              return DropdownMenuItem<String>(
+                value: locale['code'],
+                child: Text(locale['name']!),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedLocale = value;
               });
             },
           ),
